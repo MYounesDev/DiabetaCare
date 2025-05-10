@@ -1,0 +1,2 @@
+cls && cd server && npm install && cd .. && cd client && npm install && npm install asynckit combined-stream has-flag tailwindcss mime-types es-set-tostringtag && cd .. && cls && echo installation complete
+:: This batch file is used to install the required packages for both the server and client directories.
