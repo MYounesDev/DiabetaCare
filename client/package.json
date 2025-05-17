@@ -6,13 +6,15 @@
   "author": "RBFraphael",
   "description": "Electron + NextJS example project",
   "scripts": {
-    "dev": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev\" \"electron .\"",
+    "dev": "next dev --turbopack",
     "build": "next build && electron-builder",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "axios": "^1.9.0",
     "electron-serve": "^2.1.1",
+    "lucide-react": "^0.511.0",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

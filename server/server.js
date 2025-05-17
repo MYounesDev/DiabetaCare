@@ -8,6 +8,7 @@ const fs = require('fs');
 const path = require('path');
 const handlebars = require('handlebars');
 const nodemailer = require('nodemailer');
+const { createCipheriv } = require("crypto");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -35,7 +36,7 @@ async function verifyToken(token, secret) {
     const query = `SELECT * FROM users WHERE id = $1`;
     const result = await pool.query(query, [userId]);
     const user = result.rows[0];
-    
+
     if (!user) {
       console.log('User not found:', userId);
       throw new Error('User not found');
@@ -107,19 +108,60 @@ const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf8');
 const compiledTemplate = handlebars.compile(emailTemplate);
 
 app.post('/register', async (req, res) => {
-  const { username, email, phoneNumber, fullName, gender } = req.body;
+  const { username, email, phoneNumber, fullName, birthDate, gender, role } = req.body;
 
-  if (!username || !email || !phoneNumber || !fullName || !gender) {
+  if (!username || !email || !phoneNumber || !fullName || !birthDate || !gender || !role) {
+    console.log('Missing fields in registration:', req.body);
     return res.status(400).json({ message: 'All fields are required' });
   }
 
   const randomPassword = Math.random().toString(36).slice(-8);
   const hashedPassword = await bcrypt.hash(randomPassword, 10);
-  const query = `INSERT INTO users (username, email, phone_number, role, password, full_name, gender) VALUES ($1, $2, $3, 'patient', $4, $5, $6) RETURNING *`;
 
   try {
-    // Add user to database
-    const result = await pool.query(query, [username, email, phoneNumber, hashedPassword, fullName, gender]);
+    // First, get the role_id and gender_id from their respective tables
+    const roleQuery = 'SELECT id FROM roles WHERE role_name = $1';
+    const genderQuery = 'SELECT id FROM genders WHERE gender_name = $1';
+    
+    const roleResult = await pool.query(roleQuery, [role]);
+    const genderResult = await pool.query(genderQuery, [gender]);
+
+    if (roleResult.rows.length === 0) {
+      return res.status(400).json({ message: 'Invalid role specified' });
+    }
+    if (genderResult.rows.length === 0) {
+      return res.status(400).json({ message: 'Invalid gender specified' });
+    }
+
+    const roleId = roleResult.rows[0].id;
+    const genderId = genderResult.rows[0].id;
+
+    // Now insert the user with the correct foreign keys
+    const query = `
+      INSERT INTO users (
+        username, 
+        email, 
+        phone_number, 
+        role_id, 
+        password, 
+        full_name, 
+        gender_id, 
+        birth_date
+      ) 
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
+      RETURNING *`;
+
+    // Add user to database with foreign keys
+    const result = await pool.query(query, [
+      username, 
+      email, 
+      phoneNumber, 
+      roleId, 
+      hashedPassword, 
+      fullName, 
+      genderId, 
+      birthDate
+    ]);
     const newUser = result.rows[0];
     const { password: _, ...userData } = newUser;
 
@@ -131,9 +173,10 @@ app.post('/register', async (req, res) => {
 
     // Prepare email data
     const emailData = {
-      username: username,
+      userName: username,
       fullName: fullName,
-      randomPassword: randomPassword
+      randomPassword: randomPassword,
+      loginUrl: `${process.env.FRONTEND_URL}/login`
     };
 
     // Compile template with data
@@ -149,7 +192,6 @@ app.post('/register', async (req, res) => {
         subject: 'Welcome to DiabetaCare - Your Account Information',
         html: htmlContent,
       });
-      console.log('Welcome email sent successfully');
     } catch (emailError) {
       console.error('Error sending welcome email:', emailError);
       // Still proceed with registration even if email fails
@@ -169,8 +211,6 @@ app.post('/register', async (req, res) => {
 
 
 
-
-
 app.post('/login', async (req, res) => {
 
   const { username, password } = req.body;
@@ -179,7 +219,21 @@ app.post('/login', async (req, res) => {
     return res.status(400).json({ message: 'user name and password required' });
   }
 
-  const query = `SELECT * FROM users WHERE username = $1`;
+  const query = `SELECT 
+    users.id, 
+    users.username, 
+    users.full_name, 
+    users.email, 
+    users.phone_number, 
+    users.birth_date, 
+    roles.role_name AS role, 
+    genders.gender_name AS gender, 
+    users.password, 
+    users.profile_picture
+    FROM users 
+    INNER JOIN roles ON users.role_id = roles.id
+    INNER JOIN genders ON users.gender_id = genders.id
+    WHERE users.username = $1`;
   try {
     const result = await pool.query(query, [username]);
     const user = result.rows[0];
@@ -201,6 +255,7 @@ app.post('/login', async (req, res) => {
     );
 
     const { password: _, ...userData } = user;
+
 
     res.json({
       message: 'Login successful',
@@ -291,7 +346,7 @@ app.post('/change-password', authenticate, async (req, res) => {
 
     try {
       await pool.query(updateQuery, [hashedPassword, user.password_changed_at, id]);
-    }catch (error) {
+    } catch (error) {
       console.error('Error updating password in database:', error);
       return res.status(500).json({ message: 'Internal server error' });
     }
