@@ -21,7 +21,7 @@ export default function Home() {
           router.push('/patient/home');
         }
       } else {
-        router.push('/dashboard');
+        router.push('/home');
       }
     } else {
       // Not logged in, redirect to login page

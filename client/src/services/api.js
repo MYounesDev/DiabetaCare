@@ -35,7 +35,11 @@ api.interceptors.request.use(
 
 // Response interceptor to handle common errors
 api.interceptors.response.use(
-  (response) => response.data,
+  (response) => ({
+    data:response.data,
+    status: response.status,
+    user: response.data.user
+  }),
   (error) => {
     const { response } = error;
     
@@ -62,10 +66,14 @@ export const authService = {
     try {
       const response = await api.post('/login', { username, password });
       
+      console.log("response.status::", response.status);
       if (response.status === 200) {
-        localStorage.setItem('token', response.token);
-        localStorage.setItem('user', JSON.stringify(response.user));
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        console.log(response.data.token);
       }
+      
+      console.log("response : ", response);
       return response;
     } catch (error) {
       console.log(error);

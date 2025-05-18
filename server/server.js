@@ -80,6 +80,14 @@ const authenticate = async (req, res, next) => {
   }
 };
 
+const authorize = (...allowedRoles) => {
+  return (req, res, next) => {
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+    next();
+  };
+};
 
 // Database connection
 const pool = new Pool({
@@ -171,6 +179,21 @@ app.post('/register', async (req, res) => {
       { expiresIn: '1h' }
     );
 
+    //check if a doctor add the patient (then the doctor is the patient's doctor and will add the relation between them to the database)
+    const tokenFromHeader = req.headers['authorization']?.split(' ')[1];
+    if (tokenFromHeader) {
+      try {
+        const decoded = await verifyToken(tokenFromHeader, jwtSecretKey);
+        if (decoded.role === 'doctor' && role === 'patient') {
+          const query = `INSERT INTO "patient_doctor" (patient_id, doctor_id) VALUES ($1, $2)`;
+          await pool.query(query, [newUser.id, decoded.id]);
+        }
+      } catch (error) {
+        console.error('Error verifying token for doctor-patient relationship:', error);
+        // Proceed without the relationship if token verification fails
+      }
+    }
+
     // Prepare email data
     const emailData = {
       userName: username,
@@ -181,8 +204,6 @@ app.post('/register', async (req, res) => {
 
     // Compile template with data
     const htmlContent = compiledTemplate(emailData);
-
-
 
     // Send welcome email with login credentials using nodemailer
     try {
@@ -371,15 +392,9 @@ app.post('/change-password', authenticate, async (req, res) => {
 });
 
 
-app.get('/patients', authenticate, async (req, res) => {
-  const { role } = req.user;
-
-  if (role !== 'doctor') {
-    return res.status(403).json({ message: 'Access denied' });
-  }
-
+app.get('/patients', authenticate, authorize('admin', 'doctor'),async (req, res) => {
   try {
-    const query = `SELECT * FROM users WHERE role = 'patient'`;
+    const query = `SELECT * FROM users WHERE role_id = '1'`;
     const result = await pool.query(query);
     const patients = result.rows;
 

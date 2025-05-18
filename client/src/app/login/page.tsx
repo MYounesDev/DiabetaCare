@@ -45,7 +45,7 @@ export default function Login() {
       
       // If login is successful, redirect to dashboard or home page
       if (response && response.user) {
-        router.push(`${response.user.role}/dashboard`); // or wherever you want to redirect after login
+        router.push(`${response.user.role}/home`); // or wherever you want to redirect after login
       }
     } catch (err: any) {
       // Handle specific error cases
