@@ -5,14 +5,6 @@ import { Eye, EyeOff, LogIn, Hospital, Activity } from 'lucide-react';
 import { authService } from '@/services/api';
 import { useRouter } from 'next/navigation';
 
-interface LoginResponse {
-  token: string;
-  user: {
-    id: string;
-    username: string;
-    role: string;
-  };
-}
 
 export default function Login() {
   const router = useRouter();
@@ -48,7 +40,8 @@ export default function Login() {
         return;
       }
 
-      const response = await authService.login(formData.username, formData.password) as unknown as LoginResponse;
+      const response = await authService.login(formData.username, formData.password) ;
+
       
       // If login is successful, redirect to dashboard or home page
       if (response && response.user) {

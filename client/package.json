@@ -7,14 +7,20 @@
   "description": "Electron + NextJS example project",
   "scripts": {
     "dev": "next dev --turbopack",
+    "electron": "concurrently -n \"NEXT,ELECTRON\" -c \"yellow,blue\" --kill-others \"next dev\" \"electron .\"",
     "build": "next build && electron-builder",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "asynckit": "^0.4.0",
     "axios": "^1.9.0",
+    "combined-stream": "^1.0.8",
     "electron-serve": "^2.1.1",
+    "es-set-tostringtag": "^2.1.0",
+    "has-flag": "^5.0.1",
     "lucide-react": "^0.511.0",
+    "mime-types": "^3.0.1",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -30,7 +36,7 @@
     "electron-builder": "^26.0.12",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.7",
     "typescript": "^5"
   }
 }

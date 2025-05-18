@@ -257,7 +257,7 @@ app.post('/login', async (req, res) => {
     const { password: _, ...userData } = user;
 
 
-    res.json({
+    res.status(200).json({
       message: 'Login successful',
       token,
       user: userData

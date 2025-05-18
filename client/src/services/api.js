@@ -61,10 +61,14 @@ export const authService = {
   login: async (username, password) => {
     try {
       const response = await api.post('/login', { username, password });
-      localStorage.setItem('token', response.token);
-      localStorage.setItem('user', JSON.stringify(response.user));
+      
+      if (response.status === 200) {
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('user', JSON.stringify(response.user));
+      }
       return response;
     } catch (error) {
+      console.log(error);
       throw error;
     }
   },

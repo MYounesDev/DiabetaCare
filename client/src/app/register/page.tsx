@@ -19,7 +19,6 @@ export default function Register() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [animate, setAnimate] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   const [isRegistered, setIsRegistered] = useState(false);
 
   useEffect(() => {
@@ -36,7 +35,6 @@ export default function Register() {
   const handleSubmit = async (e) => {
     if (e) e.preventDefault();
     setError('');
-    setSuccessMessage('');
     setLoading(true);
     
     try {
@@ -69,7 +67,6 @@ export default function Register() {
       
       // If registration is successful
       if (response) {
-        setSuccessMessage('Registration successful! Please check your email for login credentials.');
         setIsRegistered(true);
         setLoading(false);
         setTimeout(() => {
