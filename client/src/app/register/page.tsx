@@ -10,9 +10,9 @@ export default function Register() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    phoneNumber: '',
-    fullName: '',
-    birthDate: '',
+    phone_number: '',
+    full_name: '',
+    birth_date: '',
     gender: '',
     role: ''
   });
@@ -39,10 +39,10 @@ export default function Register() {
     
     try {
       // Basic validation
-      const requiredFields = ['username', 'email', 'fullName', 'role'];
+      const requiredFields = ['username', 'email', 'full_name', 'role'];
       for (const field of requiredFields) {
         if (!formData[field]) {
-          setError(`Please enter your ${field === 'fullName' ? 'full name' : field}`);
+          setError(`Please enter your ${field === 'full_name' ? 'full name' : field}`);
           setLoading(false);
           return;
         }
@@ -57,7 +57,7 @@ export default function Register() {
       }
 
       // Phone validation (if provided)
-      if (formData.phoneNumber && !/^\+?[0-9\s-]{8,15}$/.test(formData.phoneNumber)) {
+      if (formData.phone_number && !/^\+?[0-9\s-]{8,15}$/.test(formData.phone_number)) {
         setError('Please enter a valid phone number');
         setLoading(false);
         return;
@@ -165,14 +165,14 @@ export default function Register() {
               <div className="space-y-4">
                 {/* Full Name */}
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-green-700 mb-1">
+                  <label htmlFor="full_name" className="block text-sm font-medium text-green-700 mb-1">
                     Full Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
-                    id="fullName"
-                    name="fullName"
-                    value={formData.fullName}
+                    id="full_name"
+                    name="full_name"
+                    value={formData.full_name}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                     placeholder="Enter your full name"
@@ -215,14 +215,14 @@ export default function Register() {
                 
                 {/* Phone Number */}
                 <div>
-                  <label htmlFor="phoneNumber" className="block text-sm font-medium text-green-700 mb-1">
+                  <label htmlFor="phone_number" className="block text-sm font-medium text-green-700 mb-1">
                     Phone Number
                   </label>
                   <input
                     type="tel"
-                    id="phoneNumber"
-                    name="phoneNumber"
-                    value={formData.phoneNumber}
+                    id="phone_number"
+                    name="phone_number"
+                    value={formData.phone_number}
                     onChange={handleChange}
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                     placeholder="Enter your phone number"
@@ -231,15 +231,15 @@ export default function Register() {
                 
                 {/* Birth Date */}
                 <div>
-                  <label htmlFor="birthDate" className="block text-sm font-medium text-green-700 mb-1">
+                  <label htmlFor="birth_date" className="block text-sm font-medium text-green-700 mb-1">
                     Birth Date
                   </label>
                   <div className="relative">
                     <input
                       type="date"
-                      id="birthDate"
-                      name="birthDate"
-                      value={formData.birthDate}
+                      id="birth_date"
+                      name="birth_date"
+                      value={formData.birth_date}
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                     />

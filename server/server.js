@@ -116,9 +116,9 @@ const emailTemplate = fs.readFileSync(emailTemplatePath, 'utf8');
 const compiledTemplate = handlebars.compile(emailTemplate);
 
 app.post('/register', async (req, res) => {
-  const { username, email, phoneNumber, fullName, birthDate, gender, role } = req.body;
+  const { username, email, phone_number, full_name, birth_date, gender, role } = req.body;
 
-  if (!username || !email || !phoneNumber || !fullName || !birthDate || !gender || !role) {
+  if (!username || !email || !phone_number || !full_name || !birth_date || !gender || !role) {
     console.log('Missing fields in registration:', req.body);
     return res.status(400).json({ message: 'All fields are required' });
   }
@@ -163,12 +163,12 @@ app.post('/register', async (req, res) => {
     const result = await pool.query(query, [
       username, 
       email, 
-      phoneNumber, 
+      phone_number, 
       roleId, 
       hashedPassword, 
-      fullName, 
+      full_name, 
       genderId, 
-      birthDate
+      birth_date
     ]);
     const newUser = result.rows[0];
     const { password: _, ...userData } = newUser;
@@ -197,7 +197,7 @@ app.post('/register', async (req, res) => {
     // Prepare email data
     const emailData = {
       userName: username,
-      fullName: fullName,
+      full_name: full_name,
       randomPassword: randomPassword,
       loginUrl: `${process.env.FRONTEND_URL}/login`
     };
@@ -243,10 +243,10 @@ app.post('/login', async (req, res) => {
   const query = `SELECT 
     users.id, 
     users.username, 
-    users.full_name, 
+    users.full_name , 
     users.email, 
-    users.phone_number, 
-    users.birth_date, 
+    users.phone_number , 
+    users.birth_date , 
     roles.role_name AS role, 
     genders.gender_name AS gender, 
     users.password, 
@@ -391,11 +391,176 @@ app.post('/change-password', authenticate, async (req, res) => {
   }
 });
 
+app.get('/blood-sugar-alerts', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  try {
+    const query = `SELECT * FROM blood_sugar_measurements`;
+    const result = await pool.query(query);
+    const bloodSugarAlerts = result.rows;
+    res.json({
+      message: 'Blood sugar alerts retrieved successfully',
+      bloodSugarAlerts: bloodSugarAlerts
+    });
+  } catch (error) {
+    console.error('Error retrieving blood sugar alerts:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/users', authenticate, authorize('admin'), async (req, res) => {
+  try {
+    const query = `SELECT *
+    FROM users
+    ORDER BY unaccent(lower(full_name));`;
+    const result = await pool.query(query);
+    const users = result.rows;
+    res.json({
+      message: 'Users retrieved successfully',
+      users: users
+    });
+  } catch (error) {
+    console.error('Error retrieving users:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.get('/users/:userId', authenticate, async (req, res) => {
+  const userId = req.params.userId;
+
+  if(req.user.role !== 'admin' && req.user.role !== 'doctor' && req.user.id !== userId){
+    return res.status(403).json({ message: 'Access denied' });
+  }
+  try {
+    const query = `SELECT * FROM users WHERE id = $1`;
+    const result = await pool.query(query, [userId]);
+    const user = result.rows[0];
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if(req.user.role === 'doctor' && req.user.id !== userId && user.role_id !== 1){
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const { password, ...userData } = user;
+    res.json({
+      message: 'User retrieved successfully', 
+      user: userData
+    });
+  } catch (error) {
+    console.error('Error retrieving user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+})
+
+app.put('/users/:userId', authenticate, async (req, res) => {
+  const userId = req.params.userId;
+
+  if(req.user.role !== 'admin' && req.user.role !== 'doctor' && req.user.id !== userId){
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  try {
+    const { full_name, email, phone_number, birth_date, gender, role, profile_picture } = req.body;
+
+    if (!full_name || !email || !phone_number || !birth_date || !gender || !role) {
+      console.log("full_name, email, phone_number, birth_date, gender, role");
+      console.log(full_name, email, phone_number, birth_date, gender, role);
+      return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const queryTemp = `SELECT * FROM users WHERE id = $1`;
+    const resultTemp = await pool.query(queryTemp, [userId]);
+    const userTemp = resultTemp.rows[0];
+
+    if(req.user.role === 'doctor' && req.user.id !== userId && userTemp.role_id !== 1){
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const genderQuery = `SELECT id FROM genders WHERE gender_name = $1`;
+    const genderResult = await pool.query(genderQuery, [gender]);
+    const genderId = genderResult.rows[0].id;
+
+    const roleQuery = `SELECT id FROM roles WHERE role_name = $1`;
+    const roleResult = await pool.query(roleQuery, [role]);
+    const roleId = roleResult.rows[0].id;
+
+    const query = `UPDATE users SET full_name = $1, email = $2, phone_number = $3, birth_date = $4, gender_id = $5, role_id = $6, profile_picture = $7 WHERE id = $8`;
+    const result = await pool.query(query, [full_name, email, phone_number, birth_date, genderId, roleId, profile_picture, userId]);
+    res.json({
+      message: 'User updated successfully',
+      user: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+})
+
+
+app.get('/symptoms', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  try {
+    const query = `SELECT * FROM patient_symptoms`;
+    const result = await pool.query(query);
+    const symptoms = result.rows;
+    res.json({
+      message: 'Symptoms retrieved successfully',
+      symptoms: symptoms
+    });
+  } catch (error) {
+    console.error('Error retrieving symptoms:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/diet-plans', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  try {
+    const query = `SELECT * FROM diet_types`;
+    const result = await pool.query(query);
+    const dietPlans = result.rows;
+    res.json({
+      message: 'Diet plans retrieved successfully',
+      dietPlans: dietPlans
+    });
+  } catch (error) {
+    console.error('Error retrieving diet plans:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/pending-exercises', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  try {
+    const query = `SELECT * FROM patient_exercises`;
+    const result = await pool.query(query);
+    const pendingExercises = result.rows;
+    res.json({
+      message: 'Pending exercises retrieved successfully',
+      pendingExercises: pendingExercises
+    });
+  } catch (error) {
+    console.error('Error retrieving pending exercises:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 app.get('/patients', authenticate, authorize('admin', 'doctor'),async (req, res) => {
   try {
-    const query = `SELECT * FROM users WHERE role_id = '1'`;
-    const result = await pool.query(query);
+    const findRoleId = `SELECT id FROM roles WHERE role_name = $1`;
+    const roleResult = await pool.query(findRoleId, ['patient']);
+    const role_id = roleResult.rows[0].id;
+
+
+
+    const query = `SELECT users.id,username,full_name, email,phone_number,birth_date,gender_name as gender,role_name as role,profile_picture
+    FROM users
+    INNER JOIN genders ON users.gender_id = genders.id
+    INNER JOIN roles ON users.role_id = roles.id
+    WHERE role_id = $1
+    ORDER BY unaccent(lower(full_name));`;
+    const result = await pool.query(query, [role_id]);
     const patients = result.rows;
 
     //return without passwords
@@ -415,6 +580,49 @@ app.get('/patients', authenticate, authorize('admin', 'doctor'),async (req, res)
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+app.delete('/patients/:patientId', authenticate, authorize('admin', 'doctor'),async (req, res) => {
+  const patientId = req.params.patientId;
+  const query = `DELETE FROM users WHERE id = $1`;
+  try {   
+    const result = await pool.query(query, [patientId]);
+    res.json({ message: 'Patient deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting patient:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/doctors', authenticate, authorize('admin'),async (req, res) => {
+  try {
+
+    const findRoleId = `SELECT id FROM roles WHERE role_name = $1`;
+    const roleResult = await pool.query(findRoleId, 'doctor');
+    const role_id = roleResult.rows[0].id;
+
+    const query = `SELECT * FROM users WHERE role_id = $1
+    ORDER BY unaccent(lower(full_name));`;
+    const result = await pool.query(query, [role_id]);
+    const doctors = result.rows;
+
+    //return without passwords
+    const doctorsInSession = doctors.map(patient => {
+      const { password, ...doctorData } = patient;
+      return doctorData;
+    });
+
+
+    res.json({
+      message: 'Doctor retrieved successfully',
+      doctors: doctorsInSession
+    });
+
+  } catch (error) {
+    console.error('Error retrieving doctors:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 
 app.post('/profile-picture/update', authenticate, async (req, res) => {
   const { pictureCode } = req.body;
@@ -446,7 +654,68 @@ app.post('/profile-picture/update', authenticate, async (req, res) => {
 
 });
 
-
+// Doctor Dashboard Endpoints
+app.get('/doctor/dashboard/stats', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  try {
+    
+    // Get total patients count
+    const patientsQuery = `
+      SELECT COUNT(*) as total_patients 
+      FROM patient_doctor 
+      `;
+    const patientsResult = await pool.query(patientsQuery);
+    const totalPatients = patientsResult.rows[0].total_patients || 0;
+    
+    // Get pending exercises count
+    const exercisesQuery = `
+      SELECT COUNT(*) as pending_exercises 
+      FROM patient_exercises pe
+`;
+    const exercisesResult = await pool.query(exercisesQuery);
+    const pendingExercises = exercisesResult.rows[0].pending_exercises || 0;
+    
+    // Get diet plans count
+    const dietsQuery = `
+      SELECT COUNT(*) as diet_plans 
+      FROM diet_types 
+`;
+    const dietsResult = await pool.query(dietsQuery);
+    const dietPlans = dietsResult.rows[0].diet_plans || 0;
+    
+    // Get new symptoms count
+    const symptomsQuery = `
+      SELECT COUNT(*) as new_symptoms 
+      FROM patient_symptoms ps
+      JOIN patient_doctor pd ON ps.patient_id = pd.patient_id
+      WHERE  ps.created_at > NOW() - INTERVAL '24 hours'`;
+    const symptomsResult = await pool.query(symptomsQuery);
+    const newSymptoms = symptomsResult.rows[0].new_symptoms || 0;
+    
+    // Get blood sugar alerts count
+    const alertsQuery = `
+      SELECT COUNT(*) as blood_sugar_alerts 
+      FROM blood_sugar_measurements bsm
+      JOIN patient_doctor pd ON bsm.patient_id = pd.patient_id
+      WHERE (bsm.value > 180 OR bsm.value < 70) AND 
+      bsm.measured_at > NOW() - INTERVAL '24 hours'`;
+    const alertsResult = await pool.query(alertsQuery);
+    const bloodSugarAlerts = alertsResult.rows[0].blood_sugar_alerts || 0;
+    
+    res.json({
+      stats: {
+        totalPatients,
+        pendingExercises,
+        dietPlans,
+        newSymptoms,
+        bloodSugarAlerts
+      }
+    });
+    
+  } catch (error) {
+    console.error('Error retrieving doctor dashboard stats:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 

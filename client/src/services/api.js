@@ -167,9 +167,120 @@ export const adminService = {
     } catch (error) {
       throw error;
     }
+  },
+
+  getUser: async (userId) => {
+    try {
+      const response = await api.get(`/users/${userId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  updateUser: async (userId, userData) => {
+    try {
+      const response = await api.put(`/users/${userId}`, userData);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+  getDoctors: async () => {
+    try {
+      const response = await api.get('/doctors');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getPatients: async () => {
+    try {
+      const response = await api.get('/patients');
+      console.log("IN API response.data.patients:");
+      console.log(response.data.patients);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deletePatient: async (patientId) => {
+    try {
+      const response = await api.delete(`/patients/${patientId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+
+};
+
+// Doctor Services
+export const doctorService = {
+  // Get dashboard statistics
+  getDashboardStats: async () => {
+    try {
+      const response = await api.get('/doctor/dashboard/stats');
+      return response.data.stats;
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      throw error;
+    }
+  },
+
+  getUser: adminService.getUser,
+  updateUser: adminService.updateUser,
+  getPatients: adminService.getPatients,
+  addPatient: authService.register,
+  deletePatient: adminService.deletePatient,
+
+  getPendingExercises: async () => {
+    try {
+      const response = await api.get('/pending-exercises');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getDietPlans: async () => {
+    try {
+      const response = await api.get('/diet-plans');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  getSymptoms: async () => {
+    try {
+      const response = await api.get('/symptoms');
+      return response;
+    } catch (error) {
+      throw error;  
+    }
+  },
+
+
+  getBloodSugarAlerts: async () => {
+    try {
+      const response = await api.get('/blood-sugar-alerts');
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 };
 
+export const usersControl = {
+
+}
 
 
 
@@ -194,7 +305,7 @@ export const isPatient = () => {
 export default {
   authService,
  // patientService,
-// doctorService,
+  doctorService,
   adminService,
  // userService,
  // notificationService,
