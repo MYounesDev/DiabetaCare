@@ -7,6 +7,12 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
+
+    // TODO: remove this 2 lines after testing
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+
+
     // Check if user is already logged in
     if (authService.isAuthenticated()) {
       const user = authService.getCurrentUser();

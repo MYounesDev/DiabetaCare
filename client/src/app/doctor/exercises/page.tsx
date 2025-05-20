@@ -466,8 +466,25 @@ export default function DoctorExercises() {
     }
   };
 
-  const handleDeleteLog = (log) => {
-    /* Placeholder for deleting a log */
+  const handleDeleteLog = async (log) => {
+    if (!log || !log.exercise_logs_id) {
+      setEditLogFormError("Invalid log selected");
+      return;
+    }
+    setIsSubmittingEditLog(true);
+    setEditLogFormError("");
+    setEditLogFormSuccess("");
+    try {
+      await doctorService.deleteExerciseLog(log.exercise_logs_id);
+      setEditLogFormSuccess("Log deleted successfully!");
+      setShowEditLogModal(false);
+      setLogToEdit(null);
+      fetchCompletedLogs();
+    } catch (err) {
+      setEditLogFormError(err.message || "Failed to delete log");
+    } finally {
+      setIsSubmittingEditLog(false);
+    }
   };
 
   // Fix mapping for patient list
@@ -1190,10 +1207,20 @@ export default function DoctorExercises() {
                   >
                     Cancel
                   </button>
+                  {logToEdit?.exercise_logs_id && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteLog(logToEdit)}
+                      disabled={isSubmittingEditLog}
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    >
+                      {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />} Delete
+                    </button>
+                  )}
                   <button
                     type="submit"
                     disabled={isSubmittingEditLog}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                   >
                     {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />} Save
                   </button>

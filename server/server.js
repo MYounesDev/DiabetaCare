@@ -1171,6 +1171,21 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
 });
 
 
+app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { exercise_logs_id } = req.params;
+
+  if (!exercise_logs_id) {
+    return res.status(400).json({ message: 'Exercise log ID is required' });
+  }
+
+  try {
+    const result = await pool.query('DELETE FROM exercise_logs WHERE exercise_logs_id = $1', [exercise_logs_id]);
+    res.json({ message: 'Exercise log deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting exercise log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 

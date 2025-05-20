@@ -338,9 +338,9 @@ export const doctorService = {
       throw error;
     }
   },
-  deletePatientExercise: async (exercise_logs_id) => {
+  deletePatientExercise: async (patientExerciseId) => {
     try {
-      const response = await api.delete(`/patient-exercises/patient/delete/${exercise_logs_id}`);
+      const response = await api.delete(`/patient-exercises/${patientExerciseId}`);
       return response;
     } catch (error) {
       throw error;
@@ -400,6 +400,15 @@ export const doctorService = {
       throw error;
     }
   },
+  deleteExerciseLog: async (logId) => {
+    try {
+      const response = await api.delete(`/exercise-logs/patient/delete/${logId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  }
+
 };
 
 export const usersControl = {
