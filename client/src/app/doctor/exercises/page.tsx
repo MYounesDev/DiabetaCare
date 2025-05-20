@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import PatientList, { Patient as PatientType } from './PatientList';
 import PatientPlans, { PatientExercisePlan as PatientExercisePlanType } from './PatientPlans';
-import ExerciseLogsCalendar, { ExerciseLog as ExerciseLogType } from './ExerciseLogsCalendar';
+import ExerciseLogsCalendar, { ExerciseLog } from './ExerciseLogsCalendar';
 
 export default function DoctorExercises() {
   // Exercise Types
@@ -130,10 +130,39 @@ export default function DoctorExercises() {
   // Fetch all data on mount
   useEffect(() => {
     fetchExerciseTypes();
-    fetchPatientExercises();
-    fetchCompletedLogs();
     fetchPatients();
   }, []);
+
+  // Fetch exercises when selected patient changes
+  useEffect(() => {
+    if (selectedPatientId) {
+      fetchPatientExercises(selectedPatientId);
+      setSelectedPlanId(null); // Reset selected plan when patient changes
+      setCompletedLogs([]); // Clear logs when patient changes
+    } else {
+      setPatientExercises([]);
+      setCompletedLogs([]);
+    }
+  }, [selectedPatientId]);
+
+  // Fetch logs when selected plan changes
+  useEffect(() => {
+    if (selectedPatientId && selectedPlanId) {
+      console.log('1');
+      fetchCompletedLogs(selectedPlanId);
+    } else {
+      setCompletedLogs([]);
+    }
+  }, [selectedPatientId, selectedPlanId]);
+
+  // Format a date as YYYY-MM-DD string without timezone issues
+  const formatDateToYYYYMMDD = (date) => {
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   // Fetch exercise types with assignments
   const fetchExerciseTypes = async () => {
@@ -160,30 +189,40 @@ export default function DoctorExercises() {
   };
 
   // Fetch patient exercises
-  const fetchPatientExercises = async () => {
+  const fetchPatientExercises = async (patientId) => {
+    if (!patientId) return;
+    
     setLoadingPlans(true);
     setPlanError(null);
     try {
-      const res = await doctorService.getPatientExercises();
+      console.log(`Fetching exercises for patient ${patientId}`);
+      // Using the new patient-specific endpoint
+      const res = await doctorService.getPatientExercisesByPatient(patientId);
+      console.log('Patient exercises response:', res.data);
       setPatientExercises(res.data.patientExercises || []);
     } catch (err) {
       console.error("Error fetching patient exercises:", err);
-      setPlanError("Failed to load patient exercise plans");
+      setPlanError(typeof err === 'string' ? err : err.message || "Failed to load patient exercise plans");
     } finally {
       setLoadingPlans(false);
     }
   };
 
   // Fetch completed logs
-  const fetchCompletedLogs = async () => {
+  const fetchCompletedLogs = async (patient_exercise_id) => {
+    if (!patient_exercise_id) return;
+    
     setLoadingLogs(true);
     setLogsError(null);
     try {
-      const res = await doctorService.getAllExerciseLogs();
+      console.log(`Fetching logs for patient_exercise_id ${patient_exercise_id}`);
+      // Using correct parameters for the API call
+      const res = await doctorService.getPatientExerciseLogs(patient_exercise_id);
+      console.log('Patient exercise logs response:', res.data);
       setCompletedLogs(res.data.exerciseLogs || []);
     } catch (err) {
       console.error("Error fetching exercise logs:", err);
-      setLogsError("Failed to load completed exercise logs");
+      setLogsError(typeof err === 'string' ? err : err.message || "Failed to load completed exercise logs");
     } finally {
       setLoadingLogs(false);
     }
@@ -193,7 +232,9 @@ export default function DoctorExercises() {
   const fetchPatients = async () => {
     setLoadingPatients(true);
     try {
+      console.log('Fetching patients');
       const res = await doctorService.getPatients();
+      console.log('Patients response:', res.data);
       setPatients(res.data.patients || []);
     } catch (err) {
       console.error("Error fetching patients:", err);
@@ -301,7 +342,7 @@ export default function DoctorExercises() {
         start_date: "",
         end_date: "",
       });
-      fetchPatientExercises();
+      fetchPatientExercises(selectedPatientId);
     } catch (err) {
       setPlanFormError(err.message || "Failed to assign exercise plan");
     } finally {
@@ -326,7 +367,9 @@ export default function DoctorExercises() {
     setSelectedPlanId(null);
   };
 
-  const handleSelectPlan = (id) => setSelectedPlanId(id);
+  const handleSelectPlan = (id) => {
+    setSelectedPlanId(id);
+  };
 
   const handleEditPlan = (plan) => {
     // Format dates to YYYY-MM-DD for the date inputs without timezone issues
@@ -378,7 +421,7 @@ export default function DoctorExercises() {
       setEditPlanFormSuccess("Plan updated successfully!");
       setShowEditPlanModal(false);
       setPlanToEdit(null);
-      fetchPatientExercises();
+      fetchPatientExercises(selectedPatientId);
     } catch (err) {
       setEditPlanFormError(err.message || "Failed to update plan");
     } finally {
@@ -410,7 +453,7 @@ export default function DoctorExercises() {
       setDeletePlanFormSuccess("Plan deleted successfully!");
       setShowDeletePlanModal(false);
       setPlanToDelete(null);
-      fetchPatientExercises();
+      fetchPatientExercises(selectedPatientId);
     } catch (err) {
       setDeletePlanFormError(err.message || "Failed to delete plan");
     } finally {
@@ -421,9 +464,12 @@ export default function DoctorExercises() {
   const handleAddLog = (date) => {
     if (!selectedPatientId || !selectedPlanId) return;
     
+    // Create a new log with all required fields
     const newLog = {
+      patient_id: selectedPatientId,
+      exercise_id: selectedPlanId,
       patient_exercise_id: selectedPlanId,
-      log_date: date,
+      log_date: date, // Already in YYYY-MM-DD format from the calendar
       is_completed: false,
       note: ""
     };
@@ -442,6 +488,8 @@ export default function DoctorExercises() {
   };
 
   const handleEditLogSubmit = async (e) => {
+    console.log('HIT HIT');
+    console.log('logToEdit', logToEdit);
     e.preventDefault();
     if (!logToEdit) return;
     setIsSubmittingEditLog(true);
@@ -458,7 +506,7 @@ export default function DoctorExercises() {
       setEditLogFormSuccess("Log saved successfully!");
       setShowEditLogModal(false);
       setLogToEdit(null);
-      fetchCompletedLogs();
+      fetchCompletedLogs(selectedPlanId);
     } catch (err) {
       setEditLogFormError(err.message || "Failed to save log");
     } finally {
@@ -479,7 +527,7 @@ export default function DoctorExercises() {
       setEditLogFormSuccess("Log deleted successfully!");
       setShowEditLogModal(false);
       setLogToEdit(null);
-      fetchCompletedLogs();
+      fetchCompletedLogs(selectedPlanId);
     } catch (err) {
       setEditLogFormError(err.message || "Failed to delete log");
     } finally {
@@ -489,7 +537,7 @@ export default function DoctorExercises() {
 
   // Fix mapping for patient list
   const mappedPatients = patients.map(patient => ({
-    exercise_logs_id: patient.id,
+    exercise_logs_id: patient.exercise_logs_id || patient.id,
     full_name: patient.full_name,
     username: patient.username,
     profile_picture: patient.profile_picture
@@ -497,19 +545,19 @@ export default function DoctorExercises() {
 
   // Fix mapping for patient plans
   const mappedPatientPlans = selectedPatientPlans.map(plan => ({
-    exercise_logs_id: plan.id,
+    exercise_logs_id: plan.exercise_logs_id || plan.id || plan.exercise_id,
     exercise_name: plan.exercise_name || getExerciseName(plan.exercise_id),
-    status: plan.status,
+    status: plan.status || 'pending',
     start_date: plan.start_date,
     end_date: plan.end_date
   }));
 
   // Fix mapping for logs
   const mappedLogs = selectedPlanLogs.map(log => ({
-    exercise_logs_id: log.exercise_logs_id,
-    log_date: new Date(log.log_date).toISOString().split('T')[0],
+    exercise_logs_id: log.exercise_logs_id || log.id,
+    log_date: log.log_date ? formatDateToYYYYMMDD(new Date(log.log_date)) : '',
     note: log.note || "",
-    is_completed: log.is_completed
+    is_completed: log.is_completed || false
   }));
 
   return (
@@ -611,8 +659,8 @@ export default function DoctorExercises() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-6">
-                {/* Patient List */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
+                {/* Patient List - now takes 1/3 of the space */}
                 <div className="bg-gray-50 rounded-lg p-4">
                   <h3 className="text-lg font-semibold text-green-800 mb-4">Patients</h3>
                   {loadingPatients ? (
@@ -628,8 +676,8 @@ export default function DoctorExercises() {
                   )}
                 </div>
 
-                {/* Exercise Plans */}
-                <div className="bg-gray-50 rounded-lg p-4">
+                {/* Exercise Plans - now takes 2/3 of the space to give more room */}
+                <div className="bg-gray-50 rounded-lg p-4 lg:col-span-2">
                   <h3 className="text-lg font-semibold text-green-800 mb-4">Exercise Plans</h3>
                   {selectedPatientId ? (
                     loadingPlans ? (
@@ -658,9 +706,13 @@ export default function DoctorExercises() {
             {selectedPlanId && (
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
-                  <div>
-                    <h2 className="text-xl font-bold text-green-800">Exercise Logs</h2>
-                    <p className="text-sm text-gray-500 mt-1">Track and manage exercise completion</p>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <h2 className="text-xl font-bold text-green-800">Exercise Logs</h2>
+                      <p className="text-sm text-gray-500 mt-1">
+                        Track and manage exercise completion for {getPatientName(selectedPatientId)} - {selectedPlan?.exercise_name || 'Selected Plan'}
+                      </p>
+                    </div>
                   </div>
                 </div>
                 

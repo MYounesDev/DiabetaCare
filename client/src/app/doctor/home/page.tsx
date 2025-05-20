@@ -12,7 +12,7 @@ export default function DoctorHome() {
     ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement);
 
     const [totalPatients, setTotalPatients] = useState(0);
-    const [pendingExercises, setPendingExercises] = useState(0);
+    const [patientExercises, setpatientExercises] = useState(0);
     const [dietPlans, setDietPlans] = useState(0);
     const [totalSymptoms, setTotalSymptoms] = useState(0);
     const [bloodSugarAlerts, setBloodSugarAlerts] = useState(0);
@@ -32,8 +32,8 @@ export default function DoctorHome() {
                 setTotalPatients(fetchPatients.data.patients.length);
 
 
-                const fetchPendingExercises = await doctorService.getPendingExercises();
-                setPendingExercises(fetchPendingExercises.data.pendingExercises.length);
+                const fetchpatientExercises = await doctorService.getpatientExercises();
+                setpatientExercises(fetchpatientExercises.data.patientExercises.length);
 
                 const fetchDietPlans = await doctorService.getDietPlans();
                 setDietPlans(fetchDietPlans.data.dietPlans.length);
@@ -151,7 +151,7 @@ export default function DoctorHome() {
                                 </div>
                                 <div>
                                     <p className="text-sm text-gray-500">Pending Exercises</p>
-                                    <p className="text-2xl font-bold text-green-700">{pendingExercises}</p>
+                                    <p className="text-2xl font-bold text-green-700">{patientExercises}</p>
                                 </div>
                             </motion.div>
 

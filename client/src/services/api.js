@@ -234,7 +234,7 @@ export const doctorService = {
   addPatient: authService.register,
   deletePatient: adminService.deletePatient,
 
-  getPendingExercises: async () => {
+  getpatientExercises: async () => {
     try {
       const response = await api.get('/patient-exercises/pending');
       return response;
@@ -322,6 +322,14 @@ export const doctorService = {
       throw error;
     }
   },
+  getPatientExercisesByPatient: async (patient_id) => {
+    try {
+      const response = await api.get(`/patient-exercises/patient/${patient_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
   addPatientExercise: async (data) => {
     try {
       const response = await api.post('/patient-exercises/patient/add', data);
@@ -354,14 +362,7 @@ export const doctorService = {
       throw error;
     }
   },
-  getPatientPendingExercises: async (patient_id) => {
-    try {
-      const response = await api.get('/patient-exercises/patient/pending', { data: { patient_id } });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
+
 
   // --- EXERCISE LOGS ---
   getAllExerciseLogs: async () => {
@@ -372,9 +373,10 @@ export const doctorService = {
       throw error;
     }
   },
-  getPatientExerciseLogs: async (patient_id) => {
+  getPatientExerciseLogs: async (patient_exercise_id) => {
     try {
-      const response = await api.get('/exercise-logs/patient', { data: { patient_id } });
+      // Using query params instead of data object which doesn't work with GET requests
+      const response = await api.get(`/exercise-logs/patient/${patient_exercise_id}`);
       return response;
     } catch (error) {
       throw error;

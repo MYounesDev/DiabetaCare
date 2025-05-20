@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, CheckCircle, AlertCircle, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface ExerciseLog {
+export interface ExerciseLog {
   exercise_logs_id: number;
   log_date: string;
   note: string;
@@ -20,7 +20,13 @@ export default function ExerciseLogsCalendar({ logs, onAddLog, onEditLog, onDele
   const [currentDate, setCurrentDate] = useState(new Date());
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
 
-
+  // Format a date as YYYY-MM-DD string without timezone issues
+  const formatDateToYYYYMMDD = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
   const getFirstDayOfMonth = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth(), 1);
@@ -47,11 +53,11 @@ export default function ExerciseLogsCalendar({ logs, onAddLog, onEditLog, onDele
   };
 
   const getLogForDate = (date: string) => {
-    // Format the date to match the API format (YYYY-MM-DD)
-    const formattedDate = date.split('T')[0];
+    // Find log where the date matches
     const log = logs.find(log => {
-      const logDate = new Date(log.log_date).toISOString().split('T')[0];
-      return logDate === formattedDate;
+      // Format log date to YYYY-MM-DD for comparison
+      const logDate = formatDateToYYYYMMDD(new Date(log.log_date));
+      return logDate === date;
     });
     return log;
   };
@@ -72,9 +78,9 @@ export default function ExerciseLogsCalendar({ logs, onAddLog, onEditLog, onDele
     // Add cells for each day of the month
     for (let day = 1; day <= daysInMonth; day++) {
       const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
-      const dateString = date.toISOString().split('T')[0];
+      const dateString = formatDateToYYYYMMDD(date);
       const log = getLogForDate(dateString);
-      const isToday = new Date().toDateString() === date.toDateString();
+      const isToday = formatDateToYYYYMMDD(new Date()) === dateString;
       const isHovered = hoveredDate === dateString;
 
       days.push(
