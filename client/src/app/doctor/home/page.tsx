@@ -94,7 +94,7 @@ export default function DoctorHome() {
 
     return (
         <PageTemplate>
-            <AuthWrapper allowedRoles={['doctor']} >
+            <AuthWrapper allowedRoles={['doctor', 'admin']} >
                 <div className="flex min-h-screen">
                     <div className="flex-1 p-8 bg-gradient-to-br from-green-50 to-teal-100">
                         <h1 className="text-3xl font-bold text-green-800 mb-8">Doctor Dashboard</h1>

@@ -832,7 +832,7 @@ export default function DoctorPatients() {
                     </div>
                   </div>
                   
-                  <h3 className="text-lg font-bold text-center mb-2">Delete Patient</h3>
+                  <h3 className="text-lg text-center mb-2 font-bold text-red-700">Delete Patient</h3>
                   <p className="text-gray-600 text-center mb-6">
                     Are you sure you want to delete {selectedPatient.full_name}? This action cannot be undone.
                   </p>

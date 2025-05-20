@@ -27,19 +27,19 @@ export default function Register() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     if (e) e.preventDefault();
     setError('');
     setLoading(true);
     
     try {
       // Basic validation
-      const requiredFields = ['username', 'email', 'full_name', 'role'];
+      const requiredFields: (keyof typeof formData)[] = ['username', 'email', 'full_name', 'role'];
       for (const field of requiredFields) {
         if (!formData[field]) {
           setError(`Please enter your ${field === 'full_name' ? 'full name' : field}`);
@@ -76,7 +76,7 @@ export default function Register() {
 
      
       
-    } catch (err) {
+    } catch (err: any) {
       // Handle specific error cases
       if (err.response?.status === 409) {
         setError('Username or email already exists');
@@ -163,146 +163,145 @@ export default function Register() {
               )}
               
               <div className="space-y-4">
-                {/* Full Name */}
-                <div>
-                  <label htmlFor="full_name" className="block text-sm font-medium text-green-700 mb-1">
-                    Full Name <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="full_name"
-                    name="full_name"
-                    value={formData.full_name}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
-                    placeholder="Enter your full name"
-                  />
-                </div>
-
-                {/* Username */}
-                <div>
-                  <label htmlFor="username" className="block text-sm font-medium text-green-700 mb-1">
-                    Username <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={formData.username}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
-                    placeholder="Choose a username"
-                  />
-                </div>
-                
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-green-700 mb-1">
-                    Email <span className="text-red-500">*</span>
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
-                    placeholder="you@example.com"
-                  />
-                </div>
-                
-
-                
-                {/* Phone Number */}
-                <div>
-                  <label htmlFor="phone_number" className="block text-sm font-medium text-green-700 mb-1">
-                    Phone Number
-                  </label>
-                  <input
-                    type="tel"
-                    id="phone_number"
-                    name="phone_number"
-                    value={formData.phone_number}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
-                    placeholder="Enter your phone number"
-                  />
-                </div>
-                
-                {/* Birth Date */}
-                <div>
-                  <label htmlFor="birth_date" className="block text-sm font-medium text-green-700 mb-1">
-                    Birth Date
-                  </label>
-                  <div className="relative">
+                <form onSubmit={handleSubmit}>
+                  {/* Full Name */}
+                  <div>
+                    <label htmlFor="full_name" className="block text-sm font-medium text-green-700 mb-1">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
                     <input
-                      type="date"
-                      id="birth_date"
-                      name="birth_date"
-                      value={formData.birth_date}
+                      type="text"
+                      id="full_name"
+                      name="full_name"
+                      value={formData.full_name}
                       onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                      placeholder="Enter your full name"
                     />
                   </div>
-                </div>
-                
-                {/* Gender */}
-                <div>
-                  <label htmlFor="gender" className="block text-sm font-medium text-green-700 mb-1">
-                    Gender
-                  </label>
-                  <select
-                    id="gender"
-                    name="gender"
-                    value={formData.gender}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
-                  >
-                    <option value="">Select gender</option>
-                    <option value="male">Male</option>
-                    <option value="female">Female</option>
-                  </select>
-                </div>
-                
-                {/* Role */}
-                <div>
-                  <label htmlFor="role" className="block text-sm font-medium text-green-700 mb-1">
-                    Role <span className="text-red-500">*</span>
-                  </label>
-                  <select
-                    id="role"
-                    name="role"
-                    value={formData.role}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
-                  >
-                    <option value="">Select role</option>
-                    <option value="patient">Patient</option>
-                    <option value="doctor">Doctor</option>
-                  </select>
-                </div>
-              </div>
-              
-              <div className="mt-8">
-                <button
-                  onClick={handleSubmit}
-                  disabled={loading}
-                  className={`w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
-                    hover:from-green-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg
-                    ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
-                >
-                  {loading ? (
-                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                  ) : (
-                    <>
-                      <User size={20} />
-                      Register
-                    </>
-                  )}
-                </button>
+
+                  {/* Username */}
+                  <div>
+                    <label htmlFor="username" className="block text-sm font-medium text-green-700 mb-1">
+                      Username <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={formData.username}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                      placeholder="Choose a username"
+                    />
+                  </div>
+                  
+                  {/* Email */}
+                  <div>
+                    <label htmlFor="email" className="block text-sm font-medium text-green-700 mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                      placeholder="you@example.com"
+                    />
+                  </div>
+                  
+                  {/* Phone Number */}
+                  <div>
+                    <label htmlFor="phone_number" className="block text-sm font-medium text-green-700 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      type="tel"
+                      id="phone_number"
+                      name="phone_number"
+                      value={formData.phone_number}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                      placeholder="Enter your phone number"
+                    />
+                  </div>
+                  
+                  {/* Birth Date */}
+                  <div>
+                    <label htmlFor="birth_date" className="block text-sm font-medium text-green-700 mb-1">
+                      Birth Date
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="date"
+                        id="birth_date"
+                        name="birth_date"
+                        value={formData.birth_date}
+                        onChange={handleChange}
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Gender */}
+                  <div>
+                    <label htmlFor="gender" className="block text-sm font-medium text-green-700 mb-1">
+                      Gender
+                    </label>
+                    <select
+                      id="gender"
+                      name="gender"
+                      value={formData.gender}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                    >
+                      <option value="">Select gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                  
+                  {/* Role */}
+                  <div>
+                    <label htmlFor="role" className="block text-sm font-medium text-green-700 mb-1">
+                      Role <span className="text-red-500">*</span>
+                    </label>
+                    <select
+                      id="role"
+                      name="role"
+                      value={formData.role}
+                      onChange={handleChange}
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                    >
+                      <option value="">Select role</option>
+                      <option value="patient">Patient</option>
+                      <option value="doctor">Doctor</option>
+                    </select>
+                  </div>
+                  <div className="mt-8">
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className={`w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
+                        hover:from-green-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg
+                        ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
+                    >
+                      {loading ? (
+                        <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      ) : (
+                        <>
+                          <User size={20} />
+                          Register
+                        </>
+                      )}
+                    </button>
+                  </div>
+                </form>
               </div>
               
               <div className="mt-8 pt-6 border-t border-gray-200">

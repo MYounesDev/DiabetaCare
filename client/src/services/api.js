@@ -66,14 +66,10 @@ export const authService = {
     try {
       const response = await api.post('/login', { username, password });
       
-      console.log("response.status::", response.status);
       if (response.status === 200) {
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
-        console.log(response.data.token);
       }
-      
-      console.log("response : ", response);
       return response;
     } catch (error) {
       console.log(error);
@@ -200,8 +196,6 @@ export const adminService = {
   getPatients: async () => {
     try {
       const response = await api.get('/patients');
-      console.log("IN API response.data.patients:");
-      console.log(response.data.patients);
       return response;
     } catch (error) {
       throw error;
@@ -242,7 +236,7 @@ export const doctorService = {
 
   getPendingExercises: async () => {
     try {
-      const response = await api.get('/pending-exercises');
+      const response = await api.get('/patient-exercises/pending');
       return response;
     } catch (error) {
       throw error;
@@ -275,7 +269,137 @@ export const doctorService = {
     } catch (error) {
       throw error;
     }
-  }
+  },
+
+  // --- EXERCISE MANAGEMENT ---
+  getExerciseTypes: async () => {
+    try {
+      const response = await api.get('/exercise-types');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  createExerciseType: async (name, description) => {
+    try {
+      const response = await api.post('/exercise-types/create', { name, description });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateExerciseType: async (exercise_id, name, description) => {
+    try {
+      const response = await api.post('/exercise-types/update', { exercise_id, name, description });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteExerciseType: async (exercise_id) => {
+    try {
+      const response = await api.delete(`/exercise-types/${exercise_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getSumPatientAssignments: async (exercise_id) => {
+    try {
+      const response = await api.get(`/exercise-types/${exercise_id}/sum-patient-assignments`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // --- PATIENT EXERCISE PLANS ---
+  getPatientExercises: async () => {
+    try {
+      const response = await api.get('/patient-exercises');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addPatientExercise: async (data) => {
+    try {
+      const response = await api.post('/patient-exercises/patient/add', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updatePatientExercise: async (data) => {
+    try {
+      const response = await api.put('/patient-exercises/patient/update', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deletePatientExercise: async (exercise_logs_id) => {
+    try {
+      const response = await api.delete(`/patient-exercises/patient/delete/${exercise_logs_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getCompletedExercises: async (patient_id) => {
+    try {
+      const response = await api.get('/patient-exercises/patient/completed', { data: { patient_id } });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getPatientPendingExercises: async (patient_id) => {
+    try {
+      const response = await api.get('/patient-exercises/patient/pending', { data: { patient_id } });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  // --- EXERCISE LOGS ---
+  getAllExerciseLogs: async () => {
+    try {
+      const response = await api.get('/exercise-logs/');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getPatientExerciseLogs: async (patient_id) => {
+    try {
+      const response = await api.get('/exercise-logs/patient', { data: { patient_id } });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addExerciseLog: async (data) => {
+    try {
+      const response = await api.post('/exercise-logs/patient/add', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateExerciseLog: async (data) => {
+    try {
+      if (!data.exercise_logs_id || data.is_completed === undefined || !data.note) {
+        throw new Error('Missing required fields: exercise_logs_id, is_completed, and note are required');
+      }
+      const response = await api.put('/exercise-logs/patient/update', data);
+      return response;
+    } catch (error) {
+      console.error('Error updating exercise log:', error);
+      throw error;
+    }
+  },
 };
 
 export const usersControl = {
