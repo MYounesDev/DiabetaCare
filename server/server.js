@@ -710,9 +710,137 @@ app.get('/doctor/dashboard/stats', authenticate, authorize('admin', 'doctor'), a
 
 
 
+app.get('/symptom_types', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const query = `SELECT * FROM symptom_types`;
+  try {
+    const result = await pool.query(query);
+    const symptomTypes = result.rows;
+    res.json({ symptomTypes });
+  } catch (error) {
+    console.error('Error retrieving symptom types:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.post('/symptom_types/create', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { symptom_name, description } = req.body;
+
+  if (!symptom_name || !description) {
+    return res.status(400).json({ message: 'Name and description are required' });
+  }
+
+  const query = `INSERT INTO symptom_types (symptom_name, description) VALUES ($1, $2) RETURNING *`;
+  try {
+    const result = await pool.query(query, [symptom_name, description]);
+    const newSymptomType = result.rows[0];
+    res.json({ newSymptomType });
+  } catch (error) {
+    console.error('Error creating symptom type:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.put('/symptom_types/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { symptom_id, symptom_name, description } = req.body;
+
+  console.log(req.body);
+  if (!symptom_id || !symptom_name || !description) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const query = `UPDATE symptom_types SET symptom_name = $1, description = $2 WHERE symptom_types.symptom_id = $3 RETURNING *`;
+
+  try {
+    const result = await pool.query(query, [symptom_name, description, symptom_id]);
+    const updatedSymptomType = result.rows[0];
+    res.json({ updatedSymptomType });
+  } catch (error) {
+    console.error('Error updating symptom type:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.delete('/symptom_types/:symptom_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { symptom_id } = req.params;
+
+  if (!symptom_id) {
+    return res.status(400).json({ message: 'Symptom type ID is required' });
+  }
+
+  const query = `DELETE FROM symptom_types WHERE symptom_types.symptom_id = $1`;
+  try {
+    const result = await pool.query(query, [symptom_id]);
+    res.json({ message: 'Symptom type deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting symptom type:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/symptoms/patient/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_id } = req.params;
+
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  const query = `SELECT * FROM patient_symptoms 
+  INNER JOIN symptom_types ON patient_symptoms.symptom_id = symptom_types.symptom_id
+  WHERE patient_symptoms.patient_id = $1`;
+  try { 
+    const result = await pool.query(query, [patient_id]);
+    const symptoms = result.rows;
+
+    res.json({ symptoms });
+  } catch (error) {
+    console.error('Error retrieving symptoms:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.post('/symptoms/patient/add', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_id, symptom_id } = req.body;
+
+  if (!patient_id || !symptom_id) {
+    return res.status(400).json({ message: 'Patient ID and symptom ID are required' });
+  }   
+
+  const query = `INSERT INTO patient_symptoms (patient_id, symptom_id) VALUES ($1, $2) RETURNING *`;
+  try {
+    const result = await pool.query(query, [patient_id, symptom_id]);
+    const newSymptom = result.rows[0];
+    res.json({ newSymptom });
+  } catch (error) {
+    console.error('Error adding symptom:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 
+app.delete('/symptoms/patient/delete/:patient_symptoms_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_symptoms_id } = req.params;
+
+  console.log(req.params);
+  if (!patient_symptoms_id) {
+    return res.status(400).json({ message: 'Patient symptom ID is required' });
+  }
+
+  const query = `DELETE FROM patient_symptoms
+  WHERE patient_symptoms.patient_symptoms_id = $1`;
+  try {
+    const result = await pool.query(query, [patient_symptoms_id]);
+    res.json({ message: 'Symptom deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting symptom:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 

@@ -313,6 +313,73 @@ export const doctorService = {
     }
   },
 
+  // --- SYMPTOMS ---
+  getSymptoms: async () => {
+    try {
+      const response = await api.get('/symptom_types');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addSymptom: async (data) => {
+    try {
+      const response = await api.post('/symptom_types/create', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateSymptom: async (data) => {
+    try {
+      const response = await api.put('/symptom_types/update', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteSymptom: async (symptom_id) => {
+    try {
+      const response = await api.delete(`/symptom_types/${symptom_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+
+
+  getPatientSymptoms: async (patient_id) => {
+    try {
+      const response = await api.get(`/symptoms/patient/${patient_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addPatientSymptom: async (data) => {
+    try {
+      const response = await api.post('/symptoms/patient/add', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  deletePatientSymptom: async (patient_symptoms_id) => {
+    try {
+      const response = await api.delete(`/symptoms/patient/delete/${patient_symptoms_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  
+
+
+
+
   // --- PATIENT EXERCISE PLANS ---
   getPatientExercises: async () => {
     try {
