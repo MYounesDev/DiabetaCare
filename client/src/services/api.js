@@ -252,9 +252,9 @@ export const doctorService = {
     }
   },
 
-  getSymptoms: async () => {
+  getRecentSymptoms: async () => {
     try {
-      const response = await api.get('/symptoms');
+      const response = await api.get('/symptoms-recent');
       return response;
     } catch (error) {
       throw error;  
@@ -375,8 +375,47 @@ export const doctorService = {
       throw error;
     }
   },
-  
 
+
+  // --- BLOOD SUGAR MEASUREMENTS ---
+  getBloodSugarMeasurements: async (patientId) => {
+    try {
+      const response = await api.get(`/blood-sugar-measurements/patient/${patientId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addBloodSugarMeasurement: async (data) => {
+    try {
+      const response = await api.post('/blood-sugar-measurements/patient/add', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateBloodSugarMeasurement: async (data) => {
+    try {
+      const response = await api.put('/blood-sugar-measurements/patient/update', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteBloodSugarMeasurement: async (blood_sugar_measurement_id) => {
+    try {
+      const response = await api.delete(`/blood-sugar-measurements/patient/delete/${blood_sugar_measurement_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+
+
+
+  
 
 
 
@@ -415,7 +454,7 @@ export const doctorService = {
   },
   deletePatientExercise: async (patientExerciseId) => {
     try {
-      const response = await api.delete(`/patient-exercises/${patientExerciseId}`);
+      const response = await api.delete(`/patient-exercises/patient/delete/${patientExerciseId}`);
       return response;
     } catch (error) {
       throw error;

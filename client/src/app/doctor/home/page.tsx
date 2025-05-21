@@ -39,7 +39,7 @@ export default function DoctorHome() {
                 setDietPlans(fetchDietPlans.data.dietPlans.length);
 
 
-                const fetchSymptoms = await doctorService.getSymptoms();
+                const fetchSymptoms = await doctorService.getRecentSymptoms();
                 setTotalSymptoms(fetchSymptoms.data.symptoms.length);
 
 

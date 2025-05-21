@@ -316,7 +316,7 @@ app.get('/profile', authenticate, async (req, res) => {
 
     const { password: _, ...userData } = user;
 
-    res.json({
+    res.status(200).json({
       message: 'User profile retrieved successfully',
       user: userData
     });
@@ -387,7 +387,7 @@ app.post('/change-password', authenticate, async (req, res) => {
 
 
     const { password: _, ...userData } = user;
-    res.json({
+    res.status(200).json({
       message: 'Password changed successfully',
       token,
       user: userData
@@ -403,7 +403,7 @@ app.get('/blood-sugar-alerts', authenticate, authorize('admin', 'doctor'), async
     const query = `SELECT * FROM blood_sugar_measurements`;
     const result = await pool.query(query);
     const bloodSugarAlerts = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Blood sugar alerts retrieved successfully',
       bloodSugarAlerts: bloodSugarAlerts
     });
@@ -421,7 +421,7 @@ app.get('/users', authenticate, authorize('admin'), async (req, res) => {
     ORDER BY unaccent(lower(full_name));`;
     const result = await pool.query(query);
     const users = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Users retrieved successfully',
       users: users
     });
@@ -452,7 +452,7 @@ app.get('/users/:userId', authenticate, async (req, res) => {
     }
 
     const { password, ...userData } = user;
-    res.json({
+    res.status(200).json({
       message: 'User retrieved successfully',
       user: userData
     });
@@ -494,7 +494,7 @@ app.put('/users/:userId', authenticate, async (req, res) => {
 
     const query = `UPDATE users SET full_name = $1, email = $2, phone_number = $3, birth_date = $4, gender_id = $5, role_id = $6, profile_picture = $7 WHERE id = $8`;
     const result = await pool.query(query, [full_name, email, phone_number, birth_date, genderId, roleId, profile_picture, userId]);
-    res.json({
+    res.status(200).json({
       message: 'User updated successfully',
       user: result.rows[0]
     });
@@ -505,12 +505,12 @@ app.put('/users/:userId', authenticate, async (req, res) => {
 })
 
 
-app.get('/symptoms', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+app.get('/symptoms-recent', authenticate, authorize('admin', 'doctor'), async (req, res) => {
   try {
     const query = `SELECT * FROM patient_symptoms`;
     const result = await pool.query(query);
     const symptoms = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Symptoms retrieved successfully',
       symptoms: symptoms
     });
@@ -525,7 +525,7 @@ app.get('/diet-plans', authenticate, authorize('admin', 'doctor'), async (req, r
     const query = `SELECT * FROM diet_types`;
     const result = await pool.query(query);
     const dietPlans = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Diet plans retrieved successfully',
       dietPlans: dietPlans
     });
@@ -561,7 +561,7 @@ app.get('/patients', authenticate, authorize('admin', 'doctor'), async (req, res
     });
 
 
-    res.json({
+    res.status(200).json({
       message: 'Patients retrieved successfully',
       patients: patientsInSession
     });
@@ -577,7 +577,7 @@ app.delete('/patients/:patientId', authenticate, authorize('admin', 'doctor'), a
   const query = `DELETE FROM users WHERE id = $1`;
   try {
     const result = await pool.query(query, [patientId]);
-    res.json({ message: 'Patient deleted successfully' });
+    res.status(200).json({ message: 'Patient deleted successfully' });
   } catch (error) {
     console.error('Error deleting patient:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -603,7 +603,7 @@ app.get('/doctors', authenticate, authorize('admin'), async (req, res) => {
     });
 
 
-    res.json({
+    res.status(200).json({
       message: 'Doctor retrieved successfully',
       doctors: doctorsInSession
     });
@@ -633,7 +633,7 @@ app.post('/profile-picture/update', authenticate, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    res.json({
+    res.status(200).json({
       message: 'Profile picture updated successfully',
       user: updatedUser
     });
@@ -715,7 +715,7 @@ app.get('/symptom_types', authenticate, authorize('admin', 'doctor'), async (req
   try {
     const result = await pool.query(query);
     const symptomTypes = result.rows;
-    res.json({ symptomTypes });
+    res.status(200).json({ symptomTypes });
   } catch (error) {
     console.error('Error retrieving symptom types:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -734,7 +734,7 @@ app.post('/symptom_types/create', authenticate, authorize('admin', 'doctor'), as
   try {
     const result = await pool.query(query, [symptom_name, description]);
     const newSymptomType = result.rows[0];
-    res.json({ newSymptomType });
+    res.status(201).json({ newSymptomType });
   } catch (error) {
     console.error('Error creating symptom type:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -755,7 +755,7 @@ app.put('/symptom_types/update', authenticate, authorize('admin', 'doctor'), asy
   try {
     const result = await pool.query(query, [symptom_name, description, symptom_id]);
     const updatedSymptomType = result.rows[0];
-    res.json({ updatedSymptomType });
+    res.status(200).json({ updatedSymptomType });
   } catch (error) {
     console.error('Error updating symptom type:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -773,7 +773,7 @@ app.delete('/symptom_types/:symptom_id', authenticate, authorize('admin', 'docto
   const query = `DELETE FROM symptom_types WHERE symptom_types.symptom_id = $1`;
   try {
     const result = await pool.query(query, [symptom_id]);
-    res.json({ message: 'Symptom type deleted successfully' });
+    res.status(200).json({ message: 'Symptom type deleted successfully' });
   } catch (error) {
     console.error('Error deleting symptom type:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -795,7 +795,7 @@ app.get('/symptoms/patient/:patient_id', authenticate, authorize('admin', 'docto
     const result = await pool.query(query, [patient_id]);
     const symptoms = result.rows;
 
-    res.json({ symptoms });
+    res.status(200).json({ symptoms });
   } catch (error) {
     console.error('Error retrieving symptoms:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -814,7 +814,7 @@ app.post('/symptoms/patient/add', authenticate, authorize('admin', 'doctor'), as
   try {
     const result = await pool.query(query, [patient_id, symptom_id]);
     const newSymptom = result.rows[0];
-    res.json({ newSymptom });
+    res.status(201).json({ newSymptom });
   } catch (error) {
     console.error('Error adding symptom:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -835,12 +835,119 @@ app.delete('/symptoms/patient/delete/:patient_symptoms_id', authenticate, author
   WHERE patient_symptoms.patient_symptoms_id = $1`;
   try {
     const result = await pool.query(query, [patient_symptoms_id]);
-    res.json({ message: 'Symptom deleted successfully' });
+    res.status(200).json({ message: 'Symptom deleted successfully' });
   } catch (error) {
     console.error('Error deleting symptom:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+
+
+app.get('/blood-sugar-measurements/patient/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id } = req.params;
+
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  const query = `SELECT *
+  FROM blood_sugar_measurements
+  INNER JOIN blood_sugar_levels ON blood_sugar_measurements.blood_sugar_level_id = blood_sugar_levels.blood_sugar_level_id
+  WHERE patient_id = $1`;
+  try {
+    const result = await pool.query(query, [patient_id]);
+    const bloodSugarMeasurements = result.rows;
+    res.status(200).json({
+      message: 'Blood sugar measurements retrieved successfully',
+      bloodSugarMeasurements: bloodSugarMeasurements
+    });
+  } catch (error) {
+    console.error('Error retrieving blood sugar measurements:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+app.post('/blood-sugar-measurements/patient/add', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id, value, measured_at } = req.body;
+
+  if (!patient_id || !value || !measured_at) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+  
+  const query = `INSERT INTO blood_sugar_measurements (patient_id, value, measured_at) VALUES ($1, $2, $3) RETURNING *`;
+  try {
+    const result = await pool.query(query, [patient_id, value, measured_at]);
+    const newBloodSugarMeasurement = result.rows[0];
+    res.status(201).json({ newBloodSugarMeasurement });
+  } catch (error) {
+    console.error('Error adding blood sugar measurement:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.put('/blood-sugar-measurements/patient/update', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { blood_sugar_measurement_id, patient_id, value, measured_at } = req.body;
+
+  if (!blood_sugar_measurement_id || !patient_id || !value || !measured_at) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  const query = `UPDATE blood_sugar_measurements
+  SET patient_id = $1, value = $2, measured_at = $3
+  WHERE blood_sugar_measurement_id = $4 RETURNING *`;
+  try {
+    const result = await pool.query(query, [patient_id, value, measured_at, blood_sugar_measurement_id]);
+    const updatedBloodSugarMeasurement = result.rows[0];
+    res.status(200).json({ updatedBloodSugarMeasurement });
+  } catch (error) {
+    console.error('Error updating blood sugar measurement:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { blood_sugar_measurement_id } = req.params;
+
+  if (!blood_sugar_measurement_id) {
+    return res.status(400).json({ message: 'Blood sugar measurement ID is required' });
+  }
+  
+  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  const query = `DELETE FROM blood_sugar_measurements WHERE blood_sugar_measurement_id = $1`;
+  try {
+    const result = await pool.query(query, [blood_sugar_measurement_id]);
+    res.status(200).json({ message: 'Blood sugar measurement deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting blood sugar measurement:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+  
 
 
 
@@ -853,7 +960,7 @@ app.get('/exercise-types', authenticate, authorize('admin', 'doctor'), async (re
     const result = await pool.query(query);
     const exercisePlans = result.rows;
 
-    res.json({
+    res.status(200).json({
       message: 'Exercise plans retrieved successfully',
       exercisePlans: exercisePlans
     });
@@ -876,7 +983,7 @@ app.post('/exercise-types/create', authenticate, authorize('admin', 'doctor'), a
     const result = await pool.query(query, [name, description]);
     const newExerciseType = result.rows[0];
 
-    res.json({
+    res.status(201).json({
       message: 'Exercise type created successfully',
       exerciseType: newExerciseType
     });
@@ -900,7 +1007,7 @@ app.post('/exercise-types/update', authenticate, authorize('admin', 'doctor'), a
     const result = await pool.query(query, [name, description, exercise_id]);
     const updatedExerciseType = result.rows[0];
 
-    res.json({
+    res.status(200).json({
       message: 'Exercise type updated successfully',
       exerciseType: updatedExerciseType
     });
@@ -923,7 +1030,7 @@ app.delete('/exercise-types/:exercise_id', authenticate, authorize('admin', 'doc
   try {
     const query = `DELETE FROM exercise_types WHERE exercise_id = $1`;
     const result = await pool.query(query, [exercise_id]);
-    res.json({ message: 'Exercise type deleted successfully' });
+    res.status(200).json({ message: 'Exercise type deleted successfully' });
   } catch (error) {
     console.error('Error deleting exercise type:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -945,7 +1052,7 @@ app.get('/exercise-types/:exercise_id/sum-patient-assignments', authenticate, au
     const result = await pool.query(query, [exercise_id]);
     const totalAssignments = result.rows[0].total_assignments || 0;
 
-    res.json({
+    res.status(200).json({
       message: 'Total patient assignments retrieved successfully',
       totalAssignments: totalAssignments
     });
@@ -983,7 +1090,7 @@ app.get('/patient-exercises/patient/:patient_id', authenticate, authorize('admin
   try {
     const result = await pool.query(query, [patient_id]);
     const patientExercises = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Patient exercises retrieved successfully',
       patientExercises: patientExercises
     });
@@ -1009,7 +1116,7 @@ app.post('/patient-exercises/patient/add', authenticate, authorize('admin', 'doc
     const result = await pool.query(query, [patient_id, exercise_id, doctor_id, status, start_date, end_date]);
     const newPatientExercise = result.rows[0];
 
-    res.json({
+    res.status(201).json({
       message: 'Patient exercise added successfully',
       patientExercise: newPatientExercise
     });
@@ -1035,7 +1142,7 @@ app.put('/patient-exercises/patient/update', authenticate, authorize('admin', 'd
     const result = await pool.query(query, [patient_id, exercise_id, doctor_id, status, start_date, end_date, patient_exercise_id]);
     const updatedPatientExercise = result.rows[0];
 
-    res.json({
+    res.status(200).json({
       message: 'Patient exercise updated successfully',
       patientExercise: updatedPatientExercise
     });
@@ -1059,7 +1166,7 @@ app.delete('/patient-exercises/patient/delete/:patient_exercise_id', authenticat
 
   try {
     const result = await pool.query(query, [patient_exercise_id]);
-    res.json({ message: 'Patient exercise deleted successfully' });
+    res.status(200).json({ message: 'Patient exercise deleted successfully' });
   } catch (error) {
     console.error('Error deleting patient exercise:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -1077,7 +1184,7 @@ app.get('/patient-exercises/patient/completed', authenticate, authorize('admin',
   try {
     const result = await pool.query(query, [patient_id]);
     const completedExercises = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Completed exercises retrieved successfully',
       completedExercises: completedExercises
     });
@@ -1099,7 +1206,7 @@ app.get('/patient-exercises/patient', authenticate, authorize('admin', 'doctor')
   try {
     const result = await pool.query(query, [patient_id]);
     const patientExercises = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Patient exercises retrieved successfully',
       patientExercises: patientExercises
     });
@@ -1114,7 +1221,7 @@ app.get('/patient-exercises/pending', authenticate, authorize('admin', 'doctor')
   try {
     const result = await pool.query(query);
     const patientExercises = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Pending exercises retrieved successfully',
       patientExercises: patientExercises
     });
@@ -1130,7 +1237,7 @@ app.get('/patient-exercises/completed', authenticate, authorize('admin', 'doctor
   try {
     const result = await pool.query(query);
     const completedExercises = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Completed exercises retrieved successfully',
       completedExercises: completedExercises
     });
@@ -1162,7 +1269,7 @@ app.get('/exercise-logs/', authenticate, authorize('admin', 'doctor'), async (re
   try { 
     const result = await pool.query(query);
     const exerciseLogs = result.rows;
-    res.json({
+    res.status(200).json({
       message: 'Exercise logs retrieved successfully',
       exerciseLogs: exerciseLogs
     });
@@ -1214,7 +1321,7 @@ app.get('/exercise-logs/patient/:patient_exercise_id', authenticate, authorize('
     const result = await pool.query(query, [patient_exercise_id]);
     const exerciseLogs = result.rows;
 
-    res.json({
+    res.status(200).json({
       message: 'Exercise logs retrieved successfully',
       exerciseLogs: exerciseLogs
     });
@@ -1240,7 +1347,7 @@ app.post('/exercise-logs/patient/add', authenticate, authorize('admin', 'doctor'
     const result = await pool.query(query, [patient_exercise_id, log_date, is_completed, note]);
     const newExerciseLog = result.rows[0];
 
-    res.json({
+    res.status(201).json({
       message: 'Exercise log added successfully',
       exerciseLog: newExerciseLog
     });
@@ -1286,7 +1393,7 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
     }
 
     const updatedExerciseLog = result.rows[0];
-    res.json({
+    res.status(200).json({
       message: 'Exercise log updated successfully',
       exerciseLog: updatedExerciseLog
     });
@@ -1306,7 +1413,7 @@ app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, auth
 
   try {
     const result = await pool.query('DELETE FROM exercise_logs WHERE exercise_logs_id = $1', [exercise_logs_id]);
-    res.json({ message: 'Exercise log deleted successfully' });
+    res.status(200).json({ message: 'Exercise log deleted successfully' });
   } catch (error) {
     console.error('Error deleting exercise log:', error);
     res.status(500).json({ message: 'Internal server error' });

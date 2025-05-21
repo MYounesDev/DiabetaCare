@@ -17,8 +17,7 @@ import {
   Search,
   Users
 } from "lucide-react";
-import PatientList from "../exercises/PatientList";
-import type { Patient as PatientListPatient } from "../exercises/PatientList";
+import PatientList, { Patient as PatientListPatient } from "@/components/PatientList";
 
 // TypeScript interfaces
 interface Symptom {

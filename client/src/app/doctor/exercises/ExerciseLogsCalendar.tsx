@@ -9,14 +9,14 @@ export interface ExerciseLog {
   is_completed: boolean;
 }
 
-interface ExerciseLogsCalendarProps {
+interface CalendarProps {
   logs: ExerciseLog[];
   onAddLog: (date: string) => void;
   onEditLog: (log: ExerciseLog) => void;
   onDeleteLog: (log: ExerciseLog) => void;
 }
 
-export default function ExerciseLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLog }: ExerciseLogsCalendarProps) {
+export default function ExerciseLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLog }: CalendarProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
 

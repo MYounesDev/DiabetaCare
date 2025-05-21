@@ -14,19 +14,12 @@ import {
   CheckCircle,
   AlertCircle,
   User,
-  List,
-  Grid,
-  ChevronRight,
   Users,
-  Calendar,
   Search,
-  Filter,
-  ArrowLeft,
-  ArrowRight
 } from "lucide-react";
-import PatientList, { Patient as PatientType } from './PatientList';
-import PatientPlans, { PatientExercisePlan as PatientExercisePlanType } from './PatientPlans';
-import ExerciseLogsCalendar, { ExerciseLog } from './ExerciseLogsCalendar';
+import PatientList from '@/components/PatientList';
+import PatientPlans from './PatientPlans';
+import ExerciseLogsCalendar from '@/app/doctor/exercises/ExerciseLogsCalendar';
 
 export default function DoctorExercises() {
   // Exercise Types
@@ -75,16 +68,9 @@ export default function DoctorExercises() {
   const [patients, setPatients] = useState([]);
   const [loadingPatients, setLoadingPatients] = useState(true);
 
-  // View mode
-  const [viewMode, setViewMode] = useState("card");
-
   // New state for selection
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPlanId, setSelectedPlanId] = useState(null);
-
-  // Derived: patients with plans
-  const patientsWithPlans = patients.filter(p => 
-    patientExercises.some(pe => pe.patient_id === p.id));
 
   const selectedPatientPlans = patientExercises.filter(
     pe => pe.patient_id === selectedPatientId
@@ -453,6 +439,7 @@ export default function DoctorExercises() {
       setDeletePlanFormSuccess("Plan deleted successfully!");
       setShowDeletePlanModal(false);
       setPlanToDelete(null);
+      setSelectedPlanId(null); // hide the calendar after delete the plan
       fetchPatientExercises(selectedPatientId);
     } catch (err) {
       setDeletePlanFormError(err.message || "Failed to delete plan");
