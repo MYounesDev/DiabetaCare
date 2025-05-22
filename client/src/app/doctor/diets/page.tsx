@@ -17,13 +17,13 @@ import {
   Users,
   Search,
 } from "lucide-react";
-import PatientList from '@/app/doctor/exercises/PatientList';
+import PatientList from '@/app/doctor/diets/PatientList';
 import PatientPlans from './PatientPlans';
-import ExerciseLogsCalendar from '@/app/doctor/exercises/ExerciseLogsCalendar';
+import DietLogsCalendar from '@/app/doctor/diets/DietLogsCalendar';
 
-export default function DoctorExercises() {
-  // Exercise Types
-  const [exerciseTypes, setExerciseTypes] = useState([]);
+export default function DoctorDiets() {
+  // Diet Types
+  const [dietTypes, setDietTypes] = useState([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
   const [typeError, setTypeError] = useState(null);
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
@@ -39,27 +39,27 @@ export default function DoctorExercises() {
   const editTypeModalRef = useRef(null);
   const deleteTypeModalRef = useRef(null);
 
-  // Patient Exercises
-  const [patientExercises, setPatientExercises] = useState([]);
+  // Patient Diets
+  const [patientDiets, setPatientDiets] = useState([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
   const [planError, setPlanError] = useState(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignData, setAssignData] = useState({
     patient_id: "",
-    exercise_id: "",
+    diet_id: "",
     doctor_id: "",
     status: "pending",
     start_date: "",
     end_date: "",
   });
   const [searchPatient, setSearchPatient] = useState("");
-  const [searchExercise, setSearchExercise] = useState("");
+  const [searchDiet, setSearchDiet] = useState("");
   const [isSubmittingPlan, setIsSubmittingPlan] = useState(false);
   const [planFormError, setPlanFormError] = useState("");
   const [planFormSuccess, setPlanFormSuccess] = useState("");
   const assignModalRef = useRef(null);
 
-  // Completed Exercise Logs
+  // Completed Diet Logs
   const [completedLogs, setCompletedLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
   const [logsError, setLogsError] = useState(null);
@@ -72,7 +72,7 @@ export default function DoctorExercises() {
   const [selectedPatientId, setSelectedPatientId] = useState(null);
   const [selectedPlanId, setSelectedPlanId] = useState(null);
 
-  const selectedPatientPlans = patientExercises.filter(
+  const selectedPatientPlans = patientDiets.filter(
     pe => pe.patient_id === selectedPatientId
   );
 
@@ -82,7 +82,7 @@ export default function DoctorExercises() {
 
   // For calendar, filter logs for selected plan
   const selectedPlanLogs = completedLogs.filter(
-    log => log.patient_exercise_id === selectedPlanId
+    log => log.patient_diet_id === selectedPlanId
   );
 
   // Edit/delete plan modals
@@ -104,29 +104,29 @@ export default function DoctorExercises() {
   const [editLogFormError, setEditLogFormError] = useState("");
   const [editLogFormSuccess, setEditLogFormSuccess] = useState("");
 
-  // Filter patients and exercises based on search
+  // Filter patients and diets based on search
   const filteredPatients = patients.filter(patient =>
     patient.full_name.toLowerCase().includes(searchPatient.toLowerCase())
   );
 
-  const filteredExercises = exerciseTypes.filter(exercise =>
-    exercise.exercise_name.toLowerCase().includes(searchExercise.toLowerCase())
+  const filteredDiets = dietTypes.filter(diet =>
+    diet.diet_name.toLowerCase().includes(searchDiet.toLowerCase())
   );
 
   // Fetch all data on mount
   useEffect(() => {
-    fetchExerciseTypes();
+    fetchDietTypes();
     fetchPatients();
   }, []);
 
-  // Fetch exercises when selected patient changes
+  // Fetch diets when selected patient changes
   useEffect(() => {
     if (selectedPatientId) {
-      fetchPatientExercises(selectedPatientId);
+      fetchPatientDiets(selectedPatientId);
       setSelectedPlanId(null); // Reset selected plan when patient changes
       setCompletedLogs([]); // Clear logs when patient changes
     } else {
-      setPatientExercises([]);
+      setPatientDiets([]);
       setCompletedLogs([]);
     }
   }, [selectedPatientId]);
@@ -150,65 +150,65 @@ export default function DoctorExercises() {
     return `${year}-${month}-${day}`;
   };
 
-  // Fetch exercise types with assignments
-  const fetchExerciseTypes = async () => {
+  // Fetch diet types with assignments
+  const fetchDietTypes = async () => {
     setLoadingTypes(true);
     setTypeError(null);
     try {
-      const res = await doctorService.getExerciseTypes();
-      const types = res.data.exercisePlans || [];
-      setExerciseTypes(types);
+      const res = await doctorService.getDietTypes();
+      const types = res.data.dietPlans || [];
+      setDietTypes(types);
 
       // Fetch assignments for each type
       const assignments = {};
       for (const type of types) {
-        const assignRes = await doctorService.getSumPatientAssignments(type.exercise_id);
-        assignments[type.exercise_id] = assignRes.data.totalAssignments;
+        const assignRes = await doctorService.getSumPatientAssignments(type.diet_id);
+        assignments[type.diet_id] = assignRes.data.totalAssignments;
       }
       setTypeAssignments(assignments);
     } catch (err) {
-      console.error("Error fetching exercise types:", err);
-      setTypeError("Failed to load exercise types");
+      console.error("Error fetching diet types:", err);
+      setTypeError("Failed to load diet types");
     } finally {
       setLoadingTypes(false);
     }
   };
 
-  // Fetch patient exercises
-  const fetchPatientExercises = async (patientId) => {
+  // Fetch patient diets
+  const fetchPatientDiets = async (patientId) => {
     if (!patientId) return;
 
     setLoadingPlans(true);
     setPlanError(null);
     try {
-      console.log(`Fetching exercises for patient ${patientId}`);
+      console.log(`Fetching diets for patient ${patientId}`);
       // Using the new patient-specific endpoint
-      const res = await doctorService.getPatientExercisesByPatient(patientId);
-      console.log('Patient exercises response:', res.data);
-      setPatientExercises(res.data.patientExercises || []);
+      const res = await doctorService.getPatientDietsByPatient(patientId);
+      console.log('Patient diets response:', res.data);
+      setPatientDiets(res.data.patientDiets || []);
     } catch (err) {
-      console.error("Error fetching patient exercises:", err);
-      setPlanError(typeof err === 'string' ? err : err.message || "Failed to load patient exercise plans");
+      console.error("Error fetching patient diets:", err);
+      setPlanError(typeof err === 'string' ? err : err.message || "Failed to load patient diet plans");
     } finally {
       setLoadingPlans(false);
     }
   };
 
   // Fetch completed logs
-  const fetchCompletedLogs = async (patient_exercise_id) => {
-    if (!patient_exercise_id) return;
+  const fetchCompletedLogs = async (patient_diet_id) => {
+    if (!patient_diet_id) return;
 
     setLoadingLogs(true);
     setLogsError(null);
     try {
-      console.log(`Fetching logs for patient_exercise_id ${patient_exercise_id}`);
+      console.log(`Fetching logs for patient_diet_id ${patient_diet_id}`);
       // Using correct parameters for the API call
-      const res = await doctorService.getPatientExerciseLogs(patient_exercise_id);
-      console.log('Patient exercise logs response:', res.data);
-      setCompletedLogs(res.data.exerciseLogs || []);
+      const res = await doctorService.getPatientDietLogs(patient_diet_id);
+      console.log('Patient diet logs response:', res.data);
+      setCompletedLogs(res.data.dietLogs || []);
     } catch (err) {
-      console.error("Error fetching exercise logs:", err);
-      setLogsError(typeof err === 'string' ? err : err.message || "Failed to load completed exercise logs");
+      console.error("Error fetching diet logs:", err);
+      setLogsError(typeof err === 'string' ? err : err.message || "Failed to load completed diet logs");
     } finally {
       setLoadingLogs(false);
     }
@@ -249,26 +249,26 @@ export default function DoctorExercises() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [showAddTypeModal, showEditTypeModal, showDeleteTypeModal, showAssignModal]);
 
-  // Add Exercise Type
+  // Add Diet Type
   const handleAddType = async (e) => {
     e.preventDefault();
     setIsSubmittingType(true);
     setTypeFormError("");
     setTypeFormSuccess("");
     try {
-      await doctorService.createExerciseType(newType.name, newType.description);
-      setTypeFormSuccess("Exercise type added successfully!");
+      await doctorService.createDietType(newType.name, newType.description);
+      setTypeFormSuccess("Diet type added successfully!");
       setShowAddTypeModal(false);
       setNewType({ name: "", description: "" });
-      fetchExerciseTypes();
+      fetchDietTypes();
     } catch (err) {
-      setTypeFormError(err.message || "Failed to add exercise type");
+      setTypeFormError(err.message || "Failed to add diet type");
     } finally {
       setIsSubmittingType(false);
     }
   };
 
-  // Edit Exercise Type
+  // Edit Diet Type
   const handleEditType = async (e) => {
     e.preventDefault();
     setIsSubmittingType(true);
@@ -276,36 +276,36 @@ export default function DoctorExercises() {
     setTypeFormSuccess("");
     try {
       if (!selectedType) return;
-      await doctorService.updateExerciseType(selectedType.exercise_id, selectedType.exercise_name, selectedType.description);
-      setTypeFormSuccess("Exercise type updated successfully!");
+      await doctorService.updateDietType(selectedType.diet_id, selectedType.diet_name, selectedType.description);
+      setTypeFormSuccess("Diet type updated successfully!");
       setShowEditTypeModal(false);
-      fetchExerciseTypes();
+      fetchDietTypes();
     } catch (err) {
-      setTypeFormError(err.message || "Failed to update exercise type");
+      setTypeFormError(err.message || "Failed to update diet type");
     } finally {
       setIsSubmittingType(false);
     }
   };
 
-  // Delete Exercise Type
+  // Delete Diet Type
   const handleDeleteType = async () => {
     setIsSubmittingType(true);
     setTypeFormError("");
     setTypeFormSuccess("");
     try {
       if (!selectedType) return;
-      await doctorService.deleteExerciseType(selectedType.exercise_id);
-      setTypeFormSuccess("Exercise type deleted successfully!");
+      await doctorService.deleteDietType(selectedType.diet_id);
+      setTypeFormSuccess("Diet type deleted successfully!");
       setShowDeleteTypeModal(false);
-      fetchExerciseTypes();
+      fetchDietTypes();
     } catch (err) {
-      setTypeFormError(err.message || "Failed to delete exercise type");
+      setTypeFormError(err.message || "Failed to delete diet type");
     } finally {
       setIsSubmittingType(false);
     }
   };
 
-  // Assign Exercise Plan to Patient
+  // Assign Diet Plan to Patient
   const handleAssignPlan = async (e) => {
     e.preventDefault();
     setIsSubmittingPlan(true);
@@ -317,20 +317,20 @@ export default function DoctorExercises() {
         ...assignData,
         end_date: assignData.end_date || null
       };
-      await doctorService.addPatientExercise(dataToSubmit);
-      setPlanFormSuccess("Exercise plan assigned successfully!");
+      await doctorService.addPatientDiet(dataToSubmit);
+      setPlanFormSuccess("Diet plan assigned successfully!");
       setShowAssignModal(false);
       setAssignData({
         patient_id: "",
-        exercise_id: "",
+        diet_id: "",
         doctor_id: "",
         status: "pending",
         start_date: "",
         end_date: "",
       });
-      fetchPatientExercises(selectedPatientId);
+      fetchPatientDiets(selectedPatientId);
     } catch (err) {
-      setPlanFormError(err.message || "Failed to assign exercise plan");
+      setPlanFormError(err.message || "Failed to assign diet plan");
     } finally {
       setIsSubmittingPlan(false);
     }
@@ -342,8 +342,8 @@ export default function DoctorExercises() {
     return p ? p.full_name : id;
   };
 
-  const getExerciseName = (id) => {
-    const ex = exerciseTypes.find(et => et.id === id);
+  const getDietName = (id) => {
+    const ex = dietTypes.find(et => et.id === id);
     return ex ? ex.name : id;
   };
 
@@ -387,27 +387,27 @@ export default function DoctorExercises() {
     setEditPlanFormSuccess("");
     try {
       // Get the original plan data to ensure we have all required fields
-      const originalPlan = patientExercises.find(p => p.id === planToEdit.exercise_logs_id);
+      const originalPlan = patientDiets.find(p => p.id === planToEdit.diet_logs_id);
       if (!originalPlan) {
         throw new Error("Original plan data not found");
       }
 
       // Prepare the update data with all required fields
       const updateData = {
-        patient_exercise_id: planToEdit.exercise_logs_id,
+        patient_diet_id: planToEdit.diet_logs_id,
         patient_id: originalPlan.patient_id,
-        exercise_id: originalPlan.exercise_id,
+        diet_id: originalPlan.diet_id,
         doctor_id: originalPlan.doctor_id,
         status: planToEdit.status,
         start_date: planToEdit.start_date,
         end_date: planToEdit.end_date || null
       };
 
-      await doctorService.updatePatientExercise(updateData);
+      await doctorService.updatePatientDiet(updateData);
       setEditPlanFormSuccess("Plan updated successfully!");
       setShowEditPlanModal(false);
       setPlanToEdit(null);
-      fetchPatientExercises(selectedPatientId);
+      fetchPatientDiets(selectedPatientId);
     } catch (err) {
       setEditPlanFormError(err.message || "Failed to update plan");
     } finally {
@@ -416,7 +416,7 @@ export default function DoctorExercises() {
   };
 
   const handleDeletePlan = (plan) => {
-    if (!plan || !plan.exercise_logs_id) {
+    if (!plan || !plan.diet_logs_id) {
       setDeletePlanFormError("Invalid plan selected");
       return;
     }
@@ -427,7 +427,7 @@ export default function DoctorExercises() {
   };
 
   const handleDeletePlanConfirm = async () => {
-    if (!planToDelete || !planToDelete.exercise_logs_id) {
+    if (!planToDelete || !planToDelete.diet_logs_id) {
       setDeletePlanFormError("Invalid plan selected");
       return;
     }
@@ -435,12 +435,12 @@ export default function DoctorExercises() {
     setDeletePlanFormError("");
     setDeletePlanFormSuccess("");
     try {
-      await doctorService.deletePatientExercise(planToDelete.exercise_logs_id);
+      await doctorService.deletePatientDiet(planToDelete.diet_logs_id);
       setDeletePlanFormSuccess("Plan deleted successfully!");
       setShowDeletePlanModal(false);
       setPlanToDelete(null);
       setSelectedPlanId(null); // hide the calendar after delete the plan
-      fetchPatientExercises(selectedPatientId);
+      fetchPatientDiets(selectedPatientId);
     } catch (err) {
       setDeletePlanFormError(err.message || "Failed to delete plan");
     } finally {
@@ -454,8 +454,8 @@ export default function DoctorExercises() {
     // Create a new log with all required fields
     const newLog = {
       patient_id: selectedPatientId,
-      exercise_id: selectedPlanId,
-      patient_exercise_id: selectedPlanId,
+      diet_id: selectedPlanId,
+      patient_diet_id: selectedPlanId,
       log_date: date, // Already in YYYY-MM-DD format from the calendar
       is_completed: false,
       note: ""
@@ -483,12 +483,12 @@ export default function DoctorExercises() {
     setEditLogFormError("");
     setEditLogFormSuccess("");
     try {
-      if (logToEdit.exercise_logs_id) {
+      if (logToEdit.diet_logs_id) {
         // Update existing log
-        await doctorService.updateExerciseLog(logToEdit);
+        await doctorService.updateDietLog(logToEdit);
       } else {
         // Create new log
-        await doctorService.addExerciseLog(logToEdit);
+        await doctorService.addDietLog(logToEdit);
       }
       setEditLogFormSuccess("Log saved successfully!");
       setShowEditLogModal(false);
@@ -502,7 +502,7 @@ export default function DoctorExercises() {
   };
 
   const handleDeleteLog = async (log) => {
-    if (!log || !log.exercise_logs_id) {
+    if (!log || !log.diet_logs_id) {
       setEditLogFormError("Invalid log selected");
       return;
     }
@@ -510,7 +510,7 @@ export default function DoctorExercises() {
     setEditLogFormError("");
     setEditLogFormSuccess("");
     try {
-      await doctorService.deleteExerciseLog(log.exercise_logs_id);
+      await doctorService.deleteDietLog(log.diet_logs_id);
       setEditLogFormSuccess("Log deleted successfully!");
       setShowEditLogModal(false);
       setLogToEdit(null);
@@ -524,7 +524,7 @@ export default function DoctorExercises() {
 
   // Fix mapping for patient list
   const mappedPatients = patients.map(patient => ({
-    exercise_logs_id: patient.exercise_logs_id || patient.id,
+    diet_logs_id: patient.diet_logs_id || patient.id,
     full_name: patient.full_name,
     username: patient.username,
     profile_picture: patient.profile_picture
@@ -532,8 +532,8 @@ export default function DoctorExercises() {
 
   // Fix mapping for patient plans
   const mappedPatientPlans = selectedPatientPlans.map(plan => ({
-    exercise_logs_id: plan.exercise_logs_id || plan.id || plan.exercise_id,
-    exercise_name: plan.exercise_name || getExerciseName(plan.exercise_id),
+    diet_logs_id: plan.diet_logs_id || plan.id || plan.diet_id,
+    diet_name: plan.diet_name || getDietName(plan.diet_id),
     status: plan.status || 'pending',
     start_date: plan.start_date,
     end_date: plan.end_date
@@ -541,7 +541,7 @@ export default function DoctorExercises() {
 
   // Fix mapping for logs
   const mappedLogs = selectedPlanLogs.map(log => ({
-    exercise_logs_id: log.exercise_logs_id || log.id,
+    diet_logs_id: log.diet_logs_id || log.id,
     log_date: log.log_date ? formatDateToYYYYMMDD(new Date(log.log_date)) : '',
     note: log.note || "",
     is_completed: log.is_completed || false
@@ -553,19 +553,19 @@ export default function DoctorExercises() {
         <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-green-800 mb-2">Exercise Management</h1>
-            <p className="text-gray-600">Manage exercise types, patient assignments, and track progress</p>
+            <h1 className="text-3xl font-bold text-green-800 mb-2">Diet Management</h1>
+            <p className="text-gray-600">Manage diet types, patient assignments, and track progress</p>
           </div>
 
           {/* Main Content Grid */}
           <div className="grid grid-cols-1 gap-8">
-            {/* Exercise Types Section */}
+            {/* Diet Types Section */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-bold text-green-800">Exercise Types</h2>
-                    <p className="text-sm text-gray-500 mt-1">Manage different types of exercises</p>
+                    <h2 className="text-xl font-bold text-green-800">Diet Types</h2>
+                    <p className="text-sm text-gray-500 mt-1">Manage different types of diets</p>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -585,15 +585,15 @@ export default function DoctorExercises() {
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {exerciseTypes.map((type) => (
+                    {dietTypes.map((type) => (
                       <motion.div
-                        key={type.exercise_id}
+                        key={type.diet_id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-green-800">{type.exercise_name}</h3>
+                          <h3 className="font-semibold text-green-800">{type.diet_name}</h3>
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
@@ -618,7 +618,7 @@ export default function DoctorExercises() {
                         <p className="text-sm text-gray-600 mb-3">{type.description}</p>
                         <div className="flex items-center gap-2 text-sm text-green-600">
                           <Users size={16} />
-                          <span>{typeAssignments[type.exercise_id] || 0} patients assigned</span>
+                          <span>{typeAssignments[type.diet_id] || 0} patients assigned</span>
                         </div>
                       </motion.div>
                     ))}
@@ -633,7 +633,7 @@ export default function DoctorExercises() {
                 <div className="flex justify-between items-center">
                   <div>
                     <h2 className="text-xl font-bold text-green-800">Patient Management</h2>
-                    <p className="text-sm text-gray-500 mt-1">Manage patients and their exercise plans</p>
+                    <p className="text-sm text-gray-500 mt-1">Manage patients and their diet plans</p>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
@@ -641,7 +641,7 @@ export default function DoctorExercises() {
                     onClick={() => setShowAssignModal(true)}
                     className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
                   >
-                    <PlusCircle size={16} /> Assign Exercise
+                    <PlusCircle size={16} /> Assign Diet
                   </motion.button>
                 </div>
               </div>
@@ -663,9 +663,9 @@ export default function DoctorExercises() {
                   )}
                 </div>
 
-                {/* Exercise Plans - now takes 2/3 of the space to give more room */}
+                {/* Diet Plans - now takes 2/3 of the space to give more room */}
                 <div className="bg-gray-50 rounded-lg p-4 lg:col-span-2">
-                  <h3 className="text-lg font-semibold text-green-800 mb-4">Exercise Plans</h3>
+                  <h3 className="text-lg font-semibold text-green-800 mb-4">Diet Plans</h3>
                   {selectedPatientId ? (
                     loadingPlans ? (
                       <div className="flex justify-center items-center h-64">
@@ -682,22 +682,22 @@ export default function DoctorExercises() {
                     )
                   ) : (
                     <div className="text-gray-400 text-center mt-20 text-xl">
-                      Select a patient to view their exercise plans
+                      Select a patient to view their diet plans
                     </div>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Exercise Logs Calendar */}
+            {/* Diet Logs Calendar */}
             {selectedPlanId && (
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-xl font-bold text-green-800">Exercise Logs</h2>
+                      <h2 className="text-xl font-bold text-green-800">Diet Logs</h2>
                       <p className="text-sm text-gray-500 mt-1">
-                        Track and manage exercise completion for {getPatientName(selectedPatientId)} - {selectedPlan?.exercise_name || 'Selected Plan'}
+                        Track and manage diet completion for {getPatientName(selectedPatientId)} - {selectedPlan?.diet_name || 'Selected Plan'}
                       </p>
                     </div>
                   </div>
@@ -709,7 +709,7 @@ export default function DoctorExercises() {
                       <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                     </div>
                   ) : (
-                    <ExerciseLogsCalendar
+                    <DietLogsCalendar
                       logs={mappedLogs}
                       onAddLog={handleAddLog}
                       onEditLog={handleEditLog}
@@ -722,7 +722,7 @@ export default function DoctorExercises() {
           </div>
         </div>
 
-        {/* Add Exercise Type Modal */}
+        {/* Add Diet Type Modal */}
         {showAddTypeModal && (
           <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
@@ -732,7 +732,7 @@ export default function DoctorExercises() {
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Add Exercise Type</h2>
+                <h2 className="text-xl font-bold text-green-800">Add Diet Type</h2>
                 <button onClick={() => setShowAddTypeModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
                   <X size={20} />
                 </button>
@@ -783,7 +783,7 @@ export default function DoctorExercises() {
           </div>
         )}
 
-        {/* Edit Exercise Type Modal */}
+        {/* Edit Diet Type Modal */}
         {showEditTypeModal && selectedType && (
           <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
@@ -793,7 +793,7 @@ export default function DoctorExercises() {
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Edit Exercise Type</h2>
+                <h2 className="text-xl font-bold text-green-800">Edit Diet Type</h2>
                 <button onClick={() => setShowEditTypeModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
                   <X size={20} />
                 </button>
@@ -809,8 +809,8 @@ export default function DoctorExercises() {
                   <input
                     type="text"
                     required
-                    value={selectedType.exercise_name}
-                    onChange={(e) => setSelectedType({ ...selectedType, exercise_name: e.target.value })}
+                    value={selectedType.diet_name}
+                    onChange={(e) => setSelectedType({ ...selectedType, diet_name: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
@@ -844,7 +844,7 @@ export default function DoctorExercises() {
           </div>
         )}
 
-        {/* Delete Exercise Type Modal */}
+        {/* Delete Diet Type Modal */}
         {showDeleteTypeModal && selectedType && (
           <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
@@ -854,13 +854,13 @@ export default function DoctorExercises() {
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Delete Exercise Type</h2>
+                <h2 className="text-xl font-bold text-green-800">Delete Diet Type</h2>
                 <button onClick={() => setShowDeleteTypeModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
                   <X size={20} />
                 </button>
               </div>
               <div className="p-4">
-                <p className="mb-4 text-green-700">Are you sure you want to delete <span className="font-semibold text-red-600">{selectedType.exercise_name}</span>?</p>
+                <p className="mb-4 text-green-700">Are you sure you want to delete <span className="font-semibold text-red-600">{selectedType.diet_name}</span>?</p>
                 {typeFormError && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} /> {typeFormError}
@@ -897,8 +897,8 @@ export default function DoctorExercises() {
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-6 bg-gradient-to-r from-green-50 to-teal-50">
                 <div>
-                  <h2 className="text-2xl font-bold text-green-800">Assign Exercise Plan</h2>
-                  <p className="text-sm text-gray-600 mt-1">Create a new exercise plan for your patient</p>
+                  <h2 className="text-2xl font-bold text-green-800">Assign Diet Plan</h2>
+                  <p className="text-sm text-gray-600 mt-1">Create a new diet plan for your patient</p>
                 </div>
                 <button onClick={() => setShowAssignModal(false)} className="p-2 rounded-full hover:bg-green-100 text-green-600 transition-colors">
                   <X size={24} />
@@ -971,45 +971,45 @@ export default function DoctorExercises() {
                   </div>
                 </div>
 
-                {/* Exercise Selection */}
+                {/* Diet Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-green-700">Select Exercise Type</label>
+                  <label className="block text-sm font-medium text-green-700">Select Diet Type</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                     <input
                       type="text"
-                      placeholder="Search exercise type..."
-                      value={searchExercise}
-                      onChange={(e) => setSearchExercise(e.target.value)}
+                      placeholder="Search diet type..."
+                      value={searchDiet}
+                      onChange={(e) => setSearchDiet(e.target.value)}
                       className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg mt-2 bg-white">
-                    {searchExercise.trim() === "" ? (
+                    {searchDiet.trim() === "" ? (
                       <div className="p-4 text-center text-gray-500">
                         <ClipboardList size={24} className="mx-auto mb-2" />
-                        <p>Start typing to search exercise types</p>
+                        <p>Start typing to search diet types</p>
                       </div>
-                    ) : filteredExercises.length === 0 ? (
+                    ) : filteredDiets.length === 0 ? (
                       <div className="p-4 text-center text-gray-500">
                         <AlertCircle size={24} className="mx-auto mb-2" />
-                        <p>No exercise types found matching "{searchExercise}"</p>
+                        <p>No diet types found matching "{searchDiet}"</p>
                       </div>
                     ) : (
-                      filteredExercises.map((exercise) => (
+                      filteredDiets.map((diet) => (
                         <div
-                          key={exercise.exercise_id}
+                          key={diet.diet_id}
                           onClick={() => {
-                            setAssignData({ ...assignData, exercise_id: exercise.exercise_id });
-                            setSearchExercise(exercise.exercise_name);
+                            setAssignData({ ...assignData, diet_id: diet.diet_id });
+                            setSearchDiet(diet.diet_name);
                           }}
-                          className={`p-4 cursor-pointer transition-colors ${assignData.exercise_id === exercise.exercise_id
+                          className={`p-4 cursor-pointer transition-colors ${assignData.diet_id === diet.diet_id
                             ? 'bg-green-50 border-l-4 border-green-500'
                             : 'hover:bg-green-50'
                             }`}
                         >
-                          <div className="font-medium text-green-800">{exercise.exercise_name}</div>
-                          <div className="text-sm text-gray-500 mt-1">{exercise.description}</div>
+                          <div className="font-medium text-green-800">{diet.diet_name}</div>
+                          <div className="text-sm text-gray-500 mt-1">{diet.description}</div>
                         </div>
                       ))
                     )}
@@ -1049,7 +1049,7 @@ export default function DoctorExercises() {
                   </button>
                   <button
                     type="submit"
-                    disabled={isSubmittingPlan || !assignData.patient_id || !assignData.exercise_id || !assignData.start_date}
+                    disabled={isSubmittingPlan || !assignData.patient_id || !assignData.diet_id || !assignData.start_date}
                     className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all disabled:hover:opacity-50"
                   >
                     {isSubmittingPlan ? (
@@ -1057,7 +1057,7 @@ export default function DoctorExercises() {
                     ) : (
                       <>
                         <CheckCircle size={20} />
-                        Assign Exercise Plan
+                        Assign Diet Plan
                       </>
                     )}
                   </button>
@@ -1077,8 +1077,8 @@ export default function DoctorExercises() {
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-6 bg-gradient-to-r from-green-50 to-teal-50">
                 <div>
-                  <h2 className="text-2xl font-bold text-green-800">Edit Exercise Plan</h2>
-                  <p className="text-sm text-gray-600 mt-1">Update the exercise plan details</p>
+                  <h2 className="text-2xl font-bold text-green-800">Edit Diet Plan</h2>
+                  <p className="text-sm text-gray-600 mt-1">Update the diet plan details</p>
                 </div>
                 <button onClick={() => setShowEditPlanModal(false)} className="p-2 rounded-full hover:bg-green-100 text-green-600 transition-colors">
                   <X size={24} />
@@ -1166,13 +1166,13 @@ export default function DoctorExercises() {
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Delete Exercise Plan</h2>
+                <h2 className="text-xl font-bold text-green-800">Delete Diet Plan</h2>
                 <button onClick={() => setShowDeletePlanModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
                   <X size={20} />
                 </button>
               </div>
               <div className="p-4">
-                <p className="mb-4 text-green-700">Are you sure you want to delete <span className="font-semibold text-red-600">{planToDelete.exercise_name}</span>?</p>
+                <p className="mb-4 text-green-700">Are you sure you want to delete <span className="font-semibold text-red-600">{planToDelete.diet_name}</span>?</p>
                 {deletePlanFormError && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} /> {deletePlanFormError}
@@ -1207,7 +1207,7 @@ export default function DoctorExercises() {
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
               <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Edit Exercise Log</h2>
+                <h2 className="text-xl font-bold text-green-800">Edit Diet Log</h2>
                 <button onClick={() => setShowEditLogModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
                   <X size={20} />
                 </button>
@@ -1244,7 +1244,7 @@ export default function DoctorExercises() {
                   >
                     Cancel
                   </button>
-                  {logToEdit?.exercise_logs_id && (
+                  {logToEdit?.diet_logs_id && (
                     <button
                       type="button"
                       onClick={() => handleDeleteLog(logToEdit)}

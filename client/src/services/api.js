@@ -271,47 +271,6 @@ export const doctorService = {
     }
   },
 
-  // --- EXERCISE MANAGEMENT ---
-  getExerciseTypes: async () => {
-    try {
-      const response = await api.get('/exercise-types');
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
-  createExerciseType: async (name, description) => {
-    try {
-      const response = await api.post('/exercise-types/create', { name, description });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
-  updateExerciseType: async (exercise_id, name, description) => {
-    try {
-      const response = await api.post('/exercise-types/update', { exercise_id, name, description });
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
-  deleteExerciseType: async (exercise_id) => {
-    try {
-      const response = await api.delete(`/exercise-types/${exercise_id}`);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
-  getSumPatientAssignments: async (exercise_id) => {
-    try {
-      const response = await api.get(`/exercise-types/${exercise_id}/sum-patient-assignments`);
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
 
   // --- SYMPTOMS ---
   getSymptoms: async () => {
@@ -413,7 +372,49 @@ export const doctorService = {
 
 
 
-
+  
+  // --- EXERCISE MANAGEMENT ---
+  getExerciseTypes: async () => {
+    try {
+      const response = await api.get('/exercise-types');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  createExerciseType: async (name, description) => {
+    try {
+      const response = await api.post('/exercise-types/create', { name, description });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateExerciseType: async (exercise_id, exercise_name, description) => {
+    try {
+      console.log(exercise_id, exercise_name, description);
+      const response = await api.post('/exercise-types/update', { exercise_id, exercise_name, description });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteExerciseType: async (exercise_id) => {
+    try {
+      const response = await api.delete(`/exercise-types/${exercise_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getSumPatientAssignments: async (exercise_id) => {
+    try {
+      const response = await api.get(`/exercise-types/${exercise_id}/sum-patient-assignments`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
 
   
 
@@ -515,7 +516,162 @@ export const doctorService = {
     } catch (error) {
       throw error;
     }
+  },
+
+
+
+
+
+
+  
+  // --- DIET MANAGEMENT ---
+  getDietTypes: async () => {
+    try {
+      const response = await api.get('/diet-types');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  createDietType: async (name, description) => {
+    try {
+      const response = await api.post('/diet-types/create', { name, description });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateDietType: async (diet_id, diet_name, description) => {
+    try {
+      const response = await api.post('/diet-types/update', { diet_id, diet_name, description });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deleteDietType: async (diet_id) => {
+    try {
+      const response = await api.delete(`/diet-types/${diet_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getSumPatientAssignments: async (diet_id) => {
+    try {
+      const response = await api.get(`/diet-types/${diet_id}/sum-patient-assignments`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  
+
+
+
+  // --- PATIENT DIET PLANS ---
+  getPatientDiets: async () => {
+    try {
+      const response = await api.get('/patient-diets');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getPatientDietsByPatient: async (patient_id) => {
+    try {
+      const response = await api.get(`/patient-diets/patient/${patient_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addPatientDiet: async (data) => {
+    try {
+      const response = await api.post('/patient-diets/patient/add', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updatePatientDiet: async (data) => {
+    try {
+      const response = await api.put('/patient-diets/patient/update', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  deletePatientDiet: async (patientDietId) => {
+    try {
+      const response = await api.delete(`/patient-diets/patient/delete/${patientDietId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getCompletedDiets: async (patient_id) => {
+    try {
+      const response = await api.get('/patient-diets/patient/completed', { data: { patient_id } });
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+  // --- DIET LOGS ---
+  getAllDietLogs: async () => {
+    try {
+      const response = await api.get('/diet-logs/');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  getPatientDietLogs: async (patient_diet_id) => {
+    try {
+      // Using query params instead of data object which doesn't work with GET requests
+      const response = await api.get(`/diet-logs/patient/${patient_diet_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  addDietLog: async (data) => {
+    try {
+      const response = await api.post('/diet-logs/patient/add', data);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+  updateDietLog: async (data) => {
+    try {
+      if (!data.diet_logs_id || data.is_completed === undefined || !data.note) {
+        throw new Error('Missing required fields: diet_logs_id, is_completed, and note are required');
+      }
+      const response = await api.put('/diet-logs/patient/update', data);
+      return response;
+    } catch (error) {
+      console.error('Error updating diet log:', error);
+      throw error;
+    }
+  },
+  deleteDietLog: async (logId) => {
+    try {
+      const response = await api.delete(`/diet-logs/patient/delete/${logId}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
+
+
+
+
+
 
 };
 

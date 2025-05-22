@@ -3,9 +3,8 @@ import { useState, useEffect } from "react";
 import { doctorService } from "@/services/api";
 import PageTemplate from "@/components/PageTemplate";
 import AuthWrapper from "@/components/AuthWrapper";
-import PatientList from '@/components/PatientList';
+import PatientList from '@/app/doctor/exercises/PatientList';
 import BloodSugarCalendar, { BloodSugarMeasurement } from './BloodSugarCalendar';
-import { Loader2 } from "lucide-react";
 
 interface Patient {
   id: string;
@@ -56,7 +55,7 @@ export default function DoctorBloodSugar() {
       const response = await doctorService.getBloodSugarMeasurements(patientId);
       // Sort measurements by measured_at in descending order
       const sortedMeasurements = response.data.bloodSugarMeasurements.sort(
-        (a: BloodSugarMeasurement, b: BloodSugarMeasurement) => 
+        (a: BloodSugarMeasurement, b: BloodSugarMeasurement) =>
           new Date(b.measured_at).getTime() - new Date(a.measured_at).getTime()
       );
       setMeasurements(sortedMeasurements);
@@ -141,7 +140,7 @@ export default function DoctorBloodSugar() {
               <div className="p-4">
                 {loadingPatients ? (
                   <div className="flex justify-center items-center h-64">
-                    <Loader2 className="animate-spin h-8 w-8 text-green-500" />
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                   </div>
                 ) : (
                   <PatientList
@@ -157,8 +156,8 @@ export default function DoctorBloodSugar() {
             <div className="lg:col-span-2">
               {selectedPatientId ? (
                 loadingMeasurements ? (
-                  <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm">
-                    <Loader2 className="animate-spin h-8 w-8 text-green-500" />
+                  <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                   </div>
                 ) : (
                   <BloodSugarCalendar

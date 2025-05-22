@@ -996,15 +996,16 @@ app.post('/exercise-types/create', authenticate, authorize('admin', 'doctor'), a
 
 
 app.post('/exercise-types/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  const { exercise_id, name, description } = req.body;
+  const { exercise_id, exercise_name, description } = req.body;
 
-  if (!exercise_id || !name || !description) {
+  if (!exercise_id || !exercise_name || !description) {
+    console.log(req.body);
     return res.status(400).json({ message: 'ID, name, and description are required' });
   }
 
   try {
-    const query = `UPDATE exercise_types SET exercise_name = $1, description = $2 WHERE id = $3 RETURNING *`;
-    const result = await pool.query(query, [name, description, exercise_id]);
+    const query = `UPDATE exercise_types SET exercise_name = $1, description = $2 WHERE exercise_id = $3 RETURNING *`;
+    const result = await pool.query(query, [exercise_name, description, exercise_id]);
     const updatedExerciseType = result.rows[0];
 
     res.status(200).json({
@@ -1421,6 +1422,473 @@ app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, auth
 });
 
 
+
+
+app.get('/diet-types', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  try {
+    const query = `SELECT * FROM diet_types`;
+    const result = await pool.query(query);
+    const dietPlans = result.rows;
+
+    res.status(200).json({
+      message: 'Diet plans retrieved successfully',
+      dietPlans: dietPlans
+    });
+
+  } catch (error) {
+    console.error('Error retrieving diet types:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/diet-types/create', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { name, description } = req.body;
+
+  if (!name || !description) {
+    return res.status(400).json({ message: 'Name and description are required' });
+  }
+
+  try {
+    const query = `INSERT INTO diet_types (diet_name, description) VALUES ($1, $2) RETURNING *`;
+    const result = await pool.query(query, [name, description]);
+    const newDietType = result.rows[0];
+
+    res.status(201).json({
+      message: 'Diet type created successfully',
+      dietType: newDietType
+    });
+
+  } catch (error) {
+    console.error('Error creating diet type:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.post('/diet-types/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { diet_id, diet_name, description } = req.body;
+
+  if (!diet_id || !diet_name || !description) {
+    return res.status(400).json({ message: 'ID, name, and description are required' });
+  }
+
+  try {
+    const query = `UPDATE diet_types SET diet_name = $1, description = $2 WHERE diet_id = $3 RETURNING *`;
+    const result = await pool.query(query, [diet_name, description, diet_id]);
+    const updatedDietType = result.rows[0];
+
+    res.status(200).json({
+      message: 'Diet type updated successfully',
+      dietType: updatedDietType
+    });
+
+  } catch (error) {
+    console.error('Error updating diet type:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.delete('/diet-types/:diet_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  
+  const { diet_id } = req.params;
+
+  if (!diet_id) {
+    return res.status(400).json({ message: 'Diet ID is required' });
+  }
+
+  try {
+    const query = `DELETE FROM diet_types WHERE diet_id = $1`;
+    const result = await pool.query(query, [diet_id]);
+    res.status(200).json({ message: 'Diet type deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting diet type:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/diet-types/:diet_id/sum-patient-assignments', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { diet_id } = req.params;
+
+  if (!diet_id) {
+    return res.status(400).json({ message: 'Diet ID is required' });
+  }
+
+  try {
+    const query = `SELECT COUNT(*) as total_assignments 
+    FROM patient_diets 
+    WHERE diet_id = $1`;
+    const result = await pool.query(query, [diet_id]);
+    const totalAssignments = result.rows[0].total_assignments || 0;
+
+    res.status(200).json({
+      message: 'Total patient assignments retrieved successfully',
+      totalAssignments: totalAssignments
+    });
+  } catch (error) {
+    console.error('Error retrieving total patient assignments:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+app.get('/patient-diets/patient/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id } = req.params;
+
+
+
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+
+  const query = `SELECT * 
+  FROM patient_diets 
+  INNER JOIN diet_types ON patient_diets.diet_id = diet_types.diet_id
+  WHERE patient_diets.patient_id = $1`;
+  try {
+    const result = await pool.query(query, [patient_id]);
+    const patientDiets = result.rows;
+    res.status(200).json({
+      message: 'Patient diets retrieved successfully',
+      patientDiets: patientDiets
+    });
+  } catch (error) {
+    console.error('Error retrieving patient diets:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.post('/patient-diets/patient/add', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_id, diet_id, status, start_date, end_date } = req.body;
+
+  const doctor_id = req.user.id;
+
+
+  if (!patient_id || !diet_id || !status || !start_date) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const query = `INSERT INTO patient_diets (patient_id, diet_id, doctor_id, status, start_date, end_date) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`;
+
+  try {
+    const result = await pool.query(query, [patient_id, diet_id, doctor_id, status, start_date, end_date]);
+    const newPatientDiet = result.rows[0];
+
+    res.status(201).json({
+      message: 'Patient diet added successfully',
+      patientDiet: newPatientDiet
+    });
+  } catch (error) {
+    console.error('Error adding patient diet:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.put('/patient-diets/patient/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_diet_id, patient_id, diet_id, status, start_date, end_date } = req.body;
+
+  const doctor_id = req.user.id;
+  
+  if (!patient_diet_id || !patient_id || !diet_id || !doctor_id || !status || !start_date) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+
+  const query = `UPDATE patient_diets SET patient_id = $1, diet_id = $2, doctor_id = $3, status = $4, start_date = $5, end_date = $6 WHERE id = $7 RETURNING *`;
+
+  try {
+    const result = await pool.query(query, [patient_id, diet_id, doctor_id, status, start_date, end_date, patient_diet_id]);
+    const updatedPatientDiet = result.rows[0];
+
+    res.status(200).json({
+      message: 'Patient diet updated successfully',
+      patientDiet: updatedPatientDiet
+    });
+  } catch (error) {
+    console.error('Error updating patient diet:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.delete('/patient-diets/patient/delete/:patient_diet_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_diet_id } = req.params;
+
+  if (!patient_diet_id) {
+    return res.status(400).json({ message: 'Patient diet ID is required' });
+  }
+
+
+
+  const query = `DELETE FROM patient_diets WHERE id = $1`;
+
+  try {
+    const result = await pool.query(query, [patient_diet_id]);
+    res.status(200).json({ message: 'Patient diet deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting patient diet:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/patient-diets/patient/completed', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_id } = req.body;
+  const query = `SELECT * FROM patient_diets WHERE patient_id = $1 AND status = 'completed'`;
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  try {
+    const result = await pool.query(query, [patient_id]);
+    const completedDiets = result.rows;
+    res.status(200).json({
+      message: 'Completed diets retrieved successfully',
+      completedDiets: completedDiets
+    });
+  } catch (error) {
+    console.error('Error retrieving completed diets:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.get('/patient-diets/patient', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_id } = req.body;
+  const query = `SELECT * FROM patient_diets WHERE patient_id = $1`;
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  try {
+    const result = await pool.query(query, [patient_id]);
+    const patientDiets = result.rows;
+    res.status(200).json({
+      message: 'Patient diets retrieved successfully',
+      patientDiets: patientDiets
+    });
+  } catch (error) {
+    console.error('Error retrieving patient diets:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+app.get('/patient-diets/pending', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const query = `SELECT * FROM patient_diets WHERE status = 'pending'`;
+  try {
+    const result = await pool.query(query);
+    const patientDiets = result.rows;
+    res.status(200).json({
+      message: 'Pending diets retrieved successfully',
+      patientDiets: patientDiets
+    });
+  } catch (error) {
+    console.error('Error retrieving pending diets:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.get('/patient-diets/completed', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const query = `SELECT * FROM patient_diets WHERE status = 'completed'`;
+  try {
+    const result = await pool.query(query);
+    const completedDiets = result.rows;
+    res.status(200).json({
+      message: 'Completed diets retrieved successfully',
+      completedDiets: completedDiets
+    });
+  } catch (error) {
+    console.error('Error retrieving completed diets:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
+
+
+app.get('/diet-logs/', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const query = `SELECT 
+    diet_logs.*,
+    patient_diets.diet_id,
+    diet_types.diet_name
+    FROM diet_logs
+    INNER JOIN patient_diets ON diet_logs.patient_diet_id = patient_diets.id
+    INNER JOIN diet_types ON patient_diets.diet_id = diet_types.diet_id
+    ORDER BY log_date DESC`;
+  try { 
+    const result = await pool.query(query);
+    const dietLogs = result.rows;
+    res.status(200).json({
+      message: 'Diet logs retrieved successfully',
+      dietLogs: dietLogs
+    });
+  } catch (error) {
+    console.error('Error retrieving diet logs:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+app.get('/diet-logs/patient/:patient_diet_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_diet_id } = req.params;
+
+  if (!patient_diet_id) {
+    return res.status(400).json({ message: 'patientdiet ID is required' });
+  }
+
+  try {
+    const checkRole = await pool.query(`SELECT * 
+    FROM patient_diets 
+    INNER JOIN users ON patient_diets.patient_id = users.id
+    WHERE patient_diets.id = $1`, [patient_diet_id]);
+
+    const patient_id = checkRole.rows[0].patient_id;
+
+    if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+  } catch (error) {
+    console.error('Error checking role:', error);
+    res.status(500).json({ message: 'Internal server error checking role' });
+  }
+
+
+
+
+  const query = `SELECT *
+    FROM diet_logs 
+    INNER JOIN patient_diets ON diet_logs.patient_diet_id = patient_diets.id
+    WHERE diet_logs.patient_diet_id = $1 
+    ORDER BY log_date DESC`;
+
+  try {
+
+
+
+    const result = await pool.query(query, [patient_diet_id]);
+    const dietLogs = result.rows;
+
+    res.status(200).json({
+      message: 'Diet logs retrieved successfully',
+      dietLogs: dietLogs
+    });
+  } catch (error) {
+    console.error('Error retrieving diet logs:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.post('/diet-logs/patient/add', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_diet_id, log_date, is_completed, note } = req.body;
+
+  console.log('body', req.body);
+
+  if (!patient_diet_id || !log_date || is_completed === undefined || !note) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const query = `INSERT INTO diet_logs (patient_diet_id, log_date, is_completed, note) VALUES ($1, $2, $3, $4) RETURNING *`;
+
+  try {
+    const result = await pool.query(query, [patient_diet_id, log_date, is_completed, note]);
+    const newDietLog = result.rows[0];
+
+    res.status(201).json({
+      message: 'Diet log added successfully',
+      dietLog: newDietLog
+    });
+  } catch (error) {
+    console.error('Error adding diet log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { diet_logs_id, is_completed, note } = req.body;
+
+  if (!diet_logs_id || is_completed === undefined || !note) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+  console.log('diet_logs_id', diet_logs_id);  
+  console.log('is_completed', is_completed);
+  console.log('note', note);
+  
+  try {
+    // First verify the log exists and user has access
+    const verifyQuery = `SELECT * FROM diet_logs WHERE diet_logs_id = $1`;
+    const verifyResult = await pool.query(verifyQuery, [diet_logs_id]);
+    
+    if (verifyResult.rows.length === 0) {
+      console.log('Diet log not found');
+      return res.status(404).json({ message: 'Diet log not found' });
+    }
+
+    const log = verifyResult.rows[0];
+    
+    // Check if user has permission to update this log
+    if (req.user.role === 'patient' && req.user.id !== log.patient_id) {
+      return res.status(403).json({ message: 'Access denied' });
+    }
+
+    const query = `UPDATE diet_logs SET is_completed = $1, note = $2 WHERE diet_logs_id = $3 RETURNING *`;
+    const result = await pool.query(query, [is_completed, note, diet_logs_id]);
+    
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: 'Diet log not found' });
+    }
+
+    const updatedDietLog = result.rows[0];
+    res.status(200).json({
+      message: 'Diet log updated successfully',
+      dietLog: updatedDietLog
+    });
+  } catch (error) {
+    console.error('Error updating diet log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { diet_logs_id } = req.params;
+
+  if (!diet_logs_id) {
+    return res.status(400).json({ message: 'Diet log ID is required' });
+  }
+
+  try {
+    const result = await pool.query('DELETE FROM diet_logs WHERE diet_logs_id = $1', [diet_logs_id]);
+    res.status(200).json({ message: 'Diet log deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting diet log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 

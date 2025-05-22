@@ -17,7 +17,7 @@ import {
   Search,
   Users
 } from "lucide-react";
-import PatientList, { Patient as PatientListPatient } from "@/components/PatientList";
+import PatientList, { Patient as PatientListPatient } from "@/app/doctor/exercises/PatientList";
 
 // TypeScript interfaces
 interface Symptom {
@@ -249,7 +249,7 @@ export default function DoctorSymptoms() {
                     <h2 className="text-xl font-bold text-green-800">Symptoms Types</h2>
                     <p className="text-sm text-gray-500 mt-1">Manage different types of symptoms</p>
                   </div>
-                  <motion.button 
+                  <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowAddSymptomModal(true)}
@@ -259,7 +259,7 @@ export default function DoctorSymptoms() {
                   </motion.button>
                 </div>
               </div>
-              
+
               <div className="p-6">
                 {loadingSymptoms ? (
                   <div className="flex justify-center items-center h-64">
@@ -268,7 +268,7 @@ export default function DoctorSymptoms() {
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {symptoms.map((symptom) => (
-                      <motion.div 
+                      <motion.div
                         key={symptom.symptom_id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -325,7 +325,7 @@ export default function DoctorSymptoms() {
                   )}
                 </div>
               </div>
-              
+
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
                 {/* Patient List */}
                 <div className="bg-gray-50 rounded-lg p-4">
