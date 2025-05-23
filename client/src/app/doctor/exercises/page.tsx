@@ -59,6 +59,9 @@ export default function DoctorExercises() {
   const [planFormSuccess, setPlanFormSuccess] = useState("");
   const assignModalRef = useRef(null);
 
+  // New state for recommended exercises
+  const [recommendedExercises, setRecommendedExercises] = useState([]);
+
   // Completed Exercise Logs
   const [completedLogs, setCompletedLogs] = useState([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
@@ -92,10 +95,9 @@ export default function DoctorExercises() {
   const [planToDelete, setPlanToDelete] = useState(null);
   const [isSubmittingEditPlan, setIsSubmittingEditPlan] = useState(false);
   const [editPlanFormError, setEditPlanFormError] = useState("");
-  const [editPlanFormSuccess, setEditPlanFormSuccess] = useState("");
+  const [patientIsSelected, setPatientIsSelected] = useState(false);
   const [isSubmittingDeletePlan, setIsSubmittingDeletePlan] = useState(false);
   const [deletePlanFormError, setDeletePlanFormError] = useState("");
-  const [deletePlanFormSuccess, setDeletePlanFormSuccess] = useState("");
 
   // Edit log modal
   const [showEditLogModal, setShowEditLogModal] = useState(false);
@@ -134,7 +136,6 @@ export default function DoctorExercises() {
   // Fetch logs when selected plan changes
   useEffect(() => {
     if (selectedPatientId && selectedPlanId) {
-      console.log('1');
       fetchCompletedLogs(selectedPlanId);
     } else {
       setCompletedLogs([]);
@@ -162,7 +163,7 @@ export default function DoctorExercises() {
       // Fetch assignments for each type
       const assignments = {};
       for (const type of types) {
-        const assignRes = await doctorService.getSumPatientAssignments(type.exercise_id);
+        const assignRes = await doctorService.getSumPatientExerciseAssignments(type.exercise_id);
         assignments[type.exercise_id] = assignRes.data.totalAssignments;
       }
       setTypeAssignments(assignments);
@@ -181,10 +182,8 @@ export default function DoctorExercises() {
     setLoadingPlans(true);
     setPlanError(null);
     try {
-      console.log(`Fetching exercises for patient ${patientId}`);
       // Using the new patient-specific endpoint
       const res = await doctorService.getPatientExercisesByPatient(patientId);
-      console.log('Patient exercises response:', res.data);
       setPatientExercises(res.data.patientExercises || []);
     } catch (err) {
       console.error("Error fetching patient exercises:", err);
@@ -201,10 +200,8 @@ export default function DoctorExercises() {
     setLoadingLogs(true);
     setLogsError(null);
     try {
-      console.log(`Fetching logs for patient_exercise_id ${patient_exercise_id}`);
       // Using correct parameters for the API call
       const res = await doctorService.getPatientExerciseLogs(patient_exercise_id);
-      console.log('Patient exercise logs response:', res.data);
       setCompletedLogs(res.data.exerciseLogs || []);
     } catch (err) {
       console.error("Error fetching exercise logs:", err);
@@ -218,9 +215,7 @@ export default function DoctorExercises() {
   const fetchPatients = async () => {
     setLoadingPatients(true);
     try {
-      console.log('Fetching patients');
       const res = await doctorService.getPatients();
-      console.log('Patients response:', res.data);
       setPatients(res.data.patients || []);
     } catch (err) {
       console.error("Error fetching patients:", err);
@@ -267,6 +262,17 @@ export default function DoctorExercises() {
       setIsSubmittingType(false);
     }
   };
+  
+  // Fetch exercise recommendations
+  const fetchExerciseRecommendations = async (id) => {
+    try {
+      const res = await doctorService.getExerciseRecommendation(id);
+      setRecommendedExercises(res.data.result_reco || []);
+    } catch (err) {
+      console.error("Error fetching exercise recommendations:", err);
+      setRecommendedExercises([]);
+    }
+  }
 
   // Edit Exercise Type
   const handleEditType = async (e) => {
@@ -348,9 +354,10 @@ export default function DoctorExercises() {
   };
 
   // Selection handlers
-  const handleSelectPatient = (id) => {
+  const handleSelectPatient = async (id) => {
     setSelectedPatientId(id);
     setSelectedPlanId(null);
+
   };
 
   const handleSelectPlan = (id) => {
@@ -475,8 +482,6 @@ export default function DoctorExercises() {
   };
 
   const handleEditLogSubmit = async (e) => {
-    console.log('HIT HIT');
-    console.log('logToEdit', logToEdit);
     e.preventDefault();
     if (!logToEdit) return;
     setIsSubmittingEditLog(true);
@@ -942,6 +947,9 @@ export default function DoctorExercises() {
                           onClick={() => {
                             setAssignData({ ...assignData, patient_id: patient.id });
                             setSearchPatient(patient.full_name);
+                            setPatientIsSelected(true);
+                            // Fetch exercise recommendations when patient is selected (call function)
+                            fetchExerciseRecommendations(patient.id);
                           }}
                           className={`p-4 cursor-pointer transition-colors ${assignData.patient_id === patient.id
                             ? 'bg-green-50 border-l-4 border-green-500'
@@ -985,10 +993,10 @@ export default function DoctorExercises() {
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg mt-2 bg-white">
-                    {searchExercise.trim() === "" ? (
+                    { !patientIsSelected  ? (
                       <div className="p-4 text-center text-gray-500">
                         <ClipboardList size={24} className="mx-auto mb-2" />
-                        <p>Start typing to search exercise types</p>
+                        <p>Start selecting a patient to see the recommended exercises</p>
                       </div>
                     ) : filteredExercises.length === 0 ? (
                       <div className="p-4 text-center text-gray-500">
@@ -996,22 +1004,34 @@ export default function DoctorExercises() {
                         <p>No exercise types found matching "{searchExercise}"</p>
                       </div>
                     ) : (
-                      filteredExercises.map((exercise) => (
-                        <div
-                          key={exercise.exercise_id}
-                          onClick={() => {
-                            setAssignData({ ...assignData, exercise_id: exercise.exercise_id });
-                            setSearchExercise(exercise.exercise_name);
-                          }}
-                          className={`p-4 cursor-pointer transition-colors ${assignData.exercise_id === exercise.exercise_id
-                            ? 'bg-green-50 border-l-4 border-green-500'
-                            : 'hover:bg-green-50'
-                            }`}
-                        >
-                          <div className="font-medium text-green-800">{exercise.exercise_name}</div>
-                          <div className="text-sm text-gray-500 mt-1">{exercise.description}</div>
-                        </div>
-                      ))
+                      filteredExercises.map((exercise) => {
+                        const isRecommended = recommendedExercises.some(rec => rec.exercise_id === exercise.exercise_id);
+                        return (
+                          <div
+                            key={exercise.exercise_id}
+                            onClick={() => {
+                              setAssignData({ ...assignData, exercise_id: exercise.exercise_id });
+                              setSearchExercise(exercise.exercise_name);
+                            }}
+                            className={`p-4 cursor-pointer transition-colors ${assignData.exercise_id === exercise.exercise_id
+                                ? 'bg-green-50 border-l-4 border-green-500'
+                                : 'hover:bg-green-50'
+                              }`}
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <div className="font-medium text-green-800">{exercise.exercise_name}</div>
+                                <div className="text-sm text-gray-500 mt-1">{exercise.description}</div>
+                              </div>
+                              {isRecommended && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  Recommended
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 </div>

@@ -407,7 +407,7 @@ export const doctorService = {
       throw error;
     }
   },
-  getSumPatientAssignments: async (exercise_id) => {
+  getSumPatientExerciseAssignments: async (exercise_id) => {
     try {
       const response = await api.get(`/exercise-types/${exercise_id}/sum-patient-assignments`);
       return response;
@@ -518,6 +518,24 @@ export const doctorService = {
     }
   },
 
+  // --- EXERCISE RECOMMENDATION ---
+  getExerciseRecommendation: async (patient_id) => { // Returning the recommended exercise ID.
+    try {
+      console.log(patient_id);
+      const response = await api.get(`/exercise-recommendation/${patient_id}`);
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
+
+
+
+
+
+
 
 
 
@@ -557,7 +575,7 @@ export const doctorService = {
       throw error;
     }
   },
-  getSumPatientAssignments: async (diet_id) => {
+  getSumPatientDietAssignments: async (diet_id) => {
     try {
       const response = await api.get(`/diet-types/${diet_id}/sum-patient-assignments`);
       return response;

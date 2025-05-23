@@ -791,7 +791,7 @@ app.get('/symptoms/patient/:patient_id', authenticate, authorize('admin', 'docto
   const query = `SELECT * FROM patient_symptoms 
   INNER JOIN symptom_types ON patient_symptoms.symptom_id = symptom_types.symptom_id
   WHERE patient_symptoms.patient_id = $1`;
-  try { 
+  try {
     const result = await pool.query(query, [patient_id]);
     const symptoms = result.rows;
 
@@ -808,7 +808,7 @@ app.post('/symptoms/patient/add', authenticate, authorize('admin', 'doctor'), as
 
   if (!patient_id || !symptom_id) {
     return res.status(400).json({ message: 'Patient ID and symptom ID are required' });
-  }   
+  }
 
   const query = `INSERT INTO patient_symptoms (patient_id, symptom_id) VALUES ($1, $2) RETURNING *`;
   try {
@@ -886,7 +886,7 @@ app.post('/blood-sugar-measurements/patient/add', authenticate, authorize('admin
   if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
-  
+
   const query = `INSERT INTO blood_sugar_measurements (patient_id, value, measured_at) VALUES ($1, $2, $3) RETURNING *`;
   try {
     const result = await pool.query(query, [patient_id, value, measured_at]);
@@ -930,7 +930,7 @@ app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id
   if (!blood_sugar_measurement_id) {
     return res.status(400).json({ message: 'Blood sugar measurement ID is required' });
   }
-  
+
   if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
@@ -947,7 +947,7 @@ app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id
 
 
 
-  
+
 
 
 
@@ -1021,7 +1021,7 @@ app.post('/exercise-types/update', authenticate, authorize('admin', 'doctor'), a
 
 
 app.delete('/exercise-types/:exercise_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  
+
   const { exercise_id } = req.params;
 
   if (!exercise_id) {
@@ -1131,7 +1131,7 @@ app.put('/patient-exercises/patient/update', authenticate, authorize('admin', 'd
   const { patient_exercise_id, patient_id, exercise_id, status, start_date, end_date } = req.body;
 
   const doctor_id = req.user.id;
-  
+
   if (!patient_exercise_id || !patient_id || !exercise_id || !doctor_id || !status || !start_date) {
     return res.status(400).json({ message: 'All fields are required' });
   }
@@ -1267,7 +1267,7 @@ app.get('/exercise-logs/', authenticate, authorize('admin', 'doctor'), async (re
     INNER JOIN patient_exercises ON exercise_logs.patient_exercise_id = patient_exercises.id
     INNER JOIN exercise_types ON patient_exercises.exercise_id = exercise_types.exercise_id
     ORDER BY log_date DESC`;
-  try { 
+  try {
     const result = await pool.query(query);
     const exerciseLogs = result.rows;
     res.status(200).json({
@@ -1365,22 +1365,22 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
   if (!exercise_logs_id || is_completed === undefined || !note) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-  console.log('exercise_logs_id', exercise_logs_id);  
+  console.log('exercise_logs_id', exercise_logs_id);
   console.log('is_completed', is_completed);
   console.log('note', note);
-  
+
   try {
     // First verify the log exists and user has access
     const verifyQuery = `SELECT * FROM exercise_logs WHERE exercise_logs_id = $1`;
     const verifyResult = await pool.query(verifyQuery, [exercise_logs_id]);
-    
+
     if (verifyResult.rows.length === 0) {
       console.log('Exercise log not found');
       return res.status(404).json({ message: 'Exercise log not found' });
     }
 
     const log = verifyResult.rows[0];
-    
+
     // Check if user has permission to update this log
     if (req.user.role === 'patient' && req.user.id !== log.patient_id) {
       return res.status(403).json({ message: 'Access denied' });
@@ -1388,7 +1388,7 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
 
     const query = `UPDATE exercise_logs SET is_completed = $1, note = $2 WHERE exercise_logs_id = $3 RETURNING *`;
     const result = await pool.query(query, [is_completed, note, exercise_logs_id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Exercise log not found' });
     }
@@ -1420,6 +1420,145 @@ app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, auth
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
+app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+
+  const { patient_id } = req.params;
+
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  try {
+    // Check if we already have a current recommendation for this patient
+    const existingRecommendation = await pool.query(`
+      SELECT 
+        patient_exercise_recommendations.recommendation_id,
+        exercise_types.exercise_id, 
+        exercise_types.exercise_name,
+        patient_exercise_recommendations.recommended_at
+      FROM patient_exercise_recommendations
+      INNER JOIN exercise_types ON patient_exercise_recommendations.exercise_id = exercise_types.exercise_id
+      WHERE patient_exercise_recommendations.patient_id = $1 AND patient_exercise_recommendations.is_current = true
+      ORDER BY patient_exercise_recommendations.recommended_at DESC
+      LIMIT 1
+    `, [patient_id]);
+    
+    if (existingRecommendation.rows.length > 0) {
+      return res.status(200).json({
+        message: 'Exercise recommendation retrieved successfully',
+        result_reco: existingRecommendation.rows
+      });
+    }
+
+    // Get patient symptoms
+    const symptom = await pool.query(`
+      SELECT symptom_types.symptom_name 
+      FROM patient_symptoms
+      INNER JOIN symptom_types ON patient_symptoms.symptom_id = symptom_types.symptom_id
+      WHERE patient_symptoms.patient_id = $1
+    `, [patient_id]);
+
+    const symptom_names = symptom.rows.map(row => row.symptom_name);
+
+    // Get blood sugar measurements and calculate average
+    const blood_sugar_result = await pool.query(`
+      SELECT AVG(value) as average_blood_sugar 
+      FROM blood_sugar_measurements 
+      WHERE patient_id = $1
+    `, [patient_id]);
+
+    const average_blood_sugar = blood_sugar_result.rows[0].average_blood_sugar || 0;
+
+    // Find matching recommendation rule
+    const matchingRule = await pool.query(`
+      SELECT 
+        exercise_recommendation_rules.rule_id,
+        exercise_recommendation_rules.exercise_id,
+        exercise_types.exercise_name,
+        exercise_recommendation_rules.required_symptoms
+      FROM exercise_recommendation_rules
+      LEFT JOIN exercise_types ON exercise_recommendation_rules.exercise_id = exercise_types.exercise_id
+        AND (exercise_recommendation_rules.min_blood_sugar IS NULL OR $1 >= exercise_recommendation_rules.min_blood_sugar)
+        AND (exercise_recommendation_rules.max_blood_sugar IS NULL OR $1 < exercise_recommendation_rules.max_blood_sugar)
+        AND symptoms_match($2::text[], exercise_recommendation_rules.required_symptoms)
+      LIMIT 1
+    `, [average_blood_sugar, symptom_names]);
+
+    let recommendedExercise = null;
+    let ruleId = null;
+
+    if (matchingRule.rows.length > 0) {
+      const rule = matchingRule.rows[0];
+      console.log(matchingRule);
+      ruleId = rule.rule_id;
+      
+      if (rule.exercise_id) {
+        recommendedExercise = {
+          exercise_id: rule.exercise_id,
+          exercise_name: rule.exercise_name
+        };
+      }
+    }
+
+    // Store the recommendation in the database
+    await pool.query(`
+      INSERT INTO patient_exercise_recommendations 
+      (patient_id, exercise_id, rule_id, average_blood_sugar, symptoms_matched)
+      VALUES ($1, $2, $3, $4, $5)
+    `, [patient_id, recommendedExercise?.exercise_id || null, ruleId, average_blood_sugar, symptom_names]);
+
+    console.log('recommendedExercise', recommendedExercise);
+    res.status(200).json({
+      message: 'Exercise recommendation retrieved successfully',
+      result_reco: recommendedExercise,
+    });
+
+  } catch (error) {
+    console.error('Error in exercise recommendation:', error);
+    res.status(500).json({ 
+      message: 'Internal server error while generating exercise recommendation' 
+    });
+  }
+});
+
+// Additional endpoint to get recommendation history
+app.get('/exercise-recommendation-history/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { patient_id } = req.params;
+
+  try {
+    const recommendations = await pool.query(`
+      SELECT 
+        patient_exercise_recommendations.recommendation_id,
+        exercise_types.exercise_id,
+        exercise_types.exercise_name,
+        patient_exercise_recommendations.average_blood_sugar,
+        patient_exercise_recommendations.symptoms_matched,
+        patient_exercise_recommendations.recommended_at,
+        patient_exercise_recommendations.is_current,
+        exercise_recommendation_rules.rule_name
+      FROM patient_exercise_recommendations
+      LEFT JOIN exercise_types ON patient_exercise_recommendations.exercise_id = exercise_types.exercise_id
+      LEFT JOIN exercise_recommendation_rules ON patient_exercise_recommendations.rule_id = exercise_recommendation_rules.rule_id
+      WHERE patient_exercise_recommendations.patient_id = $1
+      ORDER BY patient_exercise_recommendations.recommended_at DESC
+    `, [patient_id]);
+
+    res.status(200).json({
+      message: 'Exercise recommendation history retrieved successfully',
+      recommendations: recommendations.rows
+    });
+
+  } catch (error) {
+    console.error('Error retrieving recommendation history:', error);
+    res.status(500).json({ 
+      message: 'Internal server error while retrieving recommendation history' 
+    });
+  }
+});
+
+
 
 
 
@@ -1490,7 +1629,7 @@ app.post('/diet-types/update', authenticate, authorize('admin', 'doctor'), async
 
 
 app.delete('/diet-types/:diet_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  
+
   const { diet_id } = req.params;
 
   if (!diet_id) {
@@ -1600,7 +1739,7 @@ app.put('/patient-diets/patient/update', authenticate, authorize('admin', 'docto
   const { patient_diet_id, patient_id, diet_id, status, start_date, end_date } = req.body;
 
   const doctor_id = req.user.id;
-  
+
   if (!patient_diet_id || !patient_id || !diet_id || !doctor_id || !status || !start_date) {
     return res.status(400).json({ message: 'All fields are required' });
   }
@@ -1736,7 +1875,7 @@ app.get('/diet-logs/', authenticate, authorize('admin', 'doctor'), async (req, r
     INNER JOIN patient_diets ON diet_logs.patient_diet_id = patient_diets.id
     INNER JOIN diet_types ON patient_diets.diet_id = diet_types.diet_id
     ORDER BY log_date DESC`;
-  try { 
+  try {
     const result = await pool.query(query);
     const dietLogs = result.rows;
     res.status(200).json({
@@ -1805,7 +1944,7 @@ app.get('/diet-logs/patient/:patient_diet_id', authenticate, authorize('admin', 
 app.post('/diet-logs/patient/add', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { patient_diet_id, log_date, is_completed, note } = req.body;
 
-  console.log('body', req.body);
+
 
   if (!patient_diet_id || !log_date || is_completed === undefined || !note) {
     return res.status(400).json({ message: 'All fields are required' });
@@ -1834,22 +1973,20 @@ app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 
   if (!diet_logs_id || is_completed === undefined || !note) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-  console.log('diet_logs_id', diet_logs_id);  
-  console.log('is_completed', is_completed);
-  console.log('note', note);
-  
+
+
   try {
     // First verify the log exists and user has access
     const verifyQuery = `SELECT * FROM diet_logs WHERE diet_logs_id = $1`;
     const verifyResult = await pool.query(verifyQuery, [diet_logs_id]);
-    
+
     if (verifyResult.rows.length === 0) {
       console.log('Diet log not found');
       return res.status(404).json({ message: 'Diet log not found' });
     }
 
     const log = verifyResult.rows[0];
-    
+
     // Check if user has permission to update this log
     if (req.user.role === 'patient' && req.user.id !== log.patient_id) {
       return res.status(403).json({ message: 'Access denied' });
@@ -1857,7 +1994,7 @@ app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 
 
     const query = `UPDATE diet_logs SET is_completed = $1, note = $2 WHERE diet_logs_id = $3 RETURNING *`;
     const result = await pool.query(query, [is_completed, note, diet_logs_id]);
-    
+
     if (result.rows.length === 0) {
       return res.status(404).json({ message: 'Diet log not found' });
     }

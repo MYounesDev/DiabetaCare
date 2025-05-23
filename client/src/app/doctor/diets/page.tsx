@@ -162,7 +162,7 @@ export default function DoctorDiets() {
       // Fetch assignments for each type
       const assignments = {};
       for (const type of types) {
-        const assignRes = await doctorService.getSumPatientAssignments(type.diet_id);
+        const assignRes = await doctorService.getSumPatientDietAssignments(type.diet_id);
         assignments[type.diet_id] = assignRes.data.totalAssignments;
       }
       setTypeAssignments(assignments);
