@@ -2031,6 +2031,67 @@ app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('a
 
 
 
+app.get('/patient/dashboard/stats', authenticate, authorize('patient'), async (req, res) => {
+  try {
+    const patient_id = req.user.id;
+
+    // Get assigned exercises count
+    const exercisesQuery = `
+      SELECT 
+        COUNT(*) as total_exercises,
+        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_exercises
+      FROM patient_exercises 
+      WHERE patient_id = $1`;
+    const exercisesResult = await pool.query(exercisesQuery, [patient_id]);
+    const totalExercises = exercisesResult.rows[0].total_exercises || 0;
+    const completedExercises = exercisesResult.rows[0].completed_exercises || 0;
+    const exerciseCompletionRate = totalExercises > 0 
+      ? Math.round((completedExercises / totalExercises) * 100) 
+      : 0;
+
+    // Get assigned diet plans count
+    const dietsQuery = `
+      SELECT COUNT(*) as total_diets 
+      FROM patient_diets 
+      WHERE patient_id = $1`;
+    const dietsResult = await pool.query(dietsQuery, [patient_id]);
+    const totalDiets = dietsResult.rows[0].total_diets || 0;
+
+    // Get recent blood sugar measurements (last 7 days)
+    const bloodSugarQuery = `
+      SELECT COUNT(*) as recent_measurements 
+      FROM blood_sugar_measurements 
+      WHERE patient_id = $1 
+      AND measured_at > NOW() - INTERVAL '7 days'`;
+    const bloodSugarResult = await pool.query(bloodSugarQuery, [patient_id]);
+    const recentBloodSugarMeasurements = bloodSugarResult.rows[0].recent_measurements || 0;
+
+    // Get recent symptoms (last 7 days)
+    const symptomsQuery = `
+      SELECT COUNT(*) as recent_symptoms 
+      FROM patient_symptoms 
+      WHERE patient_id = $1 
+      AND created_at > NOW() - INTERVAL '7 days'`;
+    const symptomsResult = await pool.query(symptomsQuery, [patient_id]);
+    const recentSymptoms = symptomsResult.rows[0].recent_symptoms || 0;
+
+    res.json({
+      stats: {
+        totalExercises,
+        completedExercises,
+        exerciseCompletionRate,
+        totalDiets,
+        recentBloodSugarMeasurements,
+        recentSymptoms
+      }
+    });
+
+  } catch (error) {
+    console.error('Error retrieving patient dashboard stats:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
 app.listen(PORT, async () => {
 
   console.log(`Server is running on http://localhost:${PORT}`);

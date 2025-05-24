@@ -86,7 +86,7 @@ export default function SideBar({ role }: SideBarProps) {
               <Droplet className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Blood Sugar</span>}
             </Link>
-            <Link href="/patient/doctor" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+            <Link href="/patient/my-doctor" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <Stethoscope className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">My Doctor</span>}
             </Link>

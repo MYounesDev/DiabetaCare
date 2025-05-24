@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import PatientList from '@/app/doctor/diets/PatientList';
 import PatientPlans from './PatientPlans';
-import DietLogsCalendar from '@/app/doctor/diets/DietLogsCalendar';
+import DietLogsCalendar from '@/components/DietLogsCalendar';
 
 export default function DoctorDiets() {
   // Diet Types

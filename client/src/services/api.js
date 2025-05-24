@@ -693,8 +693,30 @@ export const doctorService = {
 
 };
 
-export const usersControl = {
 
+// Patient Services
+export const patientService = {
+  // Get dashboard statistics
+  getDashboardStats: async () => {
+    try {
+      const response = await api.get('/patient/dashboard/stats');
+      return response.data.stats;
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+      throw error;
+    }
+  },
+
+  // Exercise related functions
+  addExerciseLog: doctorService.addExerciseLog,
+  getPatientExercisesByPatient: doctorService.getPatientExercisesByPatient,
+  getPatientExerciseLogs: doctorService.getPatientExerciseLogs,
+  updateExerciseLog: doctorService.updateExerciseLog,
+  deleteExerciseLog: doctorService.deleteExerciseLog
+}
+
+
+export const usersControl = {
 }
 
 

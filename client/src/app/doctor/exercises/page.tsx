@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import PatientList from '@/app/doctor/exercises/PatientList';
 import PatientPlans from './PatientPlans';
-import ExerciseLogsCalendar from '@/app/doctor/exercises/ExerciseLogsCalendar';
+import ExerciseLogsCalendar from '@/components/ExerciseLogsCalendar';
 
 export default function DoctorExercises() {
   // Exercise Types
