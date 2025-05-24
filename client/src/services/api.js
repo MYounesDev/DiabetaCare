@@ -733,6 +733,22 @@ export const patientService = {
   addBloodSugarMeasurement: doctorService.addBloodSugarMeasurement,
   updateBloodSugarMeasurement: doctorService.updateBloodSugarMeasurement,
   deleteBloodSugarMeasurement: doctorService.deleteBloodSugarMeasurement,
+
+
+
+
+
+  // --- DOCTOR ---
+  getDoctor: async () => {
+    try {
+      const response = await api.get('/patient/doctor');
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+
 }
 
 

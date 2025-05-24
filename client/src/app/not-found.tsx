@@ -1,11 +1,10 @@
 "use client";
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { authService } from '@/services/api';
-import { AlertTriangle, Home, LogOut, Hospital, Lock, HelpCircle, MessageCircle, X } from 'lucide-react';
+import { Hospital, Home, Search, AlertTriangle, X, HelpCircle, MessageCircle, ArrowLeft } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function Unauthorized() {
+export default function NotFound() {
   const [animate, setAnimate] = useState(false);
   const [showHelpModal, setShowHelpModal] = useState(false);
   const [showSupportModal, setShowSupportModal] = useState(false);
@@ -16,12 +15,9 @@ export default function Unauthorized() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleLogout = () => {
-    authService.logout();
-  };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-950 to-teal-300 p-4">
+      {/* Animated background particles */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-full">
           {Array(20).fill(0).map((_, i) => (
@@ -44,8 +40,8 @@ export default function Unauthorized() {
           ))}
         </div>
       </div>
-      
-      <motion.div 
+
+      <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
@@ -58,39 +54,49 @@ export default function Unauthorized() {
             <h1 className="text-2xl font-bold text-green-600">DiabetaCare</h1>
           </div>
           
-          {/* Icon and header */}
+          {/* 404 Icon and header */}
           <motion.div 
             className="flex flex-col items-center mb-8"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.2, duration: 0.5 }}
           >
-            <div className="p-4 rounded-full bg-red-500/10 mb-4">
+            <div className="p-4 rounded-full bg-yellow-500/10 mb-4">
               <motion.div
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 2 }}
+                animate={{ 
+                  rotate: [0, -10, 10, -10, 0],
+                  scale: [1, 1.1, 1, 1.1, 1]
+                }}
+                transition={{ 
+                  duration: 4,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
               >
-                <Lock size={40} className="text-red-500" />
+                <Search size={40} className="text-yellow-500" />
               </motion.div>
             </div>
-            <h2 className="text-3xl font-bold text-green-800 mb-2">
-              Access Denied
+            <h2 className="text-4xl font-bold text-green-800 mb-2">
+              404
             </h2>
+            <h3 className="text-xl font-semibold text-green-700 mb-2">
+              Page Not Found
+            </h3>
             <div className="h-1 w-16 bg-gradient-to-r from-green-500 to-teal-500 rounded-full mt-1"></div>
           </motion.div>
           
           {/* Message */}
-          <motion.p 
+          <motion.p
             className="text-green-700 text-center mb-8 px-6"
             initial={{ y: 20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.4, duration: 0.5 }}
           >
-            You don't have permission to access this resource. Please contact your administrator if you believe this is an error.
+            Oops! The page you're looking for seems to have wandered off. Let's get you back on track.
           </motion.p>
           
           {/* Action buttons */}
-          <div className="space-y-4 pt-2">
+          <div className="space-y-4">
             <motion.div
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -98,34 +104,34 @@ export default function Unauthorized() {
               className="hover:scale-105 transition-transform duration-300"
             >
               <Link 
-                href={`/${JSON.parse(localStorage.getItem('user') || '{}').role}/home`}
+                href="/"
                 className="group flex items-center justify-center w-full py-3 px-4 rounded-xl bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-medium transition-all duration-300 shadow-lg shadow-green-500/30 hover:shadow-green-600/40"
               >
                 <Home size={18} className="mr-2 group-hover:scale-110 transition-transform duration-300" />
-                Return to Home
+                Return Home
               </Link>
             </motion.div>
-            
+
             <div className="flex gap-2">
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.8, duration: 0.5 }}
+                transition={{ delay: 0.7, duration: 0.5 }}
                 className="flex-1 hover:scale-105 transition-transform duration-300"
               >
                 <button
-                  onClick={handleLogout}
+                  onClick={() => window.history.back()}
                   className="group flex items-center justify-center w-full py-3 px-4 rounded-xl bg-white border border-gray-200 hover:bg-gray-50 text-green-700 font-medium transition-all duration-300 shadow-md hover:shadow-lg"
                 >
-                  <LogOut size={18} className="mr-2 group-hover:scale-110 transition-transform duration-300" />
-                  Logout
+                  <ArrowLeft size={18} className="mr-2 group-hover:scale-110 transition-transform duration-300" />
+                  Go Back
                 </button>
               </motion.div>
-              
+
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.9, duration: 0.5 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
                 className="hover:scale-105 transition-transform duration-300"
               >
                 <button
@@ -135,11 +141,11 @@ export default function Unauthorized() {
                   <HelpCircle size={18} className="group-hover:scale-110 transition-transform duration-300" />
                 </button>
               </motion.div>
-              
+
               <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1, duration: 0.5 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
                 className="hover:scale-105 transition-transform duration-300"
               >
                 <button
@@ -152,7 +158,7 @@ export default function Unauthorized() {
             </div>
           </div>
         </div>
-        
+
         {/* Help Modal */}
         {showHelpModal && (
           <motion.div
@@ -180,21 +186,21 @@ export default function Unauthorized() {
               </div>
               <div className="space-y-4">
                 <div className="p-4 bg-green-50 rounded-xl">
-                  <h4 className="font-semibold text-green-700 mb-2">Common Reasons for Access Denial:</h4>
+                  <h4 className="font-semibold text-green-700 mb-2">Common Reasons for 404 Error:</h4>
                   <ul className="list-disc list-inside text-green-600 space-y-2">
-                    <li>Insufficient permissions for the requested resource</li>
-                    <li>Session expired or invalid</li>
-                    <li>Account restrictions</li>
-                    <li>System maintenance</li>
+                    <li>The page has been moved or deleted</li>
+                    <li>URL was typed incorrectly</li>
+                    <li>Outdated bookmark or link</li>
+                    <li>Temporary system issue</li>
                   </ul>
                 </div>
                 <div className="p-4 bg-blue-50 rounded-xl">
                   <h4 className="font-semibold text-blue-700 mb-2">What You Can Do:</h4>
                   <ul className="list-disc list-inside text-blue-600 space-y-2">
-                    <li>Verify your account permissions</li>
-                    <li>Try logging out and back in</li>
-                    <li>Contact your system administrator</li>
-                    <li>Submit a support ticket</li>
+                    <li>Double-check the URL for typos</li>
+                    <li>Try using the search function</li>
+                    <li>Return to the homepage</li>
+                    <li>Contact support if the issue persists</li>
                   </ul>
                 </div>
               </div>
@@ -219,7 +225,7 @@ export default function Unauthorized() {
               className="bg-white rounded-2xl p-6 w-full max-w-md shadow-xl"
             >
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-green-800">Contact Support</h3>
+                <h3 className="text-xl font-bold text-green-800">Report Missing Page</h3>
                 <button
                   onClick={() => setShowSupportModal(false)}
                   className="p-1 rounded-full hover:bg-gray-100 transition-colors"
@@ -233,21 +239,21 @@ export default function Unauthorized() {
                   <input
                     type="text"
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
-                    placeholder="Access Issue"
+                    placeholder="Missing Page Report"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Message</label>
                   <textarea
                     className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors h-32"
-                    placeholder="Please describe your issue..."
+                    placeholder="Please describe what you were looking for..."
                   ></textarea>
                 </div>
                 <button
                   type="submit"
                   className="w-full py-3 px-4 rounded-xl bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white font-medium transition-all duration-300 shadow-lg shadow-green-500/30 hover:shadow-green-600/40"
                 >
-                  Send Message
+                  Send Report
                 </button>
               </form>
             </motion.div>

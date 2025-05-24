@@ -2170,6 +2170,46 @@ app.get('/patient/dashboard/stats', authenticate, authorize('patient'), async (r
   }
 });
 
+
+
+
+
+app.get('/patient/doctor', authenticate, authorize('patient'), async (req, res) => {
+  const patient_id = req.user.id;
+  // Get assigned doctor
+  const doctorQuery = `
+    SELECT 
+      users.id as doctor_id,
+      users.full_name as doctor_name,
+      users.email as doctor_email,
+      users.phone_number as doctor_phone,
+      users.profile_picture as doctor_image
+    FROM patient_doctor
+    INNER JOIN users ON patient_doctor.doctor_id = users.id
+    WHERE patient_doctor.patient_id = $1`;
+  
+    try {
+
+    const doctorResult = await pool.query(doctorQuery, [patient_id]);
+    const doctor = doctorResult.rows[0];
+
+    res.status(200).json({
+      message: 'Doctor retrieved successfully',
+      doctor: doctor
+    });
+  } catch (error) {
+    console.error('Error retrieving doctor:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
 app.listen(PORT, async () => {
 
   console.log(`Server is running on http://localhost:${PORT}`);

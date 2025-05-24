@@ -55,10 +55,6 @@ export default function SideBar({ role }: SideBarProps) {
               <Droplet className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Blood Sugar</span>}
             </Link>
-            <Link href="/doctor/appointments" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
-              <Calendar className="text-green-500" size={20} />
-              {isOpen && <span className="text-green-700">Appointments</span>}
-            </Link>
             <Link href="/doctor/reports" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <FileText className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Reports</span>}
@@ -89,10 +85,6 @@ export default function SideBar({ role }: SideBarProps) {
             <Link href="/patient/my-doctor" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <Stethoscope className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">My Doctor</span>}
-            </Link>
-            <Link href="/patient/appointments" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
-              <Calendar className="text-green-500" size={20} />
-              {isOpen && <span className="text-green-700">Appointments</span>}
             </Link>
           </>
         ) : (
