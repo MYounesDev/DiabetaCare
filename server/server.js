@@ -781,11 +781,15 @@ app.delete('/symptom_types/:symptom_id', authenticate, authorize('admin', 'docto
 });
 
 
-app.get('/symptoms/patient/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+app.get('/symptoms/patient/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { patient_id } = req.params;
 
   if (!patient_id) {
     return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
   }
 
   const query = `SELECT * FROM patient_symptoms 
@@ -900,21 +904,33 @@ app.post('/blood-sugar-measurements/patient/add', authenticate, authorize('admin
 
 
 app.put('/blood-sugar-measurements/patient/update', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
-  const { blood_sugar_measurement_id, patient_id, value, measured_at } = req.body;
+  const { blood_sugar_measurement_id, value, measured_at } = req.body;
 
-  if (!blood_sugar_measurement_id || !patient_id || !value || !measured_at) {
+  if (!blood_sugar_measurement_id || !value || !measured_at) {
+    console.log(req.body);
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
-    return res.status(403).json({ message: 'Access denied' });
-  }
-
-  const query = `UPDATE blood_sugar_measurements
-  SET patient_id = $1, value = $2, measured_at = $3
-  WHERE blood_sugar_measurement_id = $4 RETURNING *`;
   try {
-    const result = await pool.query(query, [patient_id, value, measured_at, blood_sugar_measurement_id]);
+    if (req.user.role_id === 'patient') {
+      const checkQuery = await pool.query(`SELECT * 
+  FROM blood_sugar_measurements
+  INNER JOIN users ON blood_sugar_measurements.patient_id = users.id
+  WHERE blood_sugar_measurement_id = $1`, [blood_sugar_measurement_id]);
+
+      const checkResult = await pool.query(checkQuery, [blood_sugar_measurement_id]);
+      const patient_id = checkResult.rows[0].patient_id;
+
+
+      if (req.user.id !== patient_id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+    }
+
+    const query = `UPDATE blood_sugar_measurements
+  SET value = $1, measured_at = $2
+  WHERE blood_sugar_measurement_id = $3 RETURNING *`;
+    const result = await pool.query(query, [value, measured_at, blood_sugar_measurement_id]);
     const updatedBloodSugarMeasurement = result.rows[0];
     res.status(200).json({ updatedBloodSugarMeasurement });
   } catch (error) {
@@ -931,12 +947,24 @@ app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id
     return res.status(400).json({ message: 'Blood sugar measurement ID is required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
-    return res.status(403).json({ message: 'Access denied' });
-  }
-
-  const query = `DELETE FROM blood_sugar_measurements WHERE blood_sugar_measurement_id = $1`;
   try {
+    if (req.user.role_id === 'patient') {
+      const checkQuery = await pool.query(`SELECT * 
+  FROM blood_sugar_measurements
+  INNER JOIN users ON blood_sugar_measurements.patient_id = users.id
+  WHERE blood_sugar_measurement_id = $1`, [blood_sugar_measurement_id]);
+
+      const checkResult = await pool.query(checkQuery, [blood_sugar_measurement_id]);
+      const patient_id = checkResult.rows[0].patient_id;
+
+
+      if (req.user.id !== patient_id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+    }
+
+    const query = `DELETE FROM blood_sugar_measurements WHERE blood_sugar_measurement_id = $1`;
+
     const result = await pool.query(query, [blood_sugar_measurement_id]);
     res.status(200).json({ message: 'Blood sugar measurement deleted successfully' });
   } catch (error) {
@@ -2040,10 +2068,10 @@ app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 
 });
 
 
-app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('admin', 'doctor','patient'), async (req, res) => {
+app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { diet_logs_id } = req.params;
 
-  console.log("diet_logs_id",diet_logs_id);
+  console.log("diet_logs_id", diet_logs_id);
   if (!diet_logs_id) {
     return res.status(400).json({ message: 'Diet log ID is required' });
   }
@@ -2065,7 +2093,7 @@ app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('a
       const log = verifyResult.rows[0];
 
       if (req.user.id !== log.patient_id) {
-        console.log("sss",log.patient_id);
+        console.log("sss", log.patient_id);
         return res.status(403).json({ message: 'Access denied' });
       }
     }

@@ -4,7 +4,7 @@ import { doctorService } from "@/services/api";
 import PageTemplate from "@/components/PageTemplate";
 import AuthWrapper from "@/components/AuthWrapper";
 import PatientList from '@/app/doctor/exercises/PatientList';
-import BloodSugarCalendar, { BloodSugarMeasurement } from './BloodSugarCalendar';
+import BloodSugarCalendar, { BloodSugarMeasurement } from '../../../components/BloodSugarCalendar';
 
 interface Patient {
   id: string;

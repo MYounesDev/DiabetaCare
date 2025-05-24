@@ -707,7 +707,7 @@ export const patientService = {
     }
   },
 
-  // Exercise related functions
+  // --- EXERCISE LOGS ---
   addExerciseLog: doctorService.addExerciseLog,
   getPatientExercisesByPatient: doctorService.getPatientExercisesByPatient,
   getPatientExerciseLogs: doctorService.getPatientExerciseLogs,
@@ -715,12 +715,24 @@ export const patientService = {
   deleteExerciseLog: doctorService.deleteExerciseLog,
 
 
-  // Diet related functions
+  // --- DIET LOGS ---
   addDietLog: doctorService.addDietLog,
   getPatientDietsByPatient: doctorService.getPatientDietsByPatient,
   getPatientDietLogs: doctorService.getPatientDietLogs,
   updateDietLog: doctorService.updateDietLog,
   deleteDietLog: doctorService.deleteDietLog,
+
+
+  // --- SYMPTOMS ---
+  getPatientSymptoms: doctorService.getPatientSymptoms,
+  
+  
+
+  // --- BLOOD SUGAR MEASUREMENTS ---
+  getBloodSugarMeasurements: doctorService.getBloodSugarMeasurements,
+  addBloodSugarMeasurement: doctorService.addBloodSugarMeasurement,
+  updateBloodSugarMeasurement: doctorService.updateBloodSugarMeasurement,
+  deleteBloodSugarMeasurement: doctorService.deleteBloodSugarMeasurement,
 }
 
 
