@@ -1365,9 +1365,6 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
   if (!exercise_logs_id || is_completed === undefined || !note) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-  console.log('exercise_logs_id', exercise_logs_id);
-  console.log('is_completed', is_completed);
-  console.log('note', note);
 
   try {
     // First verify the log exists and user has access
@@ -2004,21 +2001,26 @@ app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 
 
   try {
     // First verify the log exists and user has access
-    const verifyQuery = `SELECT * FROM diet_logs WHERE diet_logs_id = $1`;
-    const verifyResult = await pool.query(verifyQuery, [diet_logs_id]);
+    if (req.user.role === 'patient') {
+      const verifyQuery = `SELECT *
+    FROM diet_logs 
+    INNER JOIN patient_diets ON diet_logs.patient_diet_id = patient_diets.id
+    INNER JOIN users ON patient_diets.patient_id = users.id
+    WHERE diet_logs_id = $1`;
+      const verifyResult = await pool.query(verifyQuery, [diet_logs_id]);
 
-    if (verifyResult.rows.length === 0) {
-      console.log('Diet log not found');
-      return res.status(404).json({ message: 'Diet log not found' });
+      if (verifyResult.rows.length === 0) {
+        console.log('Diet log not found');
+        return res.status(404).json({ message: 'Diet log not found' });
+      }
+
+      const log = verifyResult.rows[0];
+
+      // Check if user has permission to update this log
+      if (req.user.id !== log.patient_id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
     }
-
-    const log = verifyResult.rows[0];
-
-    // Check if user has permission to update this log
-    if (req.user.role === 'patient' && req.user.id !== log.patient_id) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
     const query = `UPDATE diet_logs SET is_completed = $1, note = $2 WHERE diet_logs_id = $3 RETURNING *`;
     const result = await pool.query(query, [is_completed, note, diet_logs_id]);
 
@@ -2038,14 +2040,35 @@ app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 
 });
 
 
-app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('admin', 'doctor','patient'), async (req, res) => {
   const { diet_logs_id } = req.params;
 
+  console.log("diet_logs_id",diet_logs_id);
   if (!diet_logs_id) {
     return res.status(400).json({ message: 'Diet log ID is required' });
   }
 
   try {
+
+    if (req.user.role === 'patient') {
+      const verifyQuery = `SELECT *
+    FROM diet_logs 
+    INNER JOIN patient_diets ON diet_logs.patient_diet_id = patient_diets.id
+    INNER JOIN users ON patient_diets.patient_id = users.id
+    WHERE diet_logs_id = $1`;
+      const verifyResult = await pool.query(verifyQuery, [diet_logs_id]);
+
+      if (verifyResult.rows.length === 0) {
+        return res.status(404).json({ message: 'Diet log not found' });
+      }
+
+      const log = verifyResult.rows[0];
+
+      if (req.user.id !== log.patient_id) {
+        console.log("sss",log.patient_id);
+        return res.status(403).json({ message: 'Access denied' });
+      }
+    }
     const result = await pool.query('DELETE FROM diet_logs WHERE diet_logs_id = $1', [diet_logs_id]);
     res.status(200).json({ message: 'Diet log deleted successfully' });
   } catch (error) {

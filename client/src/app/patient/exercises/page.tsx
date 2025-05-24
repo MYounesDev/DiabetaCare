@@ -197,13 +197,26 @@ export default function PatientExercises() {
   };
 
   const handleDeleteLog = async (log: ExerciseLog) => {
+    if (!log || !log.exercise_logs_id) {
+      setEditLogFormError("Invalid log selected");
+      return;
+    }
+    setIsSubmittingEditLog(true);
+    setEditLogFormError("");
+    setEditLogFormSuccess("");
     try {
       await patientService.deleteExerciseLog(log.exercise_logs_id);
+      setEditLogFormSuccess("Log deleted successfully!");
+      setShowEditLogModal(false);
+      setLogToEdit(null);
       if (selectedExercise) {
         fetchExerciseLogs(selectedExercise.id);
       }
     } catch (err) {
-      console.error("Error deleting log:", err);
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete log";
+      setEditLogFormError(errorMessage);
+    } finally {
+      setIsSubmittingEditLog(false);
     }
   };
 
@@ -477,16 +490,14 @@ export default function PatientExercises() {
                     >
                       Cancel
                     </button>
-                    {logToEdit?.exercise_logs_id && (
-                      <button
-                        type="button"
-                        onClick={() => handleDeleteLog(logToEdit)}
-                        disabled={isSubmittingEditLog}
-                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
-                      >
-                        {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />} Delete
-                      </button>
-                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteLog(logToEdit)}
+                      disabled={isSubmittingEditLog}
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    >
+                      {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />} Delete
+                    </button>
                     <button
                       type="submit"
                       disabled={isSubmittingEditLog}

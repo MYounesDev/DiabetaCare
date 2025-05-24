@@ -712,7 +712,15 @@ export const patientService = {
   getPatientExercisesByPatient: doctorService.getPatientExercisesByPatient,
   getPatientExerciseLogs: doctorService.getPatientExerciseLogs,
   updateExerciseLog: doctorService.updateExerciseLog,
-  deleteExerciseLog: doctorService.deleteExerciseLog
+  deleteExerciseLog: doctorService.deleteExerciseLog,
+
+
+  // Diet related functions
+  addDietLog: doctorService.addDietLog,
+  getPatientDietsByPatient: doctorService.getPatientDietsByPatient,
+  getPatientDietLogs: doctorService.getPatientDietLogs,
+  updateDietLog: doctorService.updateDietLog,
+  deleteDietLog: doctorService.deleteDietLog,
 }
 
 
