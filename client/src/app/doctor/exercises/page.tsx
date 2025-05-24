@@ -20,29 +20,58 @@ import {
 import PatientList from '@/app/doctor/exercises/PatientList';
 import PatientPlans from './PatientPlans';
 import ExerciseLogsCalendar from '@/components/ExerciseLogsCalendar';
+import StyledCheckbox from '@/components/StyledCheckbox';
+
+interface Patient {
+  id: string;
+  full_name: string;
+}
+
+interface Exercise {
+  exercise_id: string;
+  exercise_name: string;
+}
+
+interface PatientExercise {
+  id: string;
+  patient_id: string;
+  patient_exercise_id: string;
+}
+
+interface ExerciseType {
+  exercise_id: string;
+  exercise_name: string;
+}
+
+interface ExerciseLog {
+  exercise_logs_id: number;
+  patient_exercise_id: string;
+  note: string;
+  is_completed: boolean;
+}
 
 export default function DoctorExercises() {
   // Exercise Types
-  const [exerciseTypes, setExerciseTypes] = useState([]);
+  const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
-  const [typeError, setTypeError] = useState(null);
+  const [typeError, setTypeError] = useState<string | null>(null);
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
   const [showEditTypeModal, setShowEditTypeModal] = useState(false);
   const [showDeleteTypeModal, setShowDeleteTypeModal] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState<ExerciseType | null>(null);
   const [newType, setNewType] = useState({ name: "", description: "" });
   const [isSubmittingType, setIsSubmittingType] = useState(false);
   const [typeFormError, setTypeFormError] = useState("");
   const [typeFormSuccess, setTypeFormSuccess] = useState("");
   const [typeAssignments, setTypeAssignments] = useState({});
-  const addTypeModalRef = useRef(null);
-  const editTypeModalRef = useRef(null);
-  const deleteTypeModalRef = useRef(null);
+  const addTypeModalRef = useRef<HTMLDivElement>(null);
+  const editTypeModalRef = useRef<HTMLDivElement>(null);
+  const deleteTypeModalRef = useRef<HTMLDivElement>(null);
 
   // Patient Exercises
-  const [patientExercises, setPatientExercises] = useState([]);
+  const [patientExercises, setPatientExercises] = useState<PatientExercise[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
-  const [planError, setPlanError] = useState(null);
+  const [planError, setPlanError] = useState<string | null>(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignData, setAssignData] = useState({
     patient_id: "",
@@ -57,18 +86,18 @@ export default function DoctorExercises() {
   const [isSubmittingPlan, setIsSubmittingPlan] = useState(false);
   const [planFormError, setPlanFormError] = useState("");
   const [planFormSuccess, setPlanFormSuccess] = useState("");
-  const assignModalRef = useRef(null);
+  const assignModalRef = useRef<HTMLDivElement>(null);
 
   // New state for recommended exercises
   const [recommendedExercises, setRecommendedExercises] = useState([]);
 
   // Completed Exercise Logs
-  const [completedLogs, setCompletedLogs] = useState([]);
+  const [completedLogs, setCompletedLogs] = useState<ExerciseLog[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
   const [logsError, setLogsError] = useState(null);
 
   // Patients for assignment
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [loadingPatients, setLoadingPatients] = useState(true);
 
   // New state for selection
@@ -91,7 +120,7 @@ export default function DoctorExercises() {
   // Edit/delete plan modals
   const [showEditPlanModal, setShowEditPlanModal] = useState(false);
   const [showDeletePlanModal, setShowDeletePlanModal] = useState(false);
-  const [planToEdit, setPlanToEdit] = useState(null);
+  const [planToEdit, setPlanToEdit] = useState<ExerciseLog | null>(null);
   const [planToDelete, setPlanToDelete] = useState(null);
   const [isSubmittingEditPlan, setIsSubmittingEditPlan] = useState(false);
   const [editPlanFormError, setEditPlanFormError] = useState("");
@@ -101,10 +130,12 @@ export default function DoctorExercises() {
 
   // Edit log modal
   const [showEditLogModal, setShowEditLogModal] = useState(false);
-  const [logToEdit, setLogToEdit] = useState(null);
+  const [logToEdit, setLogToEdit] = useState<ExerciseLog | null>(null);
   const [isSubmittingEditLog, setIsSubmittingEditLog] = useState(false);
   const [editLogFormError, setEditLogFormError] = useState("");
   const [editLogFormSuccess, setEditLogFormSuccess] = useState("");
+
+  const editLogModalRef = useRef<HTMLDivElement>(null);
 
   // Filter patients and exercises based on search
   const filteredPatients = patients.filter(patient =>
@@ -143,7 +174,7 @@ export default function DoctorExercises() {
   }, [selectedPatientId, selectedPlanId]);
 
   // Format a date as YYYY-MM-DD string without timezone issues
-  const formatDateToYYYYMMDD = (date) => {
+  const formatDateToYYYYMMDD = (date: Date) => {
     const d = new Date(date);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -161,7 +192,7 @@ export default function DoctorExercises() {
       setExerciseTypes(types);
 
       // Fetch assignments for each type
-      const assignments = {};
+      const assignments: Record<string, number> = {};
       for (const type of types) {
         const assignRes = await doctorService.getSumPatientExerciseAssignments(type.exercise_id);
         assignments[type.exercise_id] = assignRes.data.totalAssignments;
@@ -176,36 +207,33 @@ export default function DoctorExercises() {
   };
 
   // Fetch patient exercises
-  const fetchPatientExercises = async (patientId) => {
+  const fetchPatientExercises = async (patientId: string) => {
     if (!patientId) return;
 
     setLoadingPlans(true);
     setPlanError(null);
     try {
-      // Using the new patient-specific endpoint
       const res = await doctorService.getPatientExercisesByPatient(patientId);
       setPatientExercises(res.data.patientExercises || []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error fetching patient exercises:", err);
-      setPlanError(typeof err === 'string' ? err : err.message || "Failed to load patient exercise plans");
+      setPlanError(err instanceof Error ? err.message : "Failed to load patient exercise plans");
     } finally {
       setLoadingPlans(false);
     }
   };
 
   // Fetch completed logs
-  const fetchCompletedLogs = async (patient_exercise_id) => {
+  const fetchCompletedLogs = async (patient_exercise_id: string) => {
     if (!patient_exercise_id) return;
 
     setLoadingLogs(true);
-    setLogsError(null);
     try {
-      // Using correct parameters for the API call
       const res = await doctorService.getPatientExerciseLogs(patient_exercise_id);
       setCompletedLogs(res.data.exerciseLogs || []);
-    } catch (err) {
-      console.error("Error fetching exercise logs:", err);
-      setLogsError(typeof err === 'string' ? err : err.message || "Failed to load completed exercise logs");
+    } catch (err: unknown) {
+      console.error("Error fetching completed logs:", err);
+      setLogsError(err instanceof Error ? err.message : "Failed to load exercise logs");
     } finally {
       setLoadingLogs(false);
     }
@@ -224,25 +252,35 @@ export default function DoctorExercises() {
     }
   };
 
-  // Handle click outside modals
+  // Handle click outside for all modals
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (showAddTypeModal && addTypeModalRef.current && !addTypeModalRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (showAddTypeModal && addTypeModalRef.current && !addTypeModalRef.current.contains(event.target as Node)) {
         setShowAddTypeModal(false);
       }
-      if (showEditTypeModal && editTypeModalRef.current && !editTypeModalRef.current.contains(event.target)) {
+      if (showEditTypeModal && editTypeModalRef.current && !editTypeModalRef.current.contains(event.target as Node)) {
         setShowEditTypeModal(false);
       }
-      if (showDeleteTypeModal && deleteTypeModalRef.current && !deleteTypeModalRef.current.contains(event.target)) {
+      if (showDeleteTypeModal && deleteTypeModalRef.current && !deleteTypeModalRef.current.contains(event.target as Node)) {
         setShowDeleteTypeModal(false);
       }
-      if (showAssignModal && assignModalRef.current && !assignModalRef.current.contains(event.target)) {
+      if (showAssignModal && assignModalRef.current && !assignModalRef.current.contains(event.target as Node)) {
         setShowAssignModal(false);
       }
+      if (showEditLogModal && editLogModalRef.current && !editLogModalRef.current.contains(event.target as Node)) {
+        setShowEditLogModal(false);
+      }
+      if (showEditPlanModal && editPlanModalRef.current && !editPlanModalRef.current.contains(event.target as Node)) {
+        setShowEditPlanModal(false);
+      }
+      if (showDeletePlanModal && deletePlanModalRef.current && !deletePlanModalRef.current.contains(event.target as Node)) {
+        setShowDeletePlanModal(false);
+      }
     }
+
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showAddTypeModal, showEditTypeModal, showDeleteTypeModal, showAssignModal]);
+  }, [showAddTypeModal, showEditTypeModal, showDeleteTypeModal, showAssignModal, showEditLogModal, showEditPlanModal, showDeletePlanModal]);
 
   // Add Exercise Type
   const handleAddType = async (e) => {
@@ -349,8 +387,8 @@ export default function DoctorExercises() {
   };
 
   const getExerciseName = (id) => {
-    const ex = exerciseTypes.find(et => et.id === id);
-    return ex ? ex.name : id;
+    const ex = exerciseTypes.find(et => et.exercise_id === id);
+    return ex ? ex.exercise_name : id;
   };
 
   // Selection handlers
@@ -1091,6 +1129,7 @@ export default function DoctorExercises() {
         {showEditPlanModal && planToEdit && (
           <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
+              ref={editPlanModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
@@ -1181,6 +1220,7 @@ export default function DoctorExercises() {
         {showDeletePlanModal && planToDelete && (
           <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
+              ref={deletePlanModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
@@ -1222,6 +1262,7 @@ export default function DoctorExercises() {
         {showEditLogModal && logToEdit && (
           <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
+              ref={editLogModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
@@ -1247,15 +1288,12 @@ export default function DoctorExercises() {
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={logToEdit.is_completed}
-                    onChange={e => setLogToEdit({ ...logToEdit, is_completed: e.target.checked })}
-                    id="is_completed"
-                  />
-                  <label htmlFor="is_completed" className="text-green-700">Mark as completed</label>
-                </div>
+                <StyledCheckbox
+                  id="is_completed"
+                  checked={logToEdit.is_completed}
+                  onChange={e => setLogToEdit({ ...logToEdit, is_completed: e.target.checked })}
+                  label="Mark as completed"
+                />
                 <div className="pt-4 border-t border-gray-200 flex justify-end space-x-3">
                   <button
                     type="button"

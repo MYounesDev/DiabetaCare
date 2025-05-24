@@ -1371,21 +1371,26 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
 
   try {
     // First verify the log exists and user has access
-    const verifyQuery = `SELECT * FROM exercise_logs WHERE exercise_logs_id = $1`;
-    const verifyResult = await pool.query(verifyQuery, [exercise_logs_id]);
+    if (req.user.role === 'patient') {
+      const verifyQuery = `SELECT *
+    FROM exercise_logs 
+    INNER JOIN patient_exercises ON exercise_logs.patient_exercise_id = patient_exercises.id
+    INNER JOIN users ON patient_exercises.patient_id = users.id
+    WHERE exercise_logs_id = $1`;
+      const verifyResult = await pool.query(verifyQuery, [exercise_logs_id]);
 
-    if (verifyResult.rows.length === 0) {
-      console.log('Exercise log not found');
-      return res.status(404).json({ message: 'Exercise log not found' });
+      if (verifyResult.rows.length === 0) {
+        console.log('Exercise log not found');
+        return res.status(404).json({ message: 'Exercise log not found' });
+      }
+
+      const log = verifyResult.rows[0];
+
+      // Check if user has permission to update this log
+      if (req.user.id !== log.patient_id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
     }
-
-    const log = verifyResult.rows[0];
-
-    // Check if user has permission to update this log
-    if (req.user.role === 'patient' && req.user.id !== log.patient_id) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
     const query = `UPDATE exercise_logs SET is_completed = $1, note = $2 WHERE exercise_logs_id = $3 RETURNING *`;
     const result = await pool.query(query, [is_completed, note, exercise_logs_id]);
 
@@ -1405,7 +1410,7 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
 });
 
 
-app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { exercise_logs_id } = req.params;
 
   if (!exercise_logs_id) {
@@ -1413,13 +1418,35 @@ app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, auth
   }
 
   try {
-    const result = await pool.query('DELETE FROM exercise_logs WHERE exercise_logs_id = $1', [exercise_logs_id]);
+
+    if (req.user.role === 'patient') {
+      const verifyQuery = `SELECT *
+    FROM exercise_logs 
+    INNER JOIN patient_exercises ON exercise_logs.patient_exercise_id = patient_exercises.id
+    INNER JOIN users ON patient_exercises.patient_id = users.id
+    WHERE exercise_logs_id = $1`;
+      const verifyResult = await pool.query(verifyQuery, [exercise_logs_id]);
+
+      if (verifyResult.rows.length === 0) {
+        return res.status(404).json({ message: 'Exercise log not found' });
+      }
+
+      const log = verifyResult.rows[0];
+
+      if (req.user.id !== log.patient_id) {
+        return res.status(403).json({ message: 'Access denied' });
+      }
+    }
+    const query = `DELETE FROM exercise_logs WHERE exercise_logs_id = $1`;
+    const result = await pool.query(query, [exercise_logs_id]);
     res.status(200).json({ message: 'Exercise log deleted successfully' });
   } catch (error) {
     console.error('Error deleting exercise log:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 });
+
+
 
 
 app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
@@ -1444,7 +1471,7 @@ app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin',
       ORDER BY patient_exercise_recommendations.recommended_at DESC
       LIMIT 1
     `, [patient_id]);
-    
+
     if (existingRecommendation.rows.length > 0) {
       return res.status(200).json({
         message: 'Exercise recommendation retrieved successfully',
@@ -1493,7 +1520,7 @@ app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin',
       const rule = matchingRule.rows[0];
       console.log(matchingRule);
       ruleId = rule.rule_id;
-      
+
       if (rule.exercise_id) {
         recommendedExercise = {
           exercise_id: rule.exercise_id,
@@ -1517,8 +1544,8 @@ app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin',
 
   } catch (error) {
     console.error('Error in exercise recommendation:', error);
-    res.status(500).json({ 
-      message: 'Internal server error while generating exercise recommendation' 
+    res.status(500).json({
+      message: 'Internal server error while generating exercise recommendation'
     });
   }
 });
@@ -1552,8 +1579,8 @@ app.get('/exercise-recommendation-history/:patient_id', authenticate, authorize(
 
   } catch (error) {
     console.error('Error retrieving recommendation history:', error);
-    res.status(500).json({ 
-      message: 'Internal server error while retrieving recommendation history' 
+    res.status(500).json({
+      message: 'Internal server error while retrieving recommendation history'
     });
   }
 });
@@ -2045,8 +2072,8 @@ app.get('/patient/dashboard/stats', authenticate, authorize('patient'), async (r
     const exercisesResult = await pool.query(exercisesQuery, [patient_id]);
     const totalExercises = exercisesResult.rows[0].total_exercises || 0;
     const completedExercises = exercisesResult.rows[0].completed_exercises || 0;
-    const exerciseCompletionRate = totalExercises > 0 
-      ? Math.round((completedExercises / totalExercises) * 100) 
+    const exerciseCompletionRate = totalExercises > 0
+      ? Math.round((completedExercises / totalExercises) * 100)
       : 0;
 
     // Get assigned diet plans count

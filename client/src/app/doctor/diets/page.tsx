@@ -20,6 +20,7 @@ import {
 import PatientList from '@/app/doctor/diets/PatientList';
 import PatientPlans from './PatientPlans';
 import DietLogsCalendar from '@/components/DietLogsCalendar';
+import StyledCheckbox from '@/components/StyledCheckbox';
 
 export default function DoctorDiets() {
   // Diet Types
@@ -1227,15 +1228,12 @@ export default function DoctorDiets() {
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    checked={logToEdit.is_completed}
-                    onChange={e => setLogToEdit({ ...logToEdit, is_completed: e.target.checked })}
-                    id="is_completed"
-                  />
-                  <label htmlFor="is_completed" className="text-green-700">Mark as completed</label>
-                </div>
+                <StyledCheckbox
+                  id="is_completed"
+                  checked={logToEdit.is_completed}
+                  onChange={e => setLogToEdit({ ...logToEdit, is_completed: e.target.checked })}
+                  label="Mark as completed"
+                />
                 <div className="pt-4 border-t border-gray-200 flex justify-end space-x-3">
                   <button
                     type="button"

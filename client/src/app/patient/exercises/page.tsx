@@ -14,8 +14,10 @@ import {
   Calendar,
   Clock,
   Activity,
+  Trash2,
 } from "lucide-react";
 import ExerciseLogsCalendar from '@/components/ExerciseLogsCalendar';
+import StyledCheckbox from '@/components/StyledCheckbox';
 
 interface Exercise {
   id: string;
@@ -31,6 +33,7 @@ interface ExerciseLog {
   log_date: string;
   note: string;
   is_completed: boolean;
+  patient_exercise_id?: string;
 }
 
 export default function PatientExercises() {
@@ -55,16 +58,26 @@ export default function PatientExercises() {
 
   const logModalRef = useRef<HTMLDivElement>(null);
 
-  // Handle click outside modal
+  // State for edit log modal
+  const [showEditLogModal, setShowEditLogModal] = useState(false);
+  const [logToEdit, setLogToEdit] = useState<ExerciseLog | null>(null);
+  const [isSubmittingEditLog, setIsSubmittingEditLog] = useState(false);
+  const [editLogFormError, setEditLogFormError] = useState("");
+  const [editLogFormSuccess, setEditLogFormSuccess] = useState("");
+  const editLogModalRef = useRef<HTMLDivElement>(null);
+
+  // Handle click outside for edit log modal
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (showLogModal && logModalRef.current && !logModalRef.current.contains(event.target as Node)) {
+      if ((showLogModal && logModalRef.current && !logModalRef.current.contains(event.target as Node)) ||
+          (showEditLogModal && editLogModalRef.current && !editLogModalRef.current.contains(event.target as Node))) {
         setShowLogModal(false);
+        setShowEditLogModal(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showLogModal]);
+  }, [showLogModal, showEditLogModal]);
 
   // Fetch patient exercises
   const fetchExercises = async () => {
@@ -137,6 +150,32 @@ export default function PatientExercises() {
     }
   };
 
+  // Handle edit log submission
+  const handleEditLogSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!logToEdit || !selectedExercise) return;
+
+    setIsSubmittingEditLog(true);
+    setEditLogFormError("");
+    setEditLogFormSuccess("");
+
+    try {
+      await patientService.updateExerciseLog({
+        exercise_logs_id: logToEdit.exercise_logs_id,
+        patient_exercise_id: selectedExercise.id,
+        ...logData,
+      });
+      setEditLogFormSuccess("Exercise log updated successfully!");
+      fetchExerciseLogs(selectedExercise.id);
+      setShowEditLogModal(false);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update exercise log";
+      setEditLogFormError(errorMessage);
+    } finally {
+      setIsSubmittingEditLog(false);
+    }
+  };
+
   // Calendar handlers
   const handleAddLog = (date: string) => {
     setLogData({
@@ -148,12 +187,13 @@ export default function PatientExercises() {
   };
 
   const handleEditLog = (log: ExerciseLog) => {
+    setLogToEdit(log);
     setLogData({
       log_date: log.log_date,
       is_completed: log.is_completed,
       note: log.note,
     });
-    setShowLogModal(true);
+    setShowEditLogModal(true);
   };
 
   const handleDeleteLog = async (log: ExerciseLog) => {
@@ -386,6 +426,73 @@ export default function PatientExercises() {
                         <CheckCircle size={16} />
                       )}
                       Save Progress
+                    </button>
+                  </div>
+                </form>
+              </motion.div>
+            </div>
+          )}
+
+          {/* Edit Log Modal */}
+          {showEditLogModal && logToEdit && (
+            <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+              <motion.div
+                ref={editLogModalRef}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
+              >
+                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                  <h2 className="text-xl font-bold text-green-800">Edit Exercise Log</h2>
+                  <button onClick={() => setShowEditLogModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+                    <X size={20} />
+                  </button>
+                </div>
+                <form onSubmit={handleEditLogSubmit} className="p-4 space-y-4">
+                  {editLogFormError && (
+                    <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
+                      <AlertCircle size={16} /> {editLogFormError}
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-green-700 mb-1">Note</label>
+                    <textarea
+                      required
+                      value={logToEdit.note}
+                      onChange={e => setLogToEdit({ ...logToEdit, note: e.target.value })}
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                    />
+                  </div>
+                  <StyledCheckbox
+                    id="is_completed"
+                    checked={logToEdit.is_completed}
+                    onChange={e => setLogToEdit({ ...logToEdit, is_completed: e.target.checked })}
+                    label="Mark as completed"
+                  />
+                  <div className="pt-4 border-t border-gray-200 flex justify-end space-x-3">
+                    <button
+                      type="button"
+                      onClick={() => setShowEditLogModal(false)}
+                      className="px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-lg"
+                    >
+                      Cancel
+                    </button>
+                    {logToEdit?.exercise_logs_id && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteLog(logToEdit)}
+                        disabled={isSubmittingEditLog}
+                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                      >
+                        {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Trash2 size={16} />} Delete
+                      </button>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={isSubmittingEditLog}
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    >
+                      {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />} Save
                     </button>
                   </div>
                 </form>
