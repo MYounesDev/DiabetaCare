@@ -464,17 +464,19 @@ app.get('/users/:userId', authenticate, async (req, res) => {
 
 app.put('/users/:userId', authenticate, async (req, res) => {
   const userId = req.params.userId;
-
+  
   if (req.user.role !== 'admin' && req.user.role !== 'doctor' && req.user.id !== userId) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
-  try {
-    const { full_name, email, phone_number, birth_date, gender, role, profile_picture } = req.body;
+  const { full_name, email, phone_number, birth_date, gender } = req.body;
 
-    if (!full_name || !email || !phone_number || !birth_date || !gender || !role) {
-      return res.status(400).json({ message: 'All fields are required' });
-    }
+  if (!full_name || !email || !phone_number || !birth_date || !gender) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  
+  try {
 
     const queryTemp = `SELECT * FROM users WHERE id = $1`;
     const resultTemp = await pool.query(queryTemp, [userId]);
@@ -488,12 +490,8 @@ app.put('/users/:userId', authenticate, async (req, res) => {
     const genderResult = await pool.query(genderQuery, [gender]);
     const genderId = genderResult.rows[0].id;
 
-    const roleQuery = `SELECT id FROM roles WHERE role_name = $1`;
-    const roleResult = await pool.query(roleQuery, [role]);
-    const roleId = roleResult.rows[0].id;
-
-    const query = `UPDATE users SET full_name = $1, email = $2, phone_number = $3, birth_date = $4, gender_id = $5, role_id = $6, profile_picture = $7 WHERE id = $8`;
-    const result = await pool.query(query, [full_name, email, phone_number, birth_date, genderId, roleId, profile_picture, userId]);
+    const query = `UPDATE users SET full_name = $1, email = $2, phone_number = $3, birth_date = $4, gender_id = $5  WHERE id = $6`;
+    const result = await pool.query(query, [full_name, email, phone_number, birth_date, genderId, userId]);
     res.status(200).json({
       message: 'User updated successfully',
       user: result.rows[0]
@@ -745,7 +743,6 @@ app.post('/symptom_types/create', authenticate, authorize('admin', 'doctor'), as
 app.put('/symptom_types/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
   const { symptom_id, symptom_name, description } = req.body;
 
-  console.log(req.body);
   if (!symptom_id || !symptom_name || !description) {
     return res.status(400).json({ message: 'All fields are required' });
   }

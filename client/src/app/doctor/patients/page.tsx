@@ -4,6 +4,7 @@ import { doctorService } from '@/services/api';
 import PageTemplate from '@/components/PageTemplate';
 import AuthWrapper from '@/components/AuthWrapper';
 import { motion } from 'framer-motion';
+import CustomDatePicker from '@/components/DatePicker';
 
 import {
   Users,
@@ -25,10 +26,34 @@ import {
   UserCircle
 } from 'lucide-react';
 
+interface NewPatient {
+  username: string;
+  email: string;
+  phone_number: string;
+  full_name: string;
+  birth_date: Date | null;
+  gender: string;
+  role: string;
+}
+
+interface Patient {
+  id: string;
+  username: string;
+  email: string;
+  phone_number: string;
+  full_name: string;
+  birth_date: string;
+  gender: string;
+  role: string;
+  profile_picture?: {
+    data: Buffer;
+  };
+}
+
 export default function DoctorPatients() {
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [viewMode, setViewMode] = useState('card'); // 'card' or 'list'
 
@@ -36,21 +61,21 @@ export default function DoctorPatients() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showViewModal, setShowViewModal] = useState(false);
-  const [selectedPatient, setSelectedPatient] = useState(null);
+  const [selectedPatient, setSelectedPatient] = useState<Patient | null>(null);
 
   // Refs for modal content to handle outside clicks
-  const addModalRef = useRef(null);
-  const editModalRef = useRef(null);
-  const viewModalRef = useRef(null);
-  const deleteModalRef = useRef(null);
+  const addModalRef = useRef<HTMLDivElement>(null);
+  const editModalRef = useRef<HTMLDivElement>(null);
+  const viewModalRef = useRef<HTMLDivElement>(null);
+  const deleteModalRef = useRef<HTMLDivElement>(null);
 
   // State for new patient form
-  const [newPatient, setNewPatient] = useState({
+  const [newPatient, setNewPatient] = useState<NewPatient>({
     username: '',
     email: '',
     phone_number: '',
     full_name: '',
-    birth_date: '',
+    birth_date: null,
     gender: 'male',
     role: 'patient'
   });
@@ -62,17 +87,18 @@ export default function DoctorPatients() {
 
   // Handle click outside to close modals
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (showAddModal && addModalRef.current && !addModalRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      if (showAddModal && addModalRef.current && !addModalRef.current.contains(target)) {
         setShowAddModal(false);
       }
-      if (showEditModal && editModalRef.current && !editModalRef.current.contains(event.target)) {
+      if (showEditModal && editModalRef.current && !editModalRef.current.contains(target)) {
         setShowEditModal(false);
       }
-      if (showViewModal && viewModalRef.current && !viewModalRef.current.contains(event.target)) {
+      if (showViewModal && viewModalRef.current && !viewModalRef.current.contains(target)) {
         setShowViewModal(false);
       }
-      if (showDeleteModal && deleteModalRef.current && !deleteModalRef.current.contains(event.target)) {
+      if (showDeleteModal && deleteModalRef.current && !deleteModalRef.current.contains(target)) {
         setShowDeleteModal(false);
       }
     }
@@ -104,14 +130,19 @@ export default function DoctorPatients() {
   };
 
   // Function to handle adding a new patient
-  const handleAddPatient = async (e) => {
+  const handleAddPatient = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setFormError('');
     setFormSuccess('');
 
     try {
-      await doctorService.addPatient(newPatient);
+      // Convert Date to ISO string for the API
+      const patientData = {
+        ...newPatient,
+        birth_date: newPatient.birth_date ? newPatient.birth_date.toISOString().split('T')[0] : null
+      };
+      await doctorService.addPatient(patientData);
       setFormSuccess('Patient added successfully!');
       setShowAddModal(false);
       setNewPatient({
@@ -119,31 +150,38 @@ export default function DoctorPatients() {
         email: '',
         phone_number: '',
         full_name: '',
-        birth_date: '',
+        birth_date: null,
         gender: 'male',
         role: 'patient'
       });
       fetchPatients(); // Refresh patient list
     } catch (err) {
-      setFormError(err.message || 'Failed to add patient');
+      setFormError((err as Error).message || 'Failed to add patient');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Function to handle updating a patient
-  const handleUpdatePatient = async (e) => {
+  const handleUpdatePatient = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedPatient) return;
+    
     setIsSubmitting(true);
     setFormError('');
 
     try {
-      await doctorService.updateUser(selectedPatient.id, selectedPatient);
+      // Convert Date to ISO string for the API
+      const { profile_picture, ...patientData} = {
+        ...selectedPatient,
+        birth_date: selectedPatient.birth_date ? new Date(selectedPatient.birth_date).toISOString().split('T')[0] : null
+      };
+      await doctorService.updateUser(selectedPatient.id, patientData);
       setFormSuccess('Patient updated successfully!');
       setShowEditModal(false);
       fetchPatients(); // Refresh patient list
     } catch (err) {
-      setFormError(err.message || err.response?.data?.message || 'Failed to update patient');
+      setFormError((err as Error).message || 'Failed to update patient');
     } finally {
       setIsSubmitting(false);
     }
@@ -151,13 +189,15 @@ export default function DoctorPatients() {
 
   // Function to handle deleting a patient
   const handleDeletePatient = async () => {
+    if (!selectedPatient) return;
+    
     try {
       await doctorService.deletePatient(selectedPatient.id);
       setFormSuccess('Patient deleted successfully!');
       setShowDeleteModal(false);
       fetchPatients(); // Refresh patient list
     } catch (err) {
-      setFormError(err.message || 'Failed to delete patient');
+      setFormError((err as Error).message || 'Failed to delete patient');
     }
   };
 
@@ -169,7 +209,7 @@ export default function DoctorPatients() {
   );
 
   // Function to calculate age from birth date
-  const calculateAge = (birth_date) => {
+  const calculateAge = (birth_date: string | null) => {
     if (!birth_date) return 'N/A';
     const today = new Date();
     const birth_dateObj = new Date(birth_date);
@@ -184,14 +224,18 @@ export default function DoctorPatients() {
   };
 
   // Function to format date
-  const formatDate = (dateString) => {
+  const formatDate = (dateString: string | null) => {
     if (!dateString) return 'N/A';
-    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   // Function to format gender display
-  const formatGender = (gender) => {
+  const formatGender = (gender: string) => {
     if (!gender) return 'N/A';
     return gender.charAt(0).toUpperCase() + gender.slice(1);
   };
@@ -396,11 +440,9 @@ export default function DoctorPatients() {
                     <tbody className="bg-white divide-y divide-gray-200">
                       {filteredPatients.map((patient, index) => (
                         <tr
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ duration: 0.3, delay: index * 0.05 }}
-
-                          key={patient.id} className="hover:bg-green-50 transition-colors">
+                          key={patient.id}
+                          className="hover:bg-green-50 transition-colors"
+                        >
                           <td className="px-6 py-4 whitespace-nowrap">
                             <div className="flex items-center">
                               <div className="flex-shrink-0 h-10 w-10 rounded-full bg-green-100 flex items-center justify-center text-green-600">
@@ -547,12 +589,11 @@ export default function DoctorPatients() {
 
                 <div>
                   <label className="block text-sm font-medium text-green-700 mb-1">Birth Date</label>
-                  <input
-                    type="date"
+                  <CustomDatePicker
+                    selectedDate={newPatient.birth_date}
+                    onChange={(date) => setNewPatient({ ...newPatient, birth_date: date })}
+                    dateFormat="dd/MM/yyyy"
                     required
-                    value={newPatient.birth_date}
-                    onChange={(e) => setNewPatient({ ...newPatient, birth_date: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
@@ -669,12 +710,18 @@ export default function DoctorPatients() {
 
                 <div>
                   <label className="block text-sm font-medium text-green-700 mb-1">Birth Date</label>
-                  <input
-                    type="date"
+                  <CustomDatePicker
+                    selectedDate={selectedPatient.birth_date ? new Date(selectedPatient.birth_date) : null}
+                    onChange={(date) => {
+                      if (selectedPatient) {
+                        setSelectedPatient({
+                          ...selectedPatient,
+                          birth_date: date ? date.toISOString().split('T')[0] : ''
+                        });
+                      }
+                    }}
+                    dateFormat="dd/MM/yyyy"
                     required
-                    value={selectedPatient.birth_date ? selectedPatient.birth_date.split('T')[0] : ''}
-                    onChange={(e) => setSelectedPatient({ ...selectedPatient, birth_date: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
