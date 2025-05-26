@@ -21,30 +21,66 @@ import PatientList from '@/app/doctor/diets/PatientList';
 import PatientPlans from './PatientPlans';
 import DietLogsCalendar from '@/components/DietLogsCalendar';
 import StyledCheckbox from '@/components/StyledCheckbox';
+import CustomDatePicker from '@/components/DatePicker';
+
+interface Patient {
+  id: string;
+  full_name: string;
+}
+
+interface DietType {
+  diet_id: string;
+  diet_name: string;
+  description: string;
+}
+
+interface PatientDiet {
+  id: string;
+  patient_id: string;
+  diet_id: string;
+  patient_diet_id: string;
+  status: string;
+  start_date: string;
+  end_date?: string;
+}
+
+interface RecommendedDiet {
+  diet_id: string;
+  diet_name: string;
+}
+
+interface DietLog {
+  diet_logs_id: string;
+  log_date: string;
+  is_completed: boolean;
+  note: string;
+  patient_diet_id?: string;
+}
 
 export default function DoctorDiets() {
   // Diet Types
-  const [dietTypes, setDietTypes] = useState([]);
+  const [dietTypes, setDietTypes] = useState<DietType[]>([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
-  const [typeError, setTypeError] = useState(null);
+  const [typeError, setTypeError] = useState<string | null>(null);
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
   const [showEditTypeModal, setShowEditTypeModal] = useState(false);
   const [showDeleteTypeModal, setShowDeleteTypeModal] = useState(false);
-  const [selectedType, setSelectedType] = useState(null);
+  const [selectedType, setSelectedType] = useState<DietType | null>(null);
   const [newType, setNewType] = useState({ name: "", description: "" });
   const [isSubmittingType, setIsSubmittingType] = useState(false);
   const [typeFormError, setTypeFormError] = useState("");
   const [typeFormSuccess, setTypeFormSuccess] = useState("");
-  const [typeAssignments, setTypeAssignments] = useState({});
-  const addTypeModalRef = useRef(null);
-  const editTypeModalRef = useRef(null);
-  const deleteTypeModalRef = useRef(null);
+  const [typeAssignments, setTypeAssignments] = useState<Record<string, number>>({});
+  const addTypeModalRef = useRef<HTMLDivElement>(null);
+  const editTypeModalRef = useRef<HTMLDivElement>(null);
+  const deleteTypeModalRef = useRef<HTMLDivElement>(null);
 
   // Patient Diets
-  const [patientDiets, setPatientDiets] = useState([]);
+  const [patientDiets, setPatientDiets] = useState<PatientDiet[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
-  const [planError, setPlanError] = useState(null);
+  const [planError, setPlanError] = useState<string | null>(null);
   const [showAssignModal, setShowAssignModal] = useState(false);
+  const [recommendedDiets, setRecommendedDiets] = useState<RecommendedDiet[]>([]);
   const [assignData, setAssignData] = useState({
     patient_id: "",
     diet_id: "",
@@ -58,20 +94,20 @@ export default function DoctorDiets() {
   const [isSubmittingPlan, setIsSubmittingPlan] = useState(false);
   const [planFormError, setPlanFormError] = useState("");
   const [planFormSuccess, setPlanFormSuccess] = useState("");
-  const assignModalRef = useRef(null);
+  const assignModalRef = useRef<HTMLDivElement>(null);
 
   // Completed Diet Logs
-  const [completedLogs, setCompletedLogs] = useState([]);
+  const [completedLogs, setCompletedLogs] = useState<DietLog[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
-  const [logsError, setLogsError] = useState(null);
+  const [logsError, setLogsError] = useState<string | null>(null);
 
   // Patients for assignment
-  const [patients, setPatients] = useState([]);
+  const [patients, setPatients] = useState<Patient[]>([]);
   const [loadingPatients, setLoadingPatients] = useState(true);
 
   // New state for selection
-  const [selectedPatientId, setSelectedPatientId] = useState(null);
-  const [selectedPlanId, setSelectedPlanId] = useState(null);
+  const [selectedPatientId, setSelectedPatientId] = useState<string | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
 
   const selectedPatientPlans = patientDiets.filter(
     pe => pe.patient_id === selectedPatientId
@@ -89,10 +125,11 @@ export default function DoctorDiets() {
   // Edit/delete plan modals
   const [showEditPlanModal, setShowEditPlanModal] = useState(false);
   const [showDeletePlanModal, setShowDeletePlanModal] = useState(false);
-  const [planToEdit, setPlanToEdit] = useState(null);
-  const [planToDelete, setPlanToDelete] = useState(null);
+  const [planToEdit, setPlanToEdit] = useState<DietLog | null>(null);
+  const [planToDelete, setPlanToDelete] = useState<DietLog | null>(null);
   const [isSubmittingEditPlan, setIsSubmittingEditPlan] = useState(false);
   const [editPlanFormError, setEditPlanFormError] = useState("");
+  const [patientIsSelected, setPatientIsSelected] = useState(false);
   const [editPlanFormSuccess, setEditPlanFormSuccess] = useState("");
   const [isSubmittingDeletePlan, setIsSubmittingDeletePlan] = useState(false);
   const [deletePlanFormError, setDeletePlanFormError] = useState("");
@@ -100,7 +137,7 @@ export default function DoctorDiets() {
 
   // Edit log modal
   const [showEditLogModal, setShowEditLogModal] = useState(false);
-  const [logToEdit, setLogToEdit] = useState(null);
+  const [logToEdit, setLogToEdit] = useState<DietLog | null>(null);
   const [isSubmittingEditLog, setIsSubmittingEditLog] = useState(false);
   const [editLogFormError, setEditLogFormError] = useState("");
   const [editLogFormSuccess, setEditLogFormSuccess] = useState("");
@@ -143,7 +180,7 @@ export default function DoctorDiets() {
   }, [selectedPatientId, selectedPlanId]);
 
   // Format a date as YYYY-MM-DD string without timezone issues
-  const formatDateToYYYYMMDD = (date) => {
+  const formatDateToYYYYMMDD = (date: Date): string => {
     const d = new Date(date);
     const year = d.getFullYear();
     const month = String(d.getMonth() + 1).padStart(2, '0');
@@ -161,7 +198,7 @@ export default function DoctorDiets() {
       setDietTypes(types);
 
       // Fetch assignments for each type
-      const assignments = {};
+      const assignments: Record<string, number> = {};
       for (const type of types) {
         const assignRes = await doctorService.getSumPatientDietAssignments(type.diet_id);
         assignments[type.diet_id] = assignRes.data.totalAssignments;
@@ -169,47 +206,42 @@ export default function DoctorDiets() {
       setTypeAssignments(assignments);
     } catch (err) {
       console.error("Error fetching diet types:", err);
-      setTypeError("Failed to load diet types");
+      setTypeError("Failed to load diet types" as any);
     } finally {
       setLoadingTypes(false);
     }
   };
 
   // Fetch patient diets
-  const fetchPatientDiets = async (patientId) => {
+  const fetchPatientDiets = async (patientId: string) => {
     if (!patientId) return;
 
     setLoadingPlans(true);
     setPlanError(null);
     try {
       console.log(`Fetching diets for patient ${patientId}`);
-      // Using the new patient-specific endpoint
       const res = await doctorService.getPatientDietsByPatient(patientId);
       console.log('Patient diets response:', res.data);
       setPatientDiets(res.data.patientDiets || []);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error fetching patient diets:", err);
-      setPlanError(typeof err === 'string' ? err : err.message || "Failed to load patient diet plans");
+      setPlanError(err instanceof Error ? err.message : "Failed to load patient diet plans");
     } finally {
       setLoadingPlans(false);
     }
   };
 
   // Fetch completed logs
-  const fetchCompletedLogs = async (patient_diet_id) => {
+  const fetchCompletedLogs = async (patient_diet_id: string) => {
     if (!patient_diet_id) return;
 
     setLoadingLogs(true);
-    setLogsError(null);
     try {
-      console.log(`Fetching logs for patient_diet_id ${patient_diet_id}`);
-      // Using correct parameters for the API call
       const res = await doctorService.getPatientDietLogs(patient_diet_id);
-      console.log('Patient diet logs response:', res.data);
       setCompletedLogs(res.data.dietLogs || []);
-    } catch (err) {
-      console.error("Error fetching diet logs:", err);
-      setLogsError(typeof err === 'string' ? err : err.message || "Failed to load completed diet logs");
+    } catch (err: unknown) {
+      console.error("Error fetching completed logs:", err);
+      setLogsError(err instanceof Error ? err.message : "Failed to load diet logs");
     } finally {
       setLoadingLogs(false);
     }
@@ -232,17 +264,16 @@ export default function DoctorDiets() {
 
   // Handle click outside modals
   useEffect(() => {
-    function handleClickOutside(event) {
-      if (showAddTypeModal && addTypeModalRef.current && !addTypeModalRef.current.contains(event.target)) {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        (showAddTypeModal && addTypeModalRef.current && !addTypeModalRef.current.contains(event.target as Node)) ||
+        (showEditTypeModal && editTypeModalRef.current && !editTypeModalRef.current.contains(event.target as Node)) ||
+        (showDeleteTypeModal && deleteTypeModalRef.current && !deleteTypeModalRef.current.contains(event.target as Node)) ||
+        (showAssignModal && assignModalRef.current && !assignModalRef.current.contains(event.target as Node))
+      ) {
         setShowAddTypeModal(false);
-      }
-      if (showEditTypeModal && editTypeModalRef.current && !editTypeModalRef.current.contains(event.target)) {
         setShowEditTypeModal(false);
-      }
-      if (showDeleteTypeModal && deleteTypeModalRef.current && !deleteTypeModalRef.current.contains(event.target)) {
         setShowDeleteTypeModal(false);
-      }
-      if (showAssignModal && assignModalRef.current && !assignModalRef.current.contains(event.target)) {
         setShowAssignModal(false);
       }
     }
@@ -251,7 +282,7 @@ export default function DoctorDiets() {
   }, [showAddTypeModal, showEditTypeModal, showDeleteTypeModal, showAssignModal]);
 
   // Add Diet Type
-  const handleAddType = async (e) => {
+  const handleAddType = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingType(true);
     setTypeFormError("");
@@ -262,15 +293,15 @@ export default function DoctorDiets() {
       setShowAddTypeModal(false);
       setNewType({ name: "", description: "" });
       fetchDietTypes();
-    } catch (err) {
-      setTypeFormError(err.message || "Failed to add diet type");
+    } catch (err: unknown) {
+      setTypeFormError(err instanceof Error ? err.message : "Failed to add diet type");
     } finally {
       setIsSubmittingType(false);
     }
   };
 
   // Edit Diet Type
-  const handleEditType = async (e) => {
+  const handleEditType = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingType(true);
     setTypeFormError("");
@@ -281,15 +312,16 @@ export default function DoctorDiets() {
       setTypeFormSuccess("Diet type updated successfully!");
       setShowEditTypeModal(false);
       fetchDietTypes();
-    } catch (err) {
-      setTypeFormError(err.message || "Failed to update diet type");
+    } catch (err: unknown) {
+      setTypeFormError(err instanceof Error ? err.message : "Failed to update diet type");
     } finally {
       setIsSubmittingType(false);
     }
   };
 
   // Delete Diet Type
-  const handleDeleteType = async () => {
+  const handleDeleteType = async (e: React.FormEvent) => {
+    e.preventDefault();
     setIsSubmittingType(true);
     setTypeFormError("");
     setTypeFormSuccess("");
@@ -299,8 +331,8 @@ export default function DoctorDiets() {
       setTypeFormSuccess("Diet type deleted successfully!");
       setShowDeleteTypeModal(false);
       fetchDietTypes();
-    } catch (err) {
-      setTypeFormError(err.message || "Failed to delete diet type");
+    } catch (err: unknown) {
+      setTypeFormError(err instanceof Error ? err.message : "Failed to delete diet type");
     } finally {
       setIsSubmittingType(false);
     }
@@ -344,8 +376,8 @@ export default function DoctorDiets() {
   };
 
   const getDietName = (id) => {
-    const ex = dietTypes.find(et => et.id === id);
-    return ex ? ex.name : id;
+    const ex = dietTypes.find(et => et.diet_id === id);
+    return ex ? ex.diet_name : id;
   };
 
   // Selection handlers
@@ -547,6 +579,18 @@ export default function DoctorDiets() {
     note: log.note || "",
     is_completed: log.is_completed || false
   }));
+
+  // Fetch diet recommendations
+  const fetchDietRecommendations = async (id: string) => {
+    if (!id) return;
+    try {
+      const res = await doctorService.getDietRecommendation(id);
+      setRecommendedDiets(res.data.result_reco || []);
+    } catch (err: unknown) {
+      console.error("Error fetching diet recommendations:", err);
+      setRecommendedDiets([]);
+    }
+  };
 
   return (
     <PageTemplate>
@@ -943,6 +987,9 @@ export default function DoctorDiets() {
                           onClick={() => {
                             setAssignData({ ...assignData, patient_id: patient.id });
                             setSearchPatient(patient.full_name);
+                            setPatientIsSelected(true);
+                            // Fetch diet recommendations when patient is selected
+                            fetchDietRecommendations(patient.id);
                           }}
                           className={`p-4 cursor-pointer transition-colors ${assignData.patient_id === patient.id
                             ? 'bg-green-50 border-l-4 border-green-500'
@@ -986,10 +1033,10 @@ export default function DoctorDiets() {
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg mt-2 bg-white">
-                    {searchDiet.trim() === "" ? (
+                    {!patientIsSelected ? (
                       <div className="p-4 text-center text-gray-500">
                         <ClipboardList size={24} className="mx-auto mb-2" />
-                        <p>Start typing to search diet types</p>
+                        <p>Start selecting a patient to see the recommended diets</p>
                       </div>
                     ) : filteredDiets.length === 0 ? (
                       <div className="p-4 text-center text-gray-500">
@@ -997,22 +1044,34 @@ export default function DoctorDiets() {
                         <p>No diet types found matching "{searchDiet}"</p>
                       </div>
                     ) : (
-                      filteredDiets.map((diet) => (
-                        <div
-                          key={diet.diet_id}
-                          onClick={() => {
-                            setAssignData({ ...assignData, diet_id: diet.diet_id });
-                            setSearchDiet(diet.diet_name);
-                          }}
-                          className={`p-4 cursor-pointer transition-colors ${assignData.diet_id === diet.diet_id
-                            ? 'bg-green-50 border-l-4 border-green-500'
-                            : 'hover:bg-green-50'
-                            }`}
-                        >
-                          <div className="font-medium text-green-800">{diet.diet_name}</div>
-                          <div className="text-sm text-gray-500 mt-1">{diet.description}</div>
-                        </div>
-                      ))
+                      filteredDiets.map((diet) => {
+                        const isRecommended = recommendedDiets.some((rec) => rec.diet_id === diet.diet_id);
+                        return (
+                          <div
+                            key={diet.diet_id}
+                            onClick={() => {
+                              setAssignData({ ...assignData, diet_id: diet.diet_id });
+                              setSearchDiet(diet.diet_name);
+                            }}
+                            className={`p-4 cursor-pointer transition-colors ${assignData.diet_id === diet.diet_id
+                              ? 'bg-green-50 border-l-4 border-green-500'
+                              : 'hover:bg-green-50'
+                              }`}
+                          >
+                            <div className="flex justify-between items-start">
+                              <div>
+                                <div className="font-medium text-green-800">{diet.diet_name}</div>
+                                <div className="text-sm text-gray-500 mt-1">{diet.description}</div>
+                              </div>
+                              {isRecommended && (
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                  Recommended
+                                </span>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })
                     )}
                   </div>
                 </div>
@@ -1021,20 +1080,18 @@ export default function DoctorDiets() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">Start Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={assignData.start_date}
-                      onChange={(e) => setAssignData({ ...assignData, start_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={assignData.start_date ? new Date(assignData.start_date) : null}
+                      onChange={(date) => setAssignData({ ...assignData, start_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">End Date (Optional)</label>
-                    <input
-                      type="date"
-                      value={assignData.end_date}
-                      onChange={(e) => setAssignData({ ...assignData, end_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={assignData.end_date ? new Date(assignData.end_date) : null}
+                      onChange={(date) => setAssignData({ ...assignData, end_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
                     />
                   </div>
@@ -1111,20 +1168,18 @@ export default function DoctorDiets() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">Start Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={planToEdit.start_date}
-                      onChange={e => setPlanToEdit({ ...planToEdit, start_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={planToEdit.start_date ? new Date(planToEdit.start_date) : null}
+                      onChange={(date) => setPlanToEdit({ ...planToEdit, start_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">End Date</label>
-                    <input
-                      type="date"
-                      value={planToEdit.end_date || ''}
-                      onChange={e => setPlanToEdit({ ...planToEdit, end_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={planToEdit.end_date ? new Date(planToEdit.end_date) : null}
+                      onChange={(date) => setPlanToEdit({ ...planToEdit, end_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
                     />
                   </div>

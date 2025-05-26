@@ -1,6 +1,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight, Plus, AlertCircle, Droplet, X, Loader2, Trash2, CheckCircle } from 'lucide-react';
+import {
+  toLocalDate,
+  formatToYYYYMMDD,
+  formatToHHMM,
+  getCurrentDate,
+  combineDateTime,
+  formatToISOString
+} from '../utils/dateUtils';
 
 export interface BloodSugarMeasurement {
   blood_sugar_measurement_id: number;
@@ -23,7 +31,7 @@ export default function BloodSugarCalendar({
   onEditMeasurement, 
   onDeleteMeasurement 
 }: BloodSugarCalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(getCurrentDate());
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -61,14 +69,11 @@ export default function BloodSugarCalendar({
 
   // Format a date as YYYY-MM-DD string without timezone issues
   const formatDateToYYYYMMDD = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return formatToYYYYMMDD(date);
   };
 
   const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
+    return toLocalDate(new Date(date.getFullYear(), date.getMonth(), 1));
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -84,20 +89,20 @@ export default function BloodSugarCalendar({
   };
 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+    setCurrentDate(toLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+    setCurrentDate(toLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)));
   };
 
   const getMeasurementsForDate = (date: string) => {
-    return measurements.filter(m => formatDateToYYYYMMDD(new Date(m.measured_at)) === date);
+    return measurements.filter(m => formatToYYYYMMDD(m.measured_at) === date);
   };
 
   const getAverageAndCount = (measurements: BloodSugarMeasurement[]) => {
     if (measurements.length === 0) return { average: 0, count: 0 };
-    const sum = measurements.reduce((acc, curr) => acc + parseFloat(curr.value), 0);
+    const sum = measurements.reduce((acc, curr) => acc + Number(curr.value), 0);
     return {
       average: Math.round(sum / measurements.length),
       count: measurements.length
@@ -139,10 +144,8 @@ export default function BloodSugarCalendar({
     if (selectedDate && newValue && newTime) {
       setIsSubmitting(true);
       try {
-        const dateTime = new Date(selectedDate);
-        const [hours, minutes] = newTime.split(':');
-        dateTime.setHours(parseInt(hours), parseInt(minutes));
-        await onAddMeasurement(dateTime.toISOString(), parseFloat(newValue));
+        const dateTime = combineDateTime(selectedDate, newTime);
+        await onAddMeasurement(formatToISOString(dateTime), parseFloat(newValue));
         setShowAddModal(false);
       } finally {
         setIsSubmitting(false);
@@ -155,13 +158,11 @@ export default function BloodSugarCalendar({
     if (selectedMeasurement && editValue && editTime) {
       setIsSubmitting(true);
       try {
-        const dateTime = new Date(selectedMeasurement.measured_at);
-        const [hours, minutes] = editTime.split(':');
-        dateTime.setHours(parseInt(hours), parseInt(minutes));
+        const dateTime = combineDateTime(formatToYYYYMMDD(selectedMeasurement.measured_at), editTime);
         await onEditMeasurement({
           ...selectedMeasurement,
           value: parseFloat(editValue),
-          measured_at: dateTime.toISOString()
+          measured_at: formatToISOString(dateTime)
         });
         setShowEditModal(false);
       } finally {
@@ -505,10 +506,7 @@ export default function BloodSugarCalendar({
                   >
                     <div className="flex justify-between items-center">
                       <span className="font-medium">
-                        {new Date(measurement.measured_at).toLocaleTimeString([], {
-                          hour: '2-digit',
-                          minute: '2-digit'
-                        })}
+                        {formatToHHMM(measurement.measured_at)}
                       </span>
                       <span className="font-bold">{measurement.value} mg/dL</span>
                     </div>

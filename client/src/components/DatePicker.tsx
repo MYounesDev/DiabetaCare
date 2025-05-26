@@ -1,6 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
+import { toLocalDate, toUTCDate } from '../utils/dateUtils';
 
 interface CustomDatePickerProps {
   selectedDate: Date | null;
@@ -21,6 +22,18 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   required = false,
   label
 }) => {
+  const handleDateChange = (date: Date | null) => {
+    if (date) {
+      // Convert to UTC before passing back to parent
+      onChange(toUTCDate(date));
+    } else {
+      onChange(null);
+    }
+  };
+
+  // Convert UTC date to local timezone for display
+  const localDate = selectedDate ? toLocalDate(selectedDate) : null;
+
   return (
     <div>
       {label && (
@@ -29,8 +42,8 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         </label>
       )}
       <DatePicker
-        selected={selectedDate}
-        onChange={onChange}
+        selected={localDate}
+        onChange={handleDateChange}
         dateFormat={dateFormat}
         placeholderText={placeholderText}
         className={className}
@@ -39,6 +52,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         showYearDropdown
         dropdownMode="select"
         isClearable
+        timeZone="Europe/Istanbul"
       />
     </div>
   );

@@ -592,7 +592,6 @@ export default function DoctorPatients() {
                   <CustomDatePicker
                     selectedDate={newPatient.birth_date}
                     onChange={(date) => setNewPatient({ ...newPatient, birth_date: date })}
-                    dateFormat="dd/MM/yyyy"
                     required
                   />
                 </div>
@@ -720,7 +719,6 @@ export default function DoctorPatients() {
                         });
                       }
                     }}
-                    dateFormat="dd/MM/yyyy"
                     required
                   />
                 </div>

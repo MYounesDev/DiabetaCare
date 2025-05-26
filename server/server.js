@@ -464,7 +464,7 @@ app.get('/users/:userId', authenticate, async (req, res) => {
 
 app.put('/users/:userId', authenticate, async (req, res) => {
   const userId = req.params.userId;
-  
+
   if (req.user.role !== 'admin' && req.user.role !== 'doctor' && req.user.id !== userId) {
     return res.status(403).json({ message: 'Access denied' });
   }
@@ -475,7 +475,7 @@ app.put('/users/:userId', authenticate, async (req, res) => {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  
+
   try {
 
     const queryTemp = `SELECT * FROM users WHERE id = $1`;
@@ -975,10 +975,6 @@ app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id
 
 
 
-
-
-
-
 app.get('/exercise-types', authenticate, authorize('admin', 'doctor'), async (req, res) => {
   try {
     const query = `SELECT * FROM exercise_types`;
@@ -1283,29 +1279,6 @@ app.get('/patient-exercises/completed', authenticate, authorize('admin', 'doctor
 
 
 
-app.get('/exercise-logs/', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  const query = `SELECT 
-    exercise_logs.*,
-    patient_exercises.exercise_id,
-    exercise_types.exercise_name
-    FROM exercise_logs
-    INNER JOIN patient_exercises ON exercise_logs.patient_exercise_id = patient_exercises.id
-    INNER JOIN exercise_types ON patient_exercises.exercise_id = exercise_types.exercise_id
-    ORDER BY log_date DESC`;
-  try {
-    const result = await pool.query(query);
-    const exerciseLogs = result.rows;
-    res.status(200).json({
-      message: 'Exercise logs retrieved successfully',
-      exerciseLogs: exerciseLogs
-    });
-  } catch (error) {
-    console.error('Error retrieving exercise logs:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-
 
 
 app.get('/exercise-logs/patient/:patient_exercise_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
@@ -1363,7 +1336,7 @@ app.post('/exercise-logs/patient/add', authenticate, authorize('admin', 'doctor'
 
   console.log('body', req.body);
 
-  if (!patient_exercise_id || !log_date || is_completed === undefined || !note) {
+  if (!patient_exercise_id || !log_date || is_completed === undefined || note == undefined) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -1387,7 +1360,7 @@ app.post('/exercise-logs/patient/add', authenticate, authorize('admin', 'doctor'
 app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { exercise_logs_id, is_completed, note } = req.body;
 
-  if (!exercise_logs_id || is_completed === undefined || !note) {
+  if (!exercise_logs_id || is_completed === undefined || note == undefined) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -1470,7 +1443,7 @@ app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, auth
 
 
 
-
+// --- EXERCISE RECOMMENDATION ---
 app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
 
   const { patient_id } = req.params;
@@ -1480,26 +1453,6 @@ app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin',
   }
 
   try {
-    // Check if we already have a current recommendation for this patient
-    const existingRecommendation = await pool.query(`
-      SELECT 
-        patient_exercise_recommendations.recommendation_id,
-        exercise_types.exercise_id, 
-        exercise_types.exercise_name,
-        patient_exercise_recommendations.recommended_at
-      FROM patient_exercise_recommendations
-      INNER JOIN exercise_types ON patient_exercise_recommendations.exercise_id = exercise_types.exercise_id
-      WHERE patient_exercise_recommendations.patient_id = $1 AND patient_exercise_recommendations.is_current = true
-      ORDER BY patient_exercise_recommendations.recommended_at DESC
-      LIMIT 1
-    `, [patient_id]);
-
-    if (existingRecommendation.rows.length > 0) {
-      return res.status(200).json({
-        message: 'Exercise recommendation retrieved successfully',
-        result_reco: existingRecommendation.rows
-      });
-    }
 
     // Get patient symptoms
     const symptom = await pool.query(`
@@ -1521,47 +1474,26 @@ app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin',
     const average_blood_sugar = blood_sugar_result.rows[0].average_blood_sugar || 0;
 
     // Find matching recommendation rule
-    const matchingRule = await pool.query(`
+    const recommendedExercises = (await pool.query(`
       SELECT 
-        exercise_recommendation_rules.rule_id,
-        exercise_recommendation_rules.exercise_id,
-        exercise_types.exercise_name,
-        exercise_recommendation_rules.required_symptoms
-      FROM exercise_recommendation_rules
-      LEFT JOIN exercise_types ON exercise_recommendation_rules.exercise_id = exercise_types.exercise_id
-        AND (exercise_recommendation_rules.min_blood_sugar IS NULL OR $1 >= exercise_recommendation_rules.min_blood_sugar)
-        AND (exercise_recommendation_rules.max_blood_sugar IS NULL OR $1 < exercise_recommendation_rules.max_blood_sugar)
-        AND symptoms_match($2::text[], exercise_recommendation_rules.required_symptoms)
+        recommendation_rules.exercise_id,
+        exercise_types.exercise_name
+
+      FROM recommendation_rules
+      
+      LEFT JOIN exercise_types ON recommendation_rules.exercise_id = exercise_types.exercise_id
+        AND (recommendation_rules.min_blood_sugar IS NULL OR $1 >= recommendation_rules.min_blood_sugar)
+        AND (recommendation_rules.max_blood_sugar IS NULL OR $1 < recommendation_rules.max_blood_sugar)
+        AND symptoms_match($2::text[], recommendation_rules.required_symptoms)
       LIMIT 1
-    `, [average_blood_sugar, symptom_names]);
+    `, [average_blood_sugar, symptom_names])).rows;
 
-    let recommendedExercise = null;
-    let ruleId = null;
 
-    if (matchingRule.rows.length > 0) {
-      const rule = matchingRule.rows[0];
-      console.log(matchingRule);
-      ruleId = rule.rule_id;
 
-      if (rule.exercise_id) {
-        recommendedExercise = {
-          exercise_id: rule.exercise_id,
-          exercise_name: rule.exercise_name
-        };
-      }
-    }
 
-    // Store the recommendation in the database
-    await pool.query(`
-      INSERT INTO patient_exercise_recommendations 
-      (patient_id, exercise_id, rule_id, average_blood_sugar, symptoms_matched)
-      VALUES ($1, $2, $3, $4, $5)
-    `, [patient_id, recommendedExercise?.exercise_id || null, ruleId, average_blood_sugar, symptom_names]);
-
-    console.log('recommendedExercise', recommendedExercise);
     res.status(200).json({
       message: 'Exercise recommendation retrieved successfully',
-      result_reco: recommendedExercise,
+      result_reco: recommendedExercises,
     });
 
   } catch (error) {
@@ -1572,40 +1504,7 @@ app.get('/exercise-recommendation/:patient_id', authenticate, authorize('admin',
   }
 });
 
-// Additional endpoint to get recommendation history
-app.get('/exercise-recommendation-history/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  const { patient_id } = req.params;
 
-  try {
-    const recommendations = await pool.query(`
-      SELECT 
-        patient_exercise_recommendations.recommendation_id,
-        exercise_types.exercise_id,
-        exercise_types.exercise_name,
-        patient_exercise_recommendations.average_blood_sugar,
-        patient_exercise_recommendations.symptoms_matched,
-        patient_exercise_recommendations.recommended_at,
-        patient_exercise_recommendations.is_current,
-        exercise_recommendation_rules.rule_name
-      FROM patient_exercise_recommendations
-      LEFT JOIN exercise_types ON patient_exercise_recommendations.exercise_id = exercise_types.exercise_id
-      LEFT JOIN exercise_recommendation_rules ON patient_exercise_recommendations.rule_id = exercise_recommendation_rules.rule_id
-      WHERE patient_exercise_recommendations.patient_id = $1
-      ORDER BY patient_exercise_recommendations.recommended_at DESC
-    `, [patient_id]);
-
-    res.status(200).json({
-      message: 'Exercise recommendation history retrieved successfully',
-      recommendations: recommendations.rows
-    });
-
-  } catch (error) {
-    console.error('Error retrieving recommendation history:', error);
-    res.status(500).json({
-      message: 'Internal server error while retrieving recommendation history'
-    });
-  }
-});
 
 
 
@@ -1915,29 +1814,6 @@ app.get('/patient-diets/completed', authenticate, authorize('admin', 'doctor'), 
 
 
 
-app.get('/diet-logs/', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  const query = `SELECT 
-    diet_logs.*,
-    patient_diets.diet_id,
-    diet_types.diet_name
-    FROM diet_logs
-    INNER JOIN patient_diets ON diet_logs.patient_diet_id = patient_diets.id
-    INNER JOIN diet_types ON patient_diets.diet_id = diet_types.diet_id
-    ORDER BY log_date DESC`;
-  try {
-    const result = await pool.query(query);
-    const dietLogs = result.rows;
-    res.status(200).json({
-      message: 'Diet logs retrieved successfully',
-      dietLogs: dietLogs
-    });
-  } catch (error) {
-    console.error('Error retrieving diet logs:', error);
-    res.status(500).json({ message: 'Internal server error' });
-  }
-});
-
-
 
 
 app.get('/diet-logs/patient/:patient_diet_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
@@ -1995,7 +1871,7 @@ app.post('/diet-logs/patient/add', authenticate, authorize('admin', 'doctor', 'p
 
 
 
-  if (!patient_diet_id || !log_date || is_completed === undefined || !note) {
+  if (!patient_diet_id || !log_date || is_completed === undefined || note == undefined) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -2019,7 +1895,7 @@ app.post('/diet-logs/patient/add', authenticate, authorize('admin', 'doctor', 'p
 app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { diet_logs_id, is_completed, note } = req.body;
 
-  if (!diet_logs_id || is_completed === undefined || !note) {
+  if (!diet_logs_id || is_completed === undefined || note == undefined) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
@@ -2104,6 +1980,331 @@ app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('a
 
 
 
+// --- DIET RECOMMENDATION ---
+app.get('/diet-recommendation/:patient_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+
+  const { patient_id } = req.params;
+
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  try {
+
+    // Get patient symptoms
+    const symptom = await pool.query(`
+      SELECT symptom_types.symptom_name 
+      FROM patient_symptoms
+      INNER JOIN symptom_types ON patient_symptoms.symptom_id = symptom_types.symptom_id
+      WHERE patient_symptoms.patient_id = $1
+    `, [patient_id]);
+
+    const symptom_names = symptom.rows.map(row => row.symptom_name);
+
+    // Get blood sugar measurements and calculate average
+    const blood_sugar_result = await pool.query(`
+      SELECT AVG(value) as average_blood_sugar 
+      FROM blood_sugar_measurements 
+      WHERE patient_id = $1
+    `, [patient_id]);
+
+    const average_blood_sugar = blood_sugar_result.rows[0].average_blood_sugar || 0;
+
+    // Find matching recommendation rule
+    const recommendedDiets = (await pool.query(`
+      SELECT 
+        recommendation_rules.diet_id,
+        diet_types.diet_name
+
+      FROM recommendation_rules
+      
+      LEFT JOIN diet_types ON recommendation_rules.diet_id = diet_types.diet_id
+        AND (recommendation_rules.min_blood_sugar IS NULL OR $1 >= recommendation_rules.min_blood_sugar)
+        AND (recommendation_rules.max_blood_sugar IS NULL OR $1 < recommendation_rules.max_blood_sugar)
+        AND symptoms_match($2::text[], recommendation_rules.required_symptoms)
+      LIMIT 1
+    `, [average_blood_sugar, symptom_names])).rows;
+
+
+
+
+    res.status(200).json({
+      message: 'Diet recommendation retrieved successfully',
+      result_reco: recommendedDiets,
+    });
+
+  } catch (error) {
+    console.error('Error in diet recommendation:', error);
+    res.status(500).json({
+      message: 'Internal server error while generating diet recommendation'
+    });
+  }
+});
+
+
+
+app.get('/insulin-recommendation', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const query = `SELECT 
+            insulin_recommendations_id, 
+            min_blood_sugar,
+            max_blood_sugar,
+            level_description,
+            insulin_dosage_ml,
+            note
+          FROM insulin_recommendations`;
+  try {
+    const result = await pool.query(query);
+    res.status(200).json({
+      message: 'Insulin recommendation retrieved successfully',
+      insulinRecommendations: result.rows
+    });
+  } catch (error) {
+    console.error('Error retrieving insulin recommendation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.post('/insulin-recommendation/create', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { min_blood_sugar, max_blood_sugar, level_description, insulin_dosage_ml, note } = req.body;
+
+  if (!min_blood_sugar || !max_blood_sugar || !level_description || insulin_dosage_ml == undefined || note == undefined) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const query = `INSERT INTO insulin_recommendations (min_blood_sugar, max_blood_sugar, level_description, insulin_dosage_ml, note) VALUES ($1, $2, $3, $4, $5)`;
+  
+  try{
+  const result = await pool.query(query, [min_blood_sugar, max_blood_sugar, level_description, insulin_dosage_ml, note]);
+  res.status(201).json({
+    message: 'Insulin recommendation added successfully',
+    insulinRecommendation: result.rows[0]
+  });
+  } catch (error) {
+    console.error('Error adding insulin recommendation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.put('/insulin-recommendation/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { insulin_recommendations_id, min_blood_sugar, max_blood_sugar, level_description, insulin_dosage_ml, note } = req.body;
+
+
+  if (!insulin_recommendations_id || !min_blood_sugar || !max_blood_sugar || !level_description || insulin_dosage_ml == undefined || note == undefined) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  const query = `UPDATE insulin_recommendations SET min_blood_sugar = $1, max_blood_sugar = $2, level_description = $3, insulin_dosage_ml = $4, note = $5 WHERE insulin_recommendations_id = $6`;
+  try{
+    const result = await pool.query(query, [min_blood_sugar, max_blood_sugar, level_description, insulin_dosage_ml, note, insulin_recommendations_id]);
+    res.status(200).json({
+      message: 'Insulin recommendation updated successfully',
+      insulinRecommendation: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating insulin recommendation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.delete('/insulin-recommendation/delete/:insulin_recommendations_id', authenticate, authorize('admin', 'doctor'), async (req, res) => {
+  const { insulin_recommendations_id } = req.params;
+  if (!insulin_recommendations_id) {
+    return res.status(400).json({ message: 'Insulin recommendation ID is required' });
+  }
+  try{
+    const result = await pool.query('DELETE FROM insulin_recommendations WHERE insulin_recommendations_id = $1', [insulin_recommendations_id]);
+    res.status(200).json({ message: 'Insulin recommendation deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting insulin recommendation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.get('/insulin-recommendation/patient/', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id, datetime } = req.query;
+  if (!patient_id || !datetime) {
+    return res.status(400).json({ message: 'Patient ID and time are required' });
+  }
+  
+  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+      return res.status(403).json({ message: 'Access denied' });
+  }
+  
+  // Calculate the patient's average blood sugar from 6:00 AM of the same day up to the given datetime
+  const startOfRange = new Date(datetime);
+  startOfRange.setHours(6, 0, 0, 0); // 6:00:00.000 AM
+  
+  console.log("startOfRange", startOfRange);
+  console.log("datetime", datetime);
+
+  try{
+  const bloodSugarRecords = await pool.query(`
+    SELECT
+        AVG(value) as average_blood_sugar,
+        COUNT(*) as total_records
+      FROM blood_sugar_measurements 
+    WHERE patient_id = $1 AND measured_at >= $2 AND measured_at <= $3
+  `, [patient_id, startOfRange, datetime]);
+
+  console.log("rows = ", bloodSugarRecords.rows);
+
+  // calculate the average of the blood_sugar_result
+  const averageBloodSugar = bloodSugarRecords.rows[0].average_blood_sugar || 0;
+  const totalRecords = bloodSugarRecords.rows[0].total_records || 0;
+  console.log("averageBloodSugar", averageBloodSugar);
+  console.log("averageBloodSugar", parseInt(averageBloodSugar));
+  // check the insulin recommendation to find the correct recommendation that matches the average blood sugar
+  const recommendedInsulinResult = averageBloodSugar ? await pool.query(`
+    SELECT
+        insulin_dosage_ml,
+        level_description,
+        note
+    FROM insulin_recommendations 
+    WHERE min_blood_sugar <= $1 AND max_blood_sugar >= $1
+  `, [parseInt(averageBloodSugar)]) : null;
+
+  const recommendedInsulin = recommendedInsulinResult ? recommendedInsulinResult.rows[0] : null;
+
+  const canTrustResult = totalRecords >= (new Date(datetime)).getHours()/5;
+
+  res.status(200).json({
+    message: 'Insulin recommendation retrieved successfully',
+    recommendedInsulin: recommendedInsulin,
+    totalRecords: totalRecords,
+    canTrustResult:  canTrustResult, 
+    neededRecords: !canTrustResult ?  Math.ceil((new Date(datetime)).getHours()/5 - totalRecords) : 0
+  });
+  } catch (error) {
+    console.error('Error retrieving insulin recommendation:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+app.get('/insulin-patient-logs/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id } = req.params;
+
+  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+  try{
+    const result = await pool.query(`
+      SELECT
+        insulin_log_id, 
+        patient_id, 
+        log_date, 
+        insulin_dosage_ml, 
+        note 
+      FROM insulin_logs 
+      WHERE patient_id = $1
+    `, [patient_id]);
+    res.status(200).json({
+      message: 'Insulin recommendation retrieved successfully',
+      patientInsulinLogs: result.rows
+    });
+  } catch (error) {
+    console.error('Error retrieving patient insulin logs:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+app.post('/insulin-patient-logs/add', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id, log_date, insulin_dosage_ml , note } = req.body;
+
+  if (!patient_id || !log_date || insulin_dosage_ml == undefined || note == undefined) {
+    console.log("req.body", req.body);
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  const query = `INSERT INTO insulin_logs (patient_id, log_date, insulin_dosage_ml, note) VALUES ($1, $2, $3, $4)`;
+
+  try{
+    const result = await pool.query(query, [patient_id, log_date, insulin_dosage_ml, note]);
+    res.status(201).json({
+      message: 'Insulin log added successfully',
+      insulinLog: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error adding insulin log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.put('/insulin-patient-logs/update', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { insulin_log_id, insulin_dosage_ml, note } = req.body;
+
+  if (!insulin_log_id || insulin_dosage_ml == undefined || note == undefined) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  const query = `UPDATE insulin_logs SET insulin_dosage_ml = $1, note = $2 WHERE insulin_log_id = $3`;
+
+  try{
+    const result = await pool.query(query, [insulin_dosage_ml, note, insulin_log_id]);
+    res.status(200).json({
+      message: 'Insulin log updated successfully',
+      insulinLog: result.rows[0]
+    });
+  } catch (error) {
+    console.error('Error updating insulin log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+app.delete('/insulin-patient-logs/delete/:insulin_log_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { insulin_log_id } = req.params;
+  if (!insulin_log_id) {
+    return res.status(400).json({ message: 'Insulin log ID is required' });
+  }
+
+  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
+
+  try{
+    const result = await pool.query('DELETE FROM insulin_logs WHERE insulin_log_id = $1', [insulin_log_id]);
+    res.status(200).json({ message: 'Insulin log deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting insulin log:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
 
 
 app.get('/patient/dashboard/stats', authenticate, authorize('patient'), async (req, res) => {
@@ -2184,8 +2385,8 @@ app.get('/patient/doctor', authenticate, authorize('patient'), async (req, res) 
     FROM patient_doctor
     INNER JOIN users ON patient_doctor.doctor_id = users.id
     WHERE patient_doctor.patient_id = $1`;
-  
-    try {
+
+  try {
 
     const doctorResult = await pool.query(doctorQuery, [patient_id]);
     const doctor = doctorResult.rows[0];

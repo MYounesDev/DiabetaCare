@@ -1,6 +1,11 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Calendar, CheckCircle, AlertCircle, Plus, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar, CheckCircle, AlertCircle, Plus, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import {
+  toLocalDate,
+  formatToYYYYMMDD,
+  getCurrentDate,
+} from '../utils/dateUtils';
 
 export interface DietLog {
   diet_logs_id: number;
@@ -17,19 +22,16 @@ interface CalendarProps {
 }
 
 export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLog }: CalendarProps) {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(getCurrentDate());
   const [hoveredDate, setHoveredDate] = useState<string | null>(null);
 
   // Format a date as YYYY-MM-DD string without timezone issues
   const formatDateToYYYYMMDD = (date: Date): string => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    return formatToYYYYMMDD(date);
   };
 
   const getFirstDayOfMonth = (date: Date) => {
-    return new Date(date.getFullYear(), date.getMonth(), 1);
+    return toLocalDate(new Date(date.getFullYear(), date.getMonth(), 1));
   };
 
   const getDaysInMonth = (date: Date) => {
@@ -45,18 +47,18 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
   };
 
   const handlePrevMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1));
+    setCurrentDate(toLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1)));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1));
+    setCurrentDate(toLocalDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1)));
   };
 
   const getLogForDate = (date: string) => {
     // Find log where the date matches
     const log = logs.find(log => {
       // Format log date to YYYY-MM-DD for comparison
-      const logDate = formatDateToYYYYMMDD(new Date(log.log_date));
+      const logDate = formatToYYYYMMDD(log.log_date);
       return logDate === date;
     });
     return log;

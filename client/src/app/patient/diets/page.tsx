@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import DietLogsCalendar from '@/components/DietLogsCalendar';
 import StyledCheckbox from '@/components/StyledCheckbox';
+import CustomDatePicker from '@/components/DatePicker';
 
 interface Diet {
   id: string;
@@ -360,10 +361,9 @@ export default function PatientDiets() {
                     <div className="space-y-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700">Date</label>
-                        <input
-                          type="date"
-                          value={logData.log_date}
-                          onChange={(e) => setLogData({ ...logData, log_date: e.target.value })}
+                        <CustomDatePicker
+                          selectedDate={logData.log_date ? new Date(logData.log_date) : null}
+                          onChange={(date) => setLogData({ ...logData, log_date: date ? date.toISOString().split('T')[0] : '' })}
                           className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
                         />
                       </div>

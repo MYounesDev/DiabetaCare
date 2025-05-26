@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { User, Hospital, Activity, ClipboardList, Utensils, HeartPulse, Droplet, Stethoscope, ChevronLeft, ChevronRight, Calendar, FileText, Settings, Home } from 'lucide-react';
+import { User, Hospital, Activity, ClipboardList, Utensils, HeartPulse, Droplet, Stethoscope, ChevronLeft, ChevronRight, Calendar, FileText, Settings, Home, Syringe } from 'lucide-react';
 
 type SideBarProps = {
   role: 'admin' | 'doctor' | 'patient';
@@ -55,6 +55,10 @@ export default function SideBar({ role }: SideBarProps) {
               <Droplet className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Blood Sugar</span>}
             </Link>
+            <Link href="/doctor/insulin-management" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+              <Syringe className="text-green-500" size={20} />
+              {isOpen && <span className="text-green-700">Insulin Management</span>}
+            </Link>
             <Link href="/doctor/reports" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <FileText className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Reports</span>}
@@ -81,6 +85,10 @@ export default function SideBar({ role }: SideBarProps) {
             <Link href="/patient/blood-sugar" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <Droplet className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Blood Sugar</span>}
+            </Link>
+            <Link href="/patient/my-insulin" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+              <Syringe className="text-green-500" size={20} />
+              {isOpen && <span className="text-green-700">My Insulin</span>}
             </Link>
             <Link href="/patient/my-doctor" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <Stethoscope className="text-green-500" size={20} />

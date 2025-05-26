@@ -392,7 +392,6 @@ export const doctorService = {
   },
   updateExerciseType: async (exercise_id, exercise_name, description) => {
     try {
-      console.log(exercise_id, exercise_name, description);
       const response = await api.post('/exercise-types/update', { exercise_id, exercise_name, description });
       return response;
     } catch (error) {
@@ -472,14 +471,7 @@ export const doctorService = {
 
 
   // --- EXERCISE LOGS ---
-  getAllExerciseLogs: async () => {
-    try {
-      const response = await api.get('/exercise-logs/');
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
+
   getPatientExerciseLogs: async (patient_exercise_id) => {
     try {
       // Using query params instead of data object which doesn't work with GET requests
@@ -518,10 +510,10 @@ export const doctorService = {
     }
   },
 
+
   // --- EXERCISE RECOMMENDATION ---
   getExerciseRecommendation: async (patient_id) => { // Returning the recommended exercise ID.
     try {
-      console.log(patient_id);
       const response = await api.get(`/exercise-recommendation/${patient_id}`);
       return response;
     } catch (error) {
@@ -534,12 +526,7 @@ export const doctorService = {
 
 
 
-
-
-
-
-
-
+  
 
   
   // --- DIET MANAGEMENT ---
@@ -640,14 +627,6 @@ export const doctorService = {
 
 
   // --- DIET LOGS ---
-  getAllDietLogs: async () => {
-    try {
-      const response = await api.get('/diet-logs/');
-      return response;
-    } catch (error) {
-      throw error;
-    }
-  },
   getPatientDietLogs: async (patient_diet_id) => {
     try {
       // Using query params instead of data object which doesn't work with GET requests
@@ -684,11 +663,116 @@ export const doctorService = {
     } catch (error) {
       throw error;
     }
-  }
+  },
 
 
 
+    // --- DIET RECOMMENDATION ---
+    getDietRecommendation: async (patient_id) => { // Returning the recommended diet ID.
+      try {
+        const response = await api.get(`/diet-recommendation/${patient_id}`);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+  
 
+    // --- INSULIN RECOMMENDATION ---
+    getInsulinRecommendation: async () => { // Returning the recommended insulin ID.
+      try {
+        const response = await api.get(`/insulin-recommendation/`);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    createInsulinRecommendation: async (data) => {
+      try {
+        const response = await api.post('/insulin-recommendation/create', data);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+
+    updateInsulinRecommendation: async (data) => {
+      try {
+        const response = await api.put('/insulin-recommendation/update', data);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    deleteInsulinRecommendation: async (insulin_recommendation_id) => {
+      try {
+        const response = await api.delete(`/insulin-recommendation/delete/${insulin_recommendation_id}`);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    // --- INSULIN RECOMMENDATION BY PATIENT ---
+    getInsulinRecommendationByPatient: async (data) => {
+      try {
+        const response = await api.get(`/insulin-recommendation/patient/`, {
+          params: {
+            patient_id: data.patient_id,
+            datetime: data.datetime
+          }
+        });
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+
+    // --- INSULIN LOGS ---
+    getInsulinLogs: async (patient_id) => {
+      try {
+        const response = await api.get(`/insulin-patient-logs/${patient_id}`);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    addInsulinLog: async (data) => {
+      try {
+        
+        const response = await api.post('/insulin-patient-logs/add', data);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    updateInsulinLog: async (data) => {
+      try {
+        const response = await api.put('/insulin-patient-logs/update', data);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    deleteInsulinLog: async (insulin_log_id) => {
+      try {
+        const response = await api.delete(`/insulin-patient-logs/delete/${insulin_log_id}`);
+        return response;
+      } catch (error) {
+        throw error;
+      }
+    },
+
+    
+    
+    
 
 
 };
@@ -735,9 +819,15 @@ export const patientService = {
   deleteBloodSugarMeasurement: doctorService.deleteBloodSugarMeasurement,
 
 
-
-
-
+  // --- INSULIN RECOMMENDATION ---
+  getInsulinRecommendationByPatient: doctorService.getInsulinRecommendationByPatient,
+  getInsulinLogs: doctorService.getInsulinLogs,
+  addInsulinLog: doctorService.addInsulinLog,
+  updateInsulinLog: doctorService.updateInsulinLog,
+  deleteInsulinLog: doctorService.deleteInsulinLog,
+ 
+ 
+ 
   // --- DOCTOR ---
   getDoctor: async () => {
     try {

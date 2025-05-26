@@ -4,10 +4,21 @@ import { User, Hospital, Activity, ArrowLeft, Check } from 'lucide-react';
 import { authService } from '@/services/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import CustomDatePicker from '@/components/DatePicker';
+
+interface FormData {
+  full_name: string;
+  username: string;
+  email: string;
+  phone_number: string;
+  birth_date: string;
+  gender: string;
+  role: string;
+}
 
 export default function Register() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     username: '',
     email: '',
     phone_number: '',
@@ -16,7 +27,7 @@ export default function Register() {
     gender: '',
     role: ''
   });
-  const [error, setError] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [animate, setAnimate] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
@@ -27,9 +38,22 @@ export default function Register() {
     return () => clearTimeout(timer);
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement> | Date | null, field?: string) => {
+    if (e === null || e instanceof Date) {
+      // Handle date change
+      const dateStr = e ? e.toISOString().split('T')[0] : '';
+      setFormData(prev => ({
+        ...prev,
+        birth_date: dateStr
+      }));
+    } else if ('target' in e) {
+      // Handle regular input change
+      const { name, value } = e.target;
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -234,12 +258,9 @@ export default function Register() {
                       Birth Date
                     </label>
                     <div className="relative">
-                      <input
-                        type="date"
-                        id="birth_date"
-                        name="birth_date"
-                        value={formData.birth_date}
-                        onChange={handleChange}
+                      <CustomDatePicker
+                        selectedDate={formData.birth_date ? new Date(formData.birth_date) : null}
+                        onChange={(date) => handleChange(date)}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                       />
                     </div>

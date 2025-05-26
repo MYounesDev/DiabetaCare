@@ -21,6 +21,7 @@ import PatientList from '@/app/doctor/exercises/PatientList';
 import PatientPlans from './PatientPlans';
 import ExerciseLogsCalendar from '@/components/ExerciseLogsCalendar';
 import StyledCheckbox from '@/components/StyledCheckbox';
+import CustomDatePicker from '@/components/DatePicker';
 
 interface Patient {
   id: string;
@@ -1043,7 +1044,7 @@ export default function DoctorExercises() {
                       </div>
                     ) : (
                       filteredExercises.map((exercise) => {
-                        const isRecommended = recommendedExercises.some(rec => rec.exercise_id === exercise.exercise_id);
+                        const isRecommended = recommendedExercises.some((rec: { exercise_id: number; exercise_name: string }) => rec.exercise_id === exercise.exercise_id);
                         return (
                           <div
                             key={exercise.exercise_id}
@@ -1078,20 +1079,18 @@ export default function DoctorExercises() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">Start Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={assignData.start_date}
-                      onChange={(e) => setAssignData({ ...assignData, start_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={assignData.start_date ? new Date(assignData.start_date) : null}
+                      onChange={(date) => setAssignData({ ...assignData, start_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">End Date (Optional)</label>
-                    <input
-                      type="date"
-                      value={assignData.end_date}
-                      onChange={(e) => setAssignData({ ...assignData, end_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={assignData.end_date ? new Date(assignData.end_date) : null}
+                      onChange={(date) => setAssignData({ ...assignData, end_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
                     />
                   </div>
@@ -1169,20 +1168,18 @@ export default function DoctorExercises() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">Start Date</label>
-                    <input
-                      type="date"
-                      required
-                      value={planToEdit.start_date}
-                      onChange={e => setPlanToEdit({ ...planToEdit, start_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={planToEdit.start_date ? new Date(planToEdit.start_date) : null}
+                      onChange={(date) => setPlanToEdit({ ...planToEdit, start_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      required
                     />
                   </div>
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-green-700">End Date</label>
-                    <input
-                      type="date"
-                      value={planToEdit.end_date || ''}
-                      onChange={e => setPlanToEdit({ ...planToEdit, end_date: e.target.value })}
+                    <CustomDatePicker
+                      selectedDate={planToEdit.end_date ? new Date(planToEdit.end_date) : null}
+                      onChange={(date) => setPlanToEdit({ ...planToEdit, end_date: date ? date.toISOString().split('T')[0] : '' })}
                       className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
                     />
                   </div>
