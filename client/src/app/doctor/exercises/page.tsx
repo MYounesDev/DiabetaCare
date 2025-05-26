@@ -137,6 +137,8 @@ export default function DoctorExercises() {
   const [editLogFormSuccess, setEditLogFormSuccess] = useState("");
 
   const editLogModalRef = useRef<HTMLDivElement>(null);
+  const editPlanModalRef = useRef<HTMLDivElement>(null);
+  const deletePlanModalRef = useRef<HTMLDivElement>(null);
 
   // Filter patients and exercises based on search
   const filteredPatients = patients.filter(patient =>
@@ -469,7 +471,6 @@ export default function DoctorExercises() {
     setPlanToDelete(plan);
     setShowDeletePlanModal(true);
     setDeletePlanFormError("");
-    setDeletePlanFormSuccess("");
   };
 
   const handleDeletePlanConfirm = async () => {
@@ -478,11 +479,9 @@ export default function DoctorExercises() {
       return;
     }
     setIsSubmittingDeletePlan(true);
-    setDeletePlanFormError("");
-    setDeletePlanFormSuccess("");
+    setDeletePlanFormError(""); 
     try {
       await doctorService.deletePatientExercise(planToDelete.exercise_logs_id);
-      setDeletePlanFormSuccess("Plan deleted successfully!");
       setShowDeletePlanModal(false);
       setPlanToDelete(null);
       setSelectedPlanId(null); // hide the calendar after delete the plan

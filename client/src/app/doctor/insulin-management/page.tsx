@@ -211,8 +211,7 @@ export default function DoctorInsulinManagement() {
 
   const handleDeleteLog = async (log: InsulinLog) => {
     try {
-      console.log(log.insulin_log_id);
-      await doctorService.deleteInsulinLog(log.insulin_log_id);
+      await doctorService.deleteInsulinLog(log);
       if (selectedPatientId) {
         fetchInsulinLogs(selectedPatientId);
       }

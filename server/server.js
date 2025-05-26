@@ -435,7 +435,7 @@ app.get('/users', authenticate, authorize('admin'), async (req, res) => {
 app.get('/users/:userId', authenticate, async (req, res) => {
   const userId = req.params.userId;
 
-  if (req.user.role !== 'admin' && req.user.role !== 'doctor' && req.user.id !== userId) {
+  if (req.user.role != 'admin' && req.user.role != 'doctor' && req.user.id != userId) {
     return res.status(403).json({ message: 'Access denied' });
   }
   try {
@@ -447,7 +447,7 @@ app.get('/users/:userId', authenticate, async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    if (req.user.role === 'doctor' && req.user.id !== userId && user.role_id !== 1) {
+    if (req.user.role === 'doctor' && req.user.id != userId && user.role_id != 1) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -465,7 +465,7 @@ app.get('/users/:userId', authenticate, async (req, res) => {
 app.put('/users/:userId', authenticate, async (req, res) => {
   const userId = req.params.userId;
 
-  if (req.user.role !== 'admin' && req.user.role !== 'doctor' && req.user.id !== userId) {
+  if (req.user.role != 'admin' && req.user.role != 'doctor' && req.user.id != userId) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -482,7 +482,7 @@ app.put('/users/:userId', authenticate, async (req, res) => {
     const resultTemp = await pool.query(queryTemp, [userId]);
     const userTemp = resultTemp.rows[0];
 
-    if (req.user.role === 'doctor' && req.user.id !== userId && userTemp.role_id !== 1) {
+    if (req.user.role === 'doctor' && req.user.id != userId && userTemp.role_id != 1) {
       return res.status(403).json({ message: 'Access denied' });
     }
 
@@ -785,7 +785,7 @@ app.get('/symptoms/patient/:patient_id', authenticate, authorize('admin', 'docto
     return res.status(400).json({ message: 'Patient ID is required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role_id === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -853,7 +853,7 @@ app.get('/blood-sugar-measurements/patient/:patient_id', authenticate, authorize
     return res.status(400).json({ message: 'Patient ID is required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role_id === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -884,7 +884,7 @@ app.post('/blood-sugar-measurements/patient/add', authenticate, authorize('admin
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role_id === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -919,7 +919,7 @@ app.put('/blood-sugar-measurements/patient/update', authenticate, authorize('adm
       const patient_id = checkResult.rows[0].patient_id;
 
 
-      if (req.user.id !== patient_id) {
+      if (req.user.id != patient_id) {
         return res.status(403).json({ message: 'Access denied' });
       }
     }
@@ -955,7 +955,7 @@ app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id
       const patient_id = checkResult.rows[0].patient_id;
 
 
-      if (req.user.id !== patient_id) {
+      if (req.user.id != patient_id) {
         return res.status(403).json({ message: 'Access denied' });
       }
     }
@@ -1100,7 +1100,7 @@ app.get('/patient-exercises/patient/:patient_id', authenticate, authorize('admin
     return res.status(400).json({ message: 'Patient ID is required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role_id === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -1296,7 +1296,7 @@ app.get('/exercise-logs/patient/:patient_exercise_id', authenticate, authorize('
 
     const patient_id = checkRole.rows[0].patient_id;
 
-    if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    if (req.user.role_id === 'patient' && req.user.id != patient_id) {
       return res.status(403).json({ message: 'Access denied' });
     }
   } catch (error) {
@@ -1363,7 +1363,7 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
   if (!exercise_logs_id || is_completed === undefined || note == undefined) {
     return res.status(400).json({ message: 'All fields are required' });
   }
-
+  console.log(req.body);
   try {
     // First verify the log exists and user has access
     if (req.user.role === 'patient') {
@@ -1382,7 +1382,7 @@ app.put('/exercise-logs/patient/update', authenticate, authorize('admin', 'docto
       const log = verifyResult.rows[0];
 
       // Check if user has permission to update this log
-      if (req.user.id !== log.patient_id) {
+      if (req.user.id != log.patient_id) {
         return res.status(403).json({ message: 'Access denied' });
       }
     }
@@ -1428,7 +1428,7 @@ app.delete('/exercise-logs/patient/delete/:exercise_logs_id', authenticate, auth
 
       const log = verifyResult.rows[0];
 
-      if (req.user.id !== log.patient_id) {
+      if (req.user.id != log.patient_id) {
         return res.status(403).json({ message: 'Access denied' });
       }
     }
@@ -1635,7 +1635,7 @@ app.get('/patient-diets/patient/:patient_id', authenticate, authorize('admin', '
     return res.status(400).json({ message: 'Patient ID is required' });
   }
 
-  if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role_id === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -1831,7 +1831,7 @@ app.get('/diet-logs/patient/:patient_diet_id', authenticate, authorize('admin', 
 
     const patient_id = checkRole.rows[0].patient_id;
 
-    if (req.user.role_id === 'patient' && req.user.id !== patient_id) {
+    if (req.user.role_id === 'patient' && req.user.id != patient_id) {
       return res.status(403).json({ message: 'Access denied' });
     }
   } catch (error) {
@@ -1918,7 +1918,7 @@ app.put('/diet-logs/patient/update', authenticate, authorize('admin', 'doctor', 
       const log = verifyResult.rows[0];
 
       // Check if user has permission to update this log
-      if (req.user.id !== log.patient_id) {
+      if (req.user.id != log.patient_id) {
         return res.status(403).json({ message: 'Access denied' });
       }
     }
@@ -1965,7 +1965,7 @@ app.delete('/diet-logs/patient/delete/:diet_logs_id', authenticate, authorize('a
 
       const log = verifyResult.rows[0];
 
-      if (req.user.id !== log.patient_id) {
+      if (req.user.id != log.patient_id) {
         console.log("sss", log.patient_id);
         return res.status(403).json({ message: 'Access denied' });
       }
@@ -2129,11 +2129,12 @@ app.delete('/insulin-recommendation/delete/:insulin_recommendations_id', authent
 
 app.get('/insulin-recommendation/patient/', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { patient_id, datetime } = req.query;
+  
   if (!patient_id || !datetime) {
     return res.status(400).json({ message: 'Patient ID and time are required' });
   }
   
-  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role === 'patient' && req.user.id != patient_id) {
       return res.status(403).json({ message: 'Access denied' });
   }
   
@@ -2195,8 +2196,9 @@ app.get('/insulin-recommendation/patient/', authenticate, authorize('admin', 'do
 
 app.get('/insulin-patient-logs/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
   const { patient_id } = req.params;
-
-  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role === 'patient' && req.user.id != patient_id) {
+    console.log("patient_id", patient_id);
+    console.log("req.user.id", req.user.id);
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -2234,7 +2236,7 @@ app.post('/insulin-patient-logs/add', authenticate, authorize('admin', 'doctor',
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
@@ -2260,14 +2262,14 @@ app.put('/insulin-patient-logs/update', authenticate, authorize('admin', 'doctor
     return res.status(400).json({ message: 'All fields are required' });
   }
 
-  if (req.user.role === 'patient' && req.user.id !== patient_id) {
+  if (req.user.role === 'patient' && req.user.id != patient_id) {
     return res.status(403).json({ message: 'Access denied' });
   }
 
   const query = `UPDATE insulin_logs SET insulin_dosage_ml = $1, note = $2 WHERE insulin_log_id = $3`;
-
   try{
     const result = await pool.query(query, [insulin_dosage_ml, note, insulin_log_id]);
+    
     res.status(200).json({
       message: 'Insulin log updated successfully',
       insulinLog: result.rows[0]
@@ -2285,9 +2287,6 @@ app.delete('/insulin-patient-logs/delete/:insulin_log_id', authenticate, authori
     return res.status(400).json({ message: 'Insulin log ID is required' });
   }
 
-  if (req.user.role === 'patient' && req.user.id !== patient_id) {
-    return res.status(403).json({ message: 'Access denied' });
-  }
 
   try{
     const result = await pool.query('DELETE FROM insulin_logs WHERE insulin_log_id = $1', [insulin_log_id]);
@@ -2401,12 +2400,165 @@ app.get('/patient/doctor', authenticate, authorize('patient'), async (req, res) 
   }
 });
 
+app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id } = req.params;
+  let { start_date, end_date } = req.query;
 
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
 
+  if (req.user.role === 'patient' && req.user.id != patient_id) {
+    return res.status(403).json({ message: 'Access denied' });
+  }
 
+  // Default to last 7 days if no dates provided
+  const endDate = end_date ? new Date(end_date) : new Date();
+  const startDate = start_date ? new Date(start_date) : new Date(endDate);
+  if (!start_date) {
+    startDate.setDate(startDate.getDate() - 30);
+  }
 
+  try {
+    // Get blood sugar measurements
+    const bloodSugarQuery = `
+      SELECT 
+        bsm.blood_sugar_measurement_id,
+        bsm.value as blood_sugar_value,
+        bsm.measured_at,
+        bsl.label as blood_sugar_level
+      FROM blood_sugar_measurements bsm
+      LEFT JOIN blood_sugar_levels bsl ON bsm.blood_sugar_level_id = bsl.blood_sugar_level_id
+      WHERE bsm.patient_id = $1
+        AND bsm.measured_at >= $2
+        AND bsm.measured_at <= $3
+      ORDER BY bsm.measured_at ASC
+    `;
 
+    // Get diet information with date range
+    const dietQuery = `
+      SELECT 
+        pd.id as patient_diet_id,
+        dt.diet_name,
+        pd.start_date,
+        pd.end_date,
+        dl.log_date,
+        dl.is_completed as diet_completed
+      FROM patient_diets pd
+      JOIN diet_types dt ON pd.diet_id = dt.diet_id
+      LEFT JOIN diet_logs dl ON pd.id = dl.patient_diet_id
+      WHERE pd.patient_id = $1
+        AND (
+          (pd.start_date >= $2 AND pd.start_date <= $3)
+          OR (dl.log_date >= $2 AND dl.log_date <= $3)
+        )
+      ORDER BY pd.start_date ASC
+    `;
 
+    // Get exercise information with date range
+    const exerciseQuery = `
+      SELECT 
+        pe.id as patient_exercise_id,
+        et.exercise_name,
+        pe.start_date,
+        pe.end_date,
+        el.log_date,
+        el.is_completed as exercise_completed
+      FROM patient_exercises pe
+      JOIN exercise_types et ON pe.exercise_id = et.exercise_id
+      LEFT JOIN exercise_logs el ON pe.id = el.patient_exercise_id
+      WHERE pe.patient_id = $1
+        AND (
+          (pe.start_date >= $2 AND pe.start_date <= $3)
+          OR (el.log_date >= $2 AND el.log_date <= $3)
+        )
+      ORDER BY pe.start_date ASC
+    `;
+
+    // Get insulin logs with date range
+    const insulinQuery = `
+      SELECT 
+        insulin_log_id,
+        log_date,
+        insulin_dosage_ml,
+        note
+      FROM insulin_logs
+      WHERE patient_id = $1
+        AND log_date >= $2
+        AND log_date <= $3
+      ORDER BY log_date ASC
+    `;
+
+    // Execute all queries in parallel with date range
+    const [bloodSugarResults, dietResults, exerciseResults, insulinResults] = await Promise.all([
+      pool.query(bloodSugarQuery, [patient_id, startDate, endDate]),
+      pool.query(dietQuery, [patient_id, startDate, endDate]),
+      pool.query(exerciseQuery, [patient_id, startDate, endDate]),
+      pool.query(insulinQuery, [patient_id, startDate, endDate])
+    ]);
+
+    // Process the results
+    const graphData = {
+      bloodSugar: bloodSugarResults.rows.map(row => ({
+        id: row.blood_sugar_measurement_id,
+        value: parseFloat(row.blood_sugar_value),
+        timestamp: row.measured_at,
+        level: row.blood_sugar_level
+      })),
+      diets: dietResults.rows.map(row => ({
+        id: row.patient_diet_id,
+        name: row.diet_name,
+        startDate: row.start_date,
+        endDate: row.end_date,
+        logDate: row.log_date,
+        completed: row.diet_completed
+      })),
+      exercises: exerciseResults.rows.map(row => ({
+        id: row.patient_exercise_id,
+        name: row.exercise_name,
+        startDate: row.start_date,
+        endDate: row.end_date,
+        logDate: row.log_date,
+        completed: row.exercise_completed
+      })),
+      insulin: insulinResults.rows.map(row => ({
+        id: row.insulin_log_id,
+        value: parseFloat(row.insulin_dosage_ml),
+        timestamp: row.log_date,
+        note: row.note
+      }))
+    };
+
+    // Calculate statistics
+    const bloodSugarValues = graphData.bloodSugar.map(bs => bs.value);
+    const insulinValues = graphData.insulin.map(i => i.value);
+    
+    const statistics = {
+      averageBloodSugar: bloodSugarValues.length > 0 
+        ? bloodSugarValues.reduce((a, b) => a + b) / bloodSugarValues.length 
+        : 0,
+      maxBloodSugar: Math.max(...(bloodSugarValues.length > 0 ? bloodSugarValues : [0])),
+      minBloodSugar: Math.min(...(bloodSugarValues.length > 0 ? bloodSugarValues : [0])),
+      totalDiets: new Set(graphData.diets.map(d => d.id)).size,
+      totalExercises: new Set(graphData.exercises.map(e => e.id)).size,
+      completedDiets: graphData.diets.filter(d => d.completed).length,
+      completedExercises: graphData.exercises.filter(e => e.completed).length,
+      averageInsulin: insulinValues.length > 0
+        ? insulinValues.reduce((a, b) => a + b) / insulinValues.length
+        : 0
+    };
+    console.log(graphData.diets);
+    res.status(200).json({
+      message: 'Graph data retrieved successfully',
+      data: graphData,
+      statistics: statistics
+    });
+
+  } catch (error) {
+    console.error('Error retrieving graph data:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 app.listen(PORT, async () => {
 

@@ -234,6 +234,27 @@ export const doctorService = {
   addPatient: authService.register,
   deletePatient: adminService.deletePatient,
 
+  // Get patient's graph data showing blood sugar, diet, and exercise relationships
+  getPatientGraphData: async (patientId, startDate, endDate) => {
+    try {
+      let url = `/patient/graph-data/${patientId}`;
+      
+      // Add date filters if provided
+      const params = new URLSearchParams();
+      if (startDate) params.append('start_date', startDate);
+      if (endDate) params.append('end_date', endDate);
+      
+      const queryString = params.toString();
+      if (queryString) url += `?${queryString}`;
+
+      const response = await api.get(url);
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching patient graph data:', error);
+      throw error;
+    }
+  },
+
   getpatientExercises: async () => {
     try {
       const response = await api.get('/patient-exercises/pending');

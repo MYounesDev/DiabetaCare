@@ -162,9 +162,11 @@ export default function PatientExercises() {
 
     try {
       await patientService.updateExerciseLog({
+        ...logData,
         exercise_logs_id: logToEdit.exercise_logs_id,
         patient_exercise_id: selectedExercise.id,
-        ...logData,
+        is_completed: logToEdit.is_completed,
+        note: logToEdit.note,
       });
       setEditLogFormSuccess("Exercise log updated successfully!");
       fetchExerciseLogs(selectedExercise.id);
@@ -390,7 +392,7 @@ export default function PatientExercises() {
                             type="checkbox"
                             checked={logData.is_completed}
                             onChange={(e) => setLogData({ ...logData, is_completed: e.target.checked })}
-                            className="rounded border-gray-300 text-green-600 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
+                            className="rounded border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
                           />
                           <span className="ml-2 text-sm text-gray-600">Mark as completed</span>
                         </label>
