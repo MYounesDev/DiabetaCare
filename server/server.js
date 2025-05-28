@@ -2412,7 +2412,7 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
     return res.status(403).json({ message: 'Access denied' });
   }
 
-  // Default to last 7 days if no dates provided
+  // Default to last 30 days if no dates provided
   const endDate = end_date ? new Date(end_date) : new Date();
   const startDate = start_date ? new Date(start_date) : new Date(endDate);
   if (!start_date) {
@@ -2420,13 +2420,20 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
   }
 
   try {
-    // Get blood sugar measurements
+    // Get blood sugar measurements with time of day categorization
     const bloodSugarQuery = `
       SELECT 
         bsm.blood_sugar_measurement_id,
         bsm.value as blood_sugar_value,
         bsm.measured_at,
-        bsl.label as blood_sugar_level
+        bsl.label as blood_sugar_level,
+        EXTRACT(HOUR FROM bsm.measured_at) as hour_of_day,
+        CASE
+          WHEN EXTRACT(HOUR FROM bsm.measured_at) BETWEEN 5 AND 11 THEN 'morning'
+          WHEN EXTRACT(HOUR FROM bsm.measured_at) BETWEEN 12 AND 17 THEN 'afternoon'
+          WHEN EXTRACT(HOUR FROM bsm.measured_at) BETWEEN 18 AND 22 THEN 'evening'
+          ELSE 'night'
+        END as time_of_day
       FROM blood_sugar_measurements bsm
       LEFT JOIN blood_sugar_levels bsl ON bsm.blood_sugar_level_id = bsl.blood_sugar_level_id
       WHERE bsm.patient_id = $1
@@ -2435,15 +2442,17 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
       ORDER BY bsm.measured_at ASC
     `;
 
-    // Get diet information with date range
+    // Get diet information with completion status
     const dietQuery = `
       SELECT 
         pd.id as patient_diet_id,
         dt.diet_name,
+        dt.diet_id,
         pd.start_date,
         pd.end_date,
         dl.log_date,
-        dl.is_completed as diet_completed
+        dl.is_completed as diet_completed,
+        dl.note as diet_notes
       FROM patient_diets pd
       JOIN diet_types dt ON pd.diet_id = dt.diet_id
       LEFT JOIN diet_logs dl ON pd.id = dl.patient_diet_id
@@ -2455,7 +2464,7 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
       ORDER BY pd.start_date ASC
     `;
 
-    // Get exercise information with date range
+    // Get exercise information with intensity and duration
     const exerciseQuery = `
       SELECT 
         pe.id as patient_exercise_id,
@@ -2463,7 +2472,8 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
         pe.start_date,
         pe.end_date,
         el.log_date,
-        el.is_completed as exercise_completed
+        el.is_completed as exercise_completed,
+        el.note as exercise_notes
       FROM patient_exercises pe
       JOIN exercise_types et ON pe.exercise_id = et.exercise_id
       LEFT JOIN exercise_logs el ON pe.id = el.patient_exercise_id
@@ -2475,13 +2485,20 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
       ORDER BY pe.start_date ASC
     `;
 
-    // Get insulin logs with date range
+    // Get insulin logs with categorization
     const insulinQuery = `
       SELECT 
         insulin_log_id,
         log_date,
         insulin_dosage_ml,
-        note
+        note,
+        EXTRACT(HOUR FROM log_date) as hour_of_day,
+        CASE
+          WHEN EXTRACT(HOUR FROM log_date) BETWEEN 5 AND 11 THEN 'morning'
+          WHEN EXTRACT(HOUR FROM log_date) BETWEEN 12 AND 17 THEN 'afternoon'
+          WHEN EXTRACT(HOUR FROM log_date) BETWEEN 18 AND 22 THEN 'evening'
+          ELSE 'night'
+        END as time_of_day
       FROM insulin_logs
       WHERE patient_id = $1
         AND log_date >= $2
@@ -2489,7 +2506,7 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
       ORDER BY log_date ASC
     `;
 
-    // Execute all queries in parallel with date range
+    // Execute all queries in parallel
     const [bloodSugarResults, dietResults, exerciseResults, insulinResults] = await Promise.all([
       pool.query(bloodSugarQuery, [patient_id, startDate, endDate]),
       pool.query(dietQuery, [patient_id, startDate, endDate]),
@@ -2497,57 +2514,124 @@ app.get('/patient/graph-data/:patient_id', authenticate, authorize('admin', 'doc
       pool.query(insulinQuery, [patient_id, startDate, endDate])
     ]);
 
-    // Process the results
-    const graphData = {
-      bloodSugar: bloodSugarResults.rows.map(row => ({
+    // Process blood sugar data with time-based aggregation
+    const bloodSugarByTime = {
+      morning: [],
+      afternoon: [],
+      evening: [],
+      night: []
+    };
+
+    bloodSugarResults.rows.forEach(row => {
+      bloodSugarByTime[row.time_of_day].push({
         id: row.blood_sugar_measurement_id,
         value: parseFloat(row.blood_sugar_value),
         timestamp: row.measured_at,
-        level: row.blood_sugar_level
-      })),
+        level: row.blood_sugar_level,
+        hourOfDay: row.hour_of_day
+      });
+    });
+
+    // Calculate average blood sugar by time of day
+    const averageBloodSugarByTime = {};
+    Object.keys(bloodSugarByTime).forEach(timeOfDay => {
+      const values = bloodSugarByTime[timeOfDay].map(bs => bs.value);
+      averageBloodSugarByTime[timeOfDay] = values.length > 0
+        ? values.reduce((a, b) => a + b) / values.length
+        : 0;
+    });
+
+    // Process and structure the data
+    const graphData = {
+      bloodSugar: {
+        measurements: bloodSugarResults.rows.map(row => ({
+          id: row.blood_sugar_measurement_id,
+          value: parseFloat(row.blood_sugar_value),
+          timestamp: row.measured_at,
+          level: row.blood_sugar_level,
+          timeOfDay: row.time_of_day
+        })),
+        averagesByTime: averageBloodSugarByTime
+      },
       diets: dietResults.rows.map(row => ({
         id: row.patient_diet_id,
         name: row.diet_name,
+        type: row.diet_type,
         startDate: row.start_date,
         endDate: row.end_date,
         logDate: row.log_date,
-        completed: row.diet_completed
+        completed: row.diet_completed,
+        notes: row.diet_notes
       })),
       exercises: exerciseResults.rows.map(row => ({
         id: row.patient_exercise_id,
         name: row.exercise_name,
+        intensity: row.intensity_level,
         startDate: row.start_date,
         endDate: row.end_date,
         logDate: row.log_date,
-        completed: row.exercise_completed
+        durationMinutes: row.duration_minutes,
+        completed: row.exercise_completed,
+        notes: row.exercise_notes
       })),
-      insulin: insulinResults.rows.map(row => ({
-        id: row.insulin_log_id,
-        value: parseFloat(row.insulin_dosage_ml),
-        timestamp: row.log_date,
-        note: row.note
-      }))
+      insulin: {
+        measurements: insulinResults.rows.map(row => ({
+          id: row.insulin_log_id,
+          value: parseFloat(row.insulin_dosage_ml),
+          timestamp: row.log_date,
+          note: row.note,
+          timeOfDay: row.time_of_day
+        })),
+        averagesByTime: {
+          morning: insulinResults.rows.filter(r => r.time_of_day === 'morning').reduce((acc, curr) => acc + parseFloat(curr.insulin_dosage_ml), 0) / (insulinResults.rows.filter(r => r.time_of_day === 'morning').length || 1),
+          afternoon: insulinResults.rows.filter(r => r.time_of_day === 'afternoon').reduce((acc, curr) => acc + parseFloat(curr.insulin_dosage_ml), 0) / (insulinResults.rows.filter(r => r.time_of_day === 'afternoon').length || 1),
+          evening: insulinResults.rows.filter(r => r.time_of_day === 'evening').reduce((acc, curr) => acc + parseFloat(curr.insulin_dosage_ml), 0) / (insulinResults.rows.filter(r => r.time_of_day === 'evening').length || 1),
+          night: insulinResults.rows.filter(r => r.time_of_day === 'night').reduce((acc, curr) => acc + parseFloat(curr.insulin_dosage_ml), 0) / (insulinResults.rows.filter(r => r.time_of_day === 'night').length || 1)
+        }
+      }
     };
 
-    // Calculate statistics
-    const bloodSugarValues = graphData.bloodSugar.map(bs => bs.value);
-    const insulinValues = graphData.insulin.map(i => i.value);
+    // Calculate enhanced statistics
+    const bloodSugarValues = graphData.bloodSugar.measurements.map(bs => bs.value);
+    const insulinValues = graphData.insulin.measurements.map(i => i.value);
     
     const statistics = {
-      averageBloodSugar: bloodSugarValues.length > 0 
-        ? bloodSugarValues.reduce((a, b) => a + b) / bloodSugarValues.length 
-        : 0,
-      maxBloodSugar: Math.max(...(bloodSugarValues.length > 0 ? bloodSugarValues : [0])),
-      minBloodSugar: Math.min(...(bloodSugarValues.length > 0 ? bloodSugarValues : [0])),
-      totalDiets: new Set(graphData.diets.map(d => d.id)).size,
-      totalExercises: new Set(graphData.exercises.map(e => e.id)).size,
-      completedDiets: graphData.diets.filter(d => d.completed).length,
-      completedExercises: graphData.exercises.filter(e => e.completed).length,
-      averageInsulin: insulinValues.length > 0
-        ? insulinValues.reduce((a, b) => a + b) / insulinValues.length
-        : 0
+      bloodSugar: {
+        average: bloodSugarValues.length > 0 
+          ? bloodSugarValues.reduce((a, b) => a + b) / bloodSugarValues.length 
+          : 0,
+        max: Math.max(...(bloodSugarValues.length > 0 ? bloodSugarValues : [0])),
+        min: Math.min(...(bloodSugarValues.length > 0 ? bloodSugarValues : [0])),
+        averagesByTime: averageBloodSugarByTime,
+        totalMeasurements: bloodSugarValues.length,
+        abnormalReadings: bloodSugarValues.filter(v => v < 70 || v > 180).length
+      },
+      diets: {
+        total: new Set(graphData.diets.map(d => d.id)).size,
+        completed: graphData.diets.filter(d => d.completed).length,
+        adherenceRate: graphData.diets.length > 0
+          ? (graphData.diets.filter(d => d.completed).length / graphData.diets.length) * 100
+          : 0
+      },
+      exercises: {
+        total: new Set(graphData.exercises.map(e => e.id)).size,
+        completed: graphData.exercises.filter(e => e.completed).length,
+        adherenceRate: graphData.exercises.length > 0
+          ? (graphData.exercises.filter(e => e.completed).length / graphData.exercises.length) * 100
+          : 0,
+        averageDuration: graphData.exercises
+          .filter(e => e.durationMinutes)
+          .reduce((acc, curr) => acc + curr.durationMinutes, 0) / (graphData.exercises.filter(e => e.durationMinutes).length || 1)
+      },
+      insulin: {
+        average: insulinValues.length > 0
+          ? insulinValues.reduce((a, b) => a + b) / insulinValues.length
+          : 0,
+        totalDoses: insulinValues.length,
+        averagesByTime: graphData.insulin.averagesByTime
+      }
     };
-    console.log(graphData.diets);
+
     res.status(200).json({
       message: 'Graph data retrieved successfully',
       data: graphData,

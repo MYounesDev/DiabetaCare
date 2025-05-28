@@ -12,16 +12,17 @@ import {
     Title,
     Tooltip,
     Legend,
-    TimeScale
+    TimeScale,
+    BarElement
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import { Line, Bar } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
-import { Card, CardContent, Typography, Box, Paper } from '@mui/material';
+import { Card, CardContent, Typography, Box, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
 import type { ChartData } from 'chart.js';
 import PageTemplate from '@/components/PageTemplate';
 import AuthWrapper from '@/components/AuthWrapper';
 import { motion } from 'framer-motion';
-import { Activity, ClipboardList, Utensils, HeartPulse, Calendar } from 'lucide-react';
+import { Activity, ClipboardList, Utensils, HeartPulse, Clock, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 
 // Register ChartJS components
 ChartJS.register(
@@ -29,6 +30,7 @@ ChartJS.register(
     LinearScale,
     PointElement,
     LineElement,
+    BarElement,
     Title,
     Tooltip,
     Legend,
@@ -36,45 +38,82 @@ ChartJS.register(
 );
 
 interface GraphData {
-    bloodSugar: Array<{
-        id: string;
-        value: number;
-        timestamp: string;
-        level: string;
-    }>;
+    bloodSugar: {
+        measurements: Array<{
+            id: string;
+            value: number;
+            timestamp: string;
+            level: string;
+            timeOfDay: string;
+        }>;
+        averagesByTime: {
+            [key: string]: number;
+        };
+    };
     diets: Array<{
         id: string;
         name: string;
+        type: string;
         startDate: string;
         endDate: string;
         logDate: string;
         completed: boolean;
+        notes: string;
     }>;
     exercises: Array<{
         id: string;
         name: string;
+        intensity: string;
         startDate: string;
         endDate: string;
         logDate: string;
+        durationMinutes: number;
         completed: boolean;
+        notes: string;
     }>;
-    insulin: Array<{
-        id: string;
-        value: number;
-        timestamp: string;
-        note: string;
-    }>;
+    insulin: {
+        measurements: Array<{
+            id: string;
+            value: number;
+            timestamp: string;
+            note: string;
+            timeOfDay: string;
+        }>;
+        averagesByTime: {
+            [key: string]: number;
+        };
+    };
 }
 
 interface Statistics {
-    averageBloodSugar: number;
-    minBloodSugar: number;
-    maxBloodSugar: number;
-    completedExercises: number;
-    totalExercises: number;
-    completedDiets: number;
-    totalDiets: number;
-    averageInsulin: number;
+    bloodSugar: {
+        average: number;
+        max: number;
+        min: number;
+        averagesByTime: {
+            [key: string]: number;
+        };
+        totalMeasurements: number;
+        abnormalReadings: number;
+    };
+    diets: {
+        total: number;
+        completed: number;
+        adherenceRate: number;
+    };
+    exercises: {
+        total: number;
+        completed: number;
+        adherenceRate: number;
+        averageDuration: number;
+    };
+    insulin: {
+        average: number;
+        totalDoses: number;
+        averagesByTime: {
+            [key: string]: number;
+        };
+    };
 }
 
 export default function StaticsPage() {
@@ -84,6 +123,7 @@ export default function StaticsPage() {
     const [statistics, setStatistics] = useState<Statistics | null>(null);
     const [loading, setLoading] = useState(true);
     const [loadingData, setLoadingData] = useState(false);
+    const [activeTab, setActiveTab] = useState(0);
     const [dateRange, setDateRange] = useState({
         startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
         endDate: new Date()
@@ -112,7 +152,6 @@ export default function StaticsPage() {
 
             try {
                 setLoadingData(true);
-                // Convert dates to ISO strings and handle null/undefined
                 const startDateStr = dateRange.startDate ? dateRange.startDate.toISOString() : undefined;
                 const endDateStr = dateRange.endDate ? dateRange.endDate.toISOString() : undefined;
                 
@@ -132,6 +171,73 @@ export default function StaticsPage() {
 
         fetchGraphData();
     }, [selectedPatientId, dateRange]);
+
+    const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
+        setActiveTab(newValue);
+    };
+
+    const prepareBloodSugarTrendsData = (): ChartData<'line'> => {
+        if (!graphData) return { labels: [], datasets: [] };
+
+        const timeLabels = ['Morning', 'Afternoon', 'Evening', 'Night'];
+        const averages = [
+            graphData.bloodSugar.averagesByTime.morning || 0,
+            graphData.bloodSugar.averagesByTime.afternoon || 0,
+            graphData.bloodSugar.averagesByTime.evening || 0,
+            graphData.bloodSugar.averagesByTime.night || 0
+        ];
+
+        return {
+            labels: timeLabels,
+            datasets: [
+                {
+                    label: 'Average Blood Sugar (mg/dL)',
+                    data: averages,
+                    borderColor: 'rgba(16, 185, 129, 0.8)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    tension: 0.3,
+                    fill: true
+                }
+            ]
+        };
+    };
+
+    const prepareDetailedChartData = (): ChartData<'line'> => {
+        if (!graphData) return { labels: [], datasets: [] };
+
+        const bloodSugarData = graphData.bloodSugar.measurements.map(bs => ({
+            x: new Date(bs.timestamp).getTime(),
+            y: bs.value
+        }));
+
+        const insulinData = graphData.insulin.measurements.map(i => ({
+            x: new Date(i.timestamp).getTime(),
+            y: i.value
+        }));
+
+        return {
+            labels: bloodSugarData.map(d => new Date(d.x)),
+            datasets: [
+                {
+                    label: 'Blood Sugar (mg/dL)',
+                    data: bloodSugarData,
+                    borderColor: 'rgba(16, 185, 129, 0.8)',
+                    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                    yAxisID: 'y',
+                    tension: 0.3,
+                    fill: true
+                },
+                {
+                    label: 'Insulin (mL)',
+                    data: insulinData,
+                    borderColor: 'rgba(244, 63, 94, 0.8)',
+                    backgroundColor: 'rgba(244, 63, 94, 0.1)',
+                    yAxisID: 'y1',
+                    tension: 0.3
+                }
+            ]
+        };
+    };
 
     const chartOptions = {
         responsive: true,
@@ -162,7 +268,9 @@ export default function StaticsPage() {
                 title: {
                     display: true,
                     text: 'Blood Sugar Level (mg/dL)'
-                }
+                },
+                min: 0,
+                max: 300
             },
             y1: {
                 type: 'linear' as const,
@@ -181,113 +289,30 @@ export default function StaticsPage() {
             legend: {
                 position: 'top' as const
             },
-            title: {
-                display: true,
-                text: 'Patient Health Metrics Over Time'
-            },
             tooltip: {
                 mode: 'index' as const,
-                intersect: false,
-                callbacks: {
-                    label: function(context: any) {
-                        let label = context.dataset.label || '';
-                        if (label) {
-                            label += ': ';
-                        }
-                        if (context.parsed.y !== null) {
-                            if (label.includes('Blood Sugar')) {
-                                label += context.parsed.y.toFixed(1) + ' mg/dL';
-                            } else if (label.includes('Insulin')) {
-                                label += context.parsed.y.toFixed(2) + ' mL';
-                            } else {
-                                label += context.parsed.y;
-                            }
-                        }
-                        return label;
-                    }
-                }
+                intersect: false
             }
         }
     };
 
-    const prepareChartData = (): ChartData<'line'> => {
-        if (!graphData) return {
-            labels: [],
-            datasets: []
-        };
-
-        // Get all dates for x-axis
-        const allDates = [
-            ...graphData.bloodSugar.map(bs => new Date(bs.timestamp).getTime()),
-            ...graphData.insulin.map(i => new Date(i.timestamp).getTime())
-        ].sort((a, b) => a - b);
-
-        // Create datasets
-        return {
-            labels: allDates.map(timestamp => new Date(timestamp)),
-            datasets: [
-                {
-                    label: 'Blood Sugar',
-                    data: graphData.bloodSugar.map(bs => ({
-                        x: new Date(bs.timestamp).getTime(),
-                        y: bs.value
-                    })),
-                    borderColor: 'rgb(75, 192, 192)',
-                    backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                    yAxisID: 'y',
-                    tension: 0.2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: 'rgb(75, 192, 192)'
-                },
-                {
-                    label: 'Insulin Dosage',
-                    data: graphData.insulin.map(i => ({
-                        x: new Date(i.timestamp).getTime(),
-                        y: i.value
-                    })),
-                    borderColor: 'rgb(255, 99, 132)',
-                    backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                    yAxisID: 'y1',
-                    tension: 0.2,
-                    pointRadius: 4,
-                    pointHoverRadius: 6,
-                    pointBackgroundColor: 'rgb(255, 99, 132)'
-                },
-                // Add exercise completion markers
-                {
-                    label: 'Exercise Completed',
-                    data: graphData.exercises
-                        .filter(e => e.completed && e.logDate)
-                        .map(e => ({
-                            x: new Date(e.logDate).getTime(),
-                            y: Math.max(...graphData.bloodSugar.map(bs => bs.value)) + 10
-                        })),
-                    backgroundColor: 'rgb(54, 162, 235)',
-                    borderColor: 'rgb(54, 162, 235)',
-                    pointStyle: 'triangle',
-                    pointRadius: 8,
-                    showLine: false,
-                    yAxisID: 'y'
-                },
-                // Add diet completion markers
-                {
-                    label: 'Diet Completed',
-                    data: graphData.diets
-                        .filter(d => d.completed && d.logDate)
-                        .map(d => ({
-                            x: new Date(d.logDate).getTime(),
-                            y: Math.max(...graphData.bloodSugar.map(bs => bs.value)) + 10
-                        })),
-                    backgroundColor: 'rgb(255, 206, 86)',
-                    borderColor: 'rgb(255, 206, 86)',
-                    pointStyle: 'star',
-                    pointRadius: 8,
-                    showLine: false,
-                    yAxisID: 'y'
+    const trendsChartOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                position: 'top' as const
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Blood Sugar Level (mg/dL)'
                 }
-            ]
-        };
+            }
+        }
     };
 
     return (
@@ -296,8 +321,8 @@ export default function StaticsPage() {
                 <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
                     {/* Header Section */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-orange-800 mb-2">Patient Statics</h1>
-                        <p className="text-gray-600">View comprehensive patient health statics and analytics</p>
+                        <h1 className="text-3xl font-bold text-orange-800 mb-2">Patient Statistics</h1>
+                        <p className="text-gray-600">Comprehensive analysis of patient health metrics and trends</p>
                     </div>
 
                     {/* Main Content Grid */}
@@ -310,7 +335,7 @@ export default function StaticsPage() {
                             <div className="p-4">
                                 {loading ? (
                                     <div className="flex justify-center items-center h-64">
-                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                                        <CircularProgress color="warning" />
                                     </div>
                                 ) : (
                                     <PatientList
@@ -322,21 +347,22 @@ export default function StaticsPage() {
                             </div>
                         </div>
 
-                        {/* Statics Content - takes 2/3 of the space */}
+                        {/* Statistics Content */}
                         <div className="lg:col-span-2">
                             {selectedPatientId ? (
                                 loadingData ? (
                                     <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm">
-                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                                        <CircularProgress color="warning" />
                                     </div>
                                 ) : graphData && statistics ? (
                                     <motion.div
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         transition={{ duration: 0.5 }}
+                                        className="space-y-6"
                                     >
                                         {/* Date Range Controls */}
-                                        <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
+                                        <div className="bg-white rounded-xl shadow-sm p-4">
                                             <div className="flex items-center gap-4">
                                                 <Calendar className="h-5 w-5 text-orange-600" />
                                                 <div className="flex items-center gap-4">
@@ -344,16 +370,16 @@ export default function StaticsPage() {
                                                         onClick={() => {
                                                             const end = new Date();
                                                             const start = new Date();
-                                                            start.setDate(end.getDate() - 30);
+                                                            start.setDate(end.getDate() - 7);
                                                             setDateRange({ startDate: start, endDate: end });
                                                         }}
-                                                        className={`px-3 py-1 rounded-lg transition-colors ${
-                                                            dateRange.endDate.getTime() - dateRange.startDate.getTime() === 30 * 24 * 60 * 60 * 1000
+                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${
+                                                            dateRange.endDate.getTime() - dateRange.startDate.getTime() === 7 * 24 * 60 * 60 * 1000
                                                             ? 'bg-orange-100 text-orange-800'
                                                             : 'hover:bg-orange-50'
                                                         }`}
                                                     >
-                                                        Last 30 Days
+                                                        Last Week
                                                     </button>
                                                     <button
                                                         onClick={() => {
@@ -362,7 +388,7 @@ export default function StaticsPage() {
                                                             start.setDate(end.getDate() - 30);
                                                             setDateRange({ startDate: start, endDate: end });
                                                         }}
-                                                        className={`px-3 py-1 rounded-lg transition-colors ${
+                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${
                                                             dateRange.endDate.getTime() - dateRange.startDate.getTime() === 30 * 24 * 60 * 60 * 1000
                                                             ? 'bg-orange-100 text-orange-800'
                                                             : 'hover:bg-orange-50'
@@ -377,7 +403,7 @@ export default function StaticsPage() {
                                                             start.setDate(end.getDate() - 90);
                                                             setDateRange({ startDate: start, endDate: end });
                                                         }}
-                                                        className={`px-3 py-1 rounded-lg transition-colors ${
+                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${
                                                             dateRange.endDate.getTime() - dateRange.startDate.getTime() === 90 * 24 * 60 * 60 * 1000
                                                             ? 'bg-orange-100 text-orange-800'
                                                             : 'hover:bg-orange-50'
@@ -389,8 +415,8 @@ export default function StaticsPage() {
                                             </div>
                                         </div>
 
-                                        {/* Statistics Cards */}
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+                                        {/* Key Statistics Cards */}
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                                             <motion.div
                                                 initial={{ opacity: 0, y: 20 }}
                                                 animate={{ opacity: 1, y: 0 }}
@@ -402,7 +428,10 @@ export default function StaticsPage() {
                                                     <p className="text-gray-600 text-sm">Average Blood Sugar</p>
                                                 </div>
                                                 <p className="text-2xl font-semibold text-orange-800">
-                                                    {statistics.averageBloodSugar.toFixed(1)}
+                                                    {statistics.bloodSugar.average.toFixed(1)} mg/dL
+                                                </p>
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    Range: {statistics.bloodSugar.min.toFixed(1)} - {statistics.bloodSugar.max.toFixed(1)}
                                                 </p>
                                             </motion.div>
 
@@ -414,10 +443,13 @@ export default function StaticsPage() {
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
                                                     <Activity className="h-5 w-5 text-orange-600" />
-                                                    <p className="text-gray-600 text-sm">Exercise Completion</p>
+                                                    <p className="text-gray-600 text-sm">Exercise Adherence</p>
                                                 </div>
                                                 <p className="text-2xl font-semibold text-orange-800">
-                                                    {statistics.completedExercises}/{statistics.totalExercises}
+                                                    {statistics.exercises.adherenceRate.toFixed(1)}%
+                                                </p>
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    {statistics.exercises.completed}/{statistics.exercises.total} completed
                                                 </p>
                                             </motion.div>
 
@@ -429,10 +461,13 @@ export default function StaticsPage() {
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
                                                     <Utensils className="h-5 w-5 text-orange-600" />
-                                                    <p className="text-gray-600 text-sm">Diet Completion</p>
+                                                    <p className="text-gray-600 text-sm">Diet Adherence</p>
                                                 </div>
                                                 <p className="text-2xl font-semibold text-orange-800">
-                                                    {statistics.completedDiets}/{statistics.totalDiets}
+                                                    {statistics.diets.adherenceRate.toFixed(1)}%
+                                                </p>
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    {statistics.diets.completed}/{statistics.diets.total} completed
                                                 </p>
                                             </motion.div>
 
@@ -443,27 +478,47 @@ export default function StaticsPage() {
                                                 className="bg-white rounded-xl shadow-sm p-4"
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <ClipboardList className="h-5 w-5 text-orange-600" />
-                                                    <p className="text-gray-600 text-sm">Blood Sugar Range</p>
+                                                    <AlertTriangle className="h-5 w-5 text-orange-600" />
+                                                    <p className="text-gray-600 text-sm">Abnormal Readings</p>
                                                 </div>
                                                 <p className="text-2xl font-semibold text-orange-800">
-                                                    {statistics.minBloodSugar.toFixed(1)} - {statistics.maxBloodSugar.toFixed(1)}
+                                                    {statistics.bloodSugar.abnormalReadings}
+                                                </p>
+                                                <p className="text-sm text-gray-500 mt-1">
+                                                    of {statistics.bloodSugar.totalMeasurements} total readings
                                                 </p>
                                             </motion.div>
                                         </div>
 
-                                        {/* Blood Sugar Graph */}
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ duration: 0.3, delay: 0.4 }}
-                                            className="bg-white rounded-xl shadow-sm p-6"
-                                        >
-                                            <h3 className="text-lg font-semibold text-orange-800 mb-4">Blood Sugar Trends</h3>
-                                            <div className="h-[400px]">
-                                                <Line options={chartOptions} data={prepareChartData()} />
-                                            </div>
-                                        </motion.div>
+                                        {/* Tabs for Different Views */}
+                                        <div className="bg-white rounded-xl shadow-sm p-6">
+                                            <Tabs
+                                                value={activeTab}
+                                                onChange={handleTabChange}
+                                                className="mb-4"
+                                                textColor="inherit"
+                                                indicatorColor="primary"
+                                            >
+                                                <Tab label="Daily Trends" />
+                                                <Tab label="Detailed View" />
+                                            </Tabs>
+
+                                            {activeTab === 0 ? (
+                                                <div className="h-[400px]">
+                                                    <Line
+                                                        options={trendsChartOptions}
+                                                        data={prepareBloodSugarTrendsData()}
+                                                    />
+                                                </div>
+                                            ) : (
+                                                <div className="h-[400px]">
+                                                    <Line
+                                                        options={chartOptions}
+                                                        data={prepareDetailedChartData()}
+                                                    />
+                                                </div>
+                                            )}
+                                        </div>
                                     </motion.div>
                                 ) : (
                                     <div className="bg-white rounded-xl shadow-sm p-6">
@@ -472,7 +527,7 @@ export default function StaticsPage() {
                                 )
                             ) : (
                                 <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm">
-                                    <p className="text-gray-400 text-xl">Select a patient to view their statics</p>
+                                    <p className="text-gray-400 text-xl">Select a patient to view their statistics</p>
                                 </div>
                             )}
                         </div>
