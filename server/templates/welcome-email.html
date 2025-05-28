@@ -5,146 +5,137 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to DiabetaCare</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: oklch(44.8% .119 151.328);
+            line-height: 1.625;
+            color: #065f46;
             margin: 0;
             padding: 0;
-            background-color: #f0f9f9;
+            background-color: #fef2f2;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 672px;
             margin: 20px auto;
             padding: 0;
-            background-color: #ffffff;
+            background-color: white;
             border-radius: 12px;
-            box-shadow: 0 10px 25px rgba(20, 184, 166, 0.15);
+            box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.15), 0 4px 6px -2px rgba(239, 68, 68, 0.15);
             overflow: hidden;
         }
 
         .header {
             text-align: center;
-            padding: 35px 20px;
-            background: linear-gradient(to right, #22c55e, #14b8a6);
+            padding: 36px 20px;
+            background: linear-gradient(to right, #f97316, #ef4444);
             color: white;
             position: relative;
         }
 
-        .logo-container {
+        .header-content {
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
         }
 
-        .logo {
+        .header-icon {
             width: 32px;
             height: 32px;
         }
 
+        .header h1 {
+            color: white;
+            margin: 16px 0;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .header p {
+            color: rgba(255, 255, 255, 0.9);
+            margin: 0;
+            font-weight: 300;
+        }
+
         .content {
-            padding: 30px;
+            padding: 32px;
             background-color: white;
         }
 
         .credentials-box {
-            background-color: #f0fdf4;
+            background-color: #fff7ed;
             border-radius: 8px;
-            padding: 25px;
-            margin: 25px 0;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            border-left: 4px solid #22c55e;
+            padding: 24px;
+            margin: 24px 0;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            border-left: 4px solid #f97316;
         }
 
         .credentials-row {
             display: flex;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
             align-items: center;
             flex-wrap: wrap;
         }
 
         .credentials-label {
             font-weight: 600;
-            width: 110px;
-            color: #15803d;
+            width: 112px;
+            color: #c2410c;
         }
 
         .credentials-value {
-            font-family: monospace;
+            font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace;
             font-weight: 600;
-            color: #166534;
+            color: #9a3412;
             padding: 8px 12px;
-            background-color: rgba(22, 163, 74, 0.1);
+            background-color: rgba(249, 115, 22, 0.1);
             border-radius: 6px;
             flex-grow: 1;
             word-break: break-all;
         }
 
-        .button {
+        .signin-button {
             display: inline-block;
-            background: linear-gradient(to right, #22c55e, #14b8a6);
+            background: linear-gradient(to right, #f97316, #ef4444);
             color: white;
             text-decoration: none;
-            padding: 12px 30px;
+            padding: 12px 32px;
             border-radius: 8px;
             font-weight: 600;
-            margin: 25px 0;
+            margin: 24px 0;
             text-align: center;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
-            animation: pulse 2s infinite;
+            transition: all 0.3s;
+            box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3), 0 4px 6px -2px rgba(249, 115, 22, 0.3);
+            animation: pulse-scale 2s infinite;
         }
 
-        .button:hover {
+        .signin-button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(22, 163, 74, 0.4);
+            box-shadow: 0 20px 25px -5px rgba(249, 115, 22, 0.4), 0 10px 10px -5px rgba(249, 115, 22, 0.4);
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.09);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-
-        .footer {
+        .signin-center {
             text-align: center;
-            padding: 20px;
-            background-color: #f0fdf4;
-            font-size: 12px;
-            color: #15803d;
-            border-top: 1px solid #dcfce7;
         }
 
-        .tips {
-            background-color: #f0fdf4;
+        .getting-started {
+            background-color: #fff7ed;
             border-radius: 8px;
-            padding: 20px 25px;
-            margin: 25px 0;
+            padding: 20px 24px;
+            margin: 24px 0;
             position: relative;
         }
 
-        h1 {
-            color: white;
-            margin: 15px 0 5px;
-            font-weight: 700;
-            font-size: 24px;
-        }
-
-        h2 {
-            color: #15803d;
+        .getting-started h2 {
+            color: #c2410c;
             font-size: 18px;
             font-weight: 600;
             margin-top: 0;
@@ -153,25 +144,29 @@
             display: inline-block;
         }
 
-        h2:after {
-            content: "";
+        .getting-started h2::after {
+            content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -4px;
             left: 0;
             width: 40px;
-            height: 3px;
-            background: linear-gradient(to right, #22c55e, #14b8a6);
-            border-radius: 3px;
+            height: 2px;
+            background: linear-gradient(to right, #f97316, #ef4444);
+            border-radius: 1px;
+        }
+
+        .checklist {
+            margin-top: 20px;
         }
 
         .list-item {
             position: relative;
-            padding-left: 25px;
+            padding-left: 24px;
             margin-bottom: 10px;
-            color: #166534;
+            color: #9a3412;
         }
 
-        .list-item:before {
+        .list-item::before {
             content: "✓";
             position: absolute;
             left: 0;
@@ -179,22 +174,58 @@
             font-weight: bold;
         }
 
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #fff7ed;
+            font-size: 12px;
+            color: #c2410c;
+            border-top: 1px solid #fed7aa;
+        }
+
+        .footer-copyright {
+            font-weight: 500;
+            color: #c2410c;
+            font-size: 14px;
+            margin-top: 16px;
+        }
+
+        .footer-disclaimer {
+            margin-top: 10px;
+        }
+
+        .footer-link {
+            color: #f97316;
+            text-decoration: none;
+        }
+
+        @keyframes pulse-scale {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Mobile responsive adjustments */
         @media only screen and (max-width: 600px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-            }
             .credentials-row {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-direction: column !important;
+                align-items: flex-start !important;
             }
             .credentials-label {
-                margin-bottom: 5px;
-                width: 100%;
+                margin-bottom: 5px !important;
+                width: 100% !important;
             }
             .credentials-value {
-                width: 100%;
-                box-sizing: border-box;
+                width: 100% !important;
+            }
+            .container {
+                margin: 10px;
+            }
+            .content {
+                padding: 20px;
+            }
+            .header {
+                padding: 24px 16px;
             }
         }
     </style>
@@ -203,11 +234,18 @@
 <body>
     <div class="container">
         <div class="header">
-            <div class="logo-container">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hospital text-green-500" aria-hidden="true"><path d="M12 6v4"></path><path d="M14 14h-4"></path><path d="M14 18h-4"></path><path d="M14 8h-4"></path><path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"></path><path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"></path></svg>
+            <div class="header-content">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-icon" aria-hidden="true">
+                    <path d="M12 6v4"></path>
+                    <path d="M14 14h-4"></path>
+                    <path d="M14 18h-4"></path>
+                    <path d="M14 8h-4"></path>
+                    <path d="M18 12h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2h2"></path>
+                    <path d="M18 22V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v18"></path>
+                </svg>
                 <h1>DiabetaCare</h1>
             </div>
-            <p style="color: rgba(255,255,255,0.9); margin: 0; font-weight: 300;">Diabetes Management Made Easy</p>
+            <p>Diabetes Management Made Easy</p>
         </div>
 
         <div class="content">
@@ -231,13 +269,13 @@
 
             <p>For security purposes, we recommend changing your password after your first login.</p>
 
-            <div style="text-align: center;">
-                <a href="{{loginUrl}}" class="button">Sign In Now</a>
+            <div class="signin-center">
+                <a href="{{loginUrl}}" class="signin-button">Sign In Now</a>
             </div>
 
-            <div class="tips">
+            <div class="getting-started">
                 <h2>Getting Started with DiabetaCare</h2>
-                <div style="margin-top: 20px;">
+                <div class="checklist">
                     <div class="list-item">Complete your health profile</div>
                     <div class="list-item">Set up your glucose monitoring schedule</div>
                     <div class="list-item">Connect your glucose monitoring devices</div>
@@ -249,9 +287,9 @@
         </div>
 
         <div class="footer">
-            <p style="font-weight: 500; color: #15803d; font-size: 14px; margin-top: 15px;">© 2025 DiabetaCare Healthcare Systems. All rights reserved.</p>
-            <p style="margin-top: 10px;">
-                <small>If you did not register for DiabetaCare, please disregard this email or <a href="mailto:support@diabetacare.com" style="color: #22c55e; text-decoration: none;">contact us immediately</a>.</small>
+            <p class="footer-copyright">© 2025 DiabetaCare Healthcare Systems. All rights reserved.</p>
+            <p class="footer-disclaimer">
+                <small>If you did not register for DiabetaCare, please disregard this email or <a href="mailto:support@diabetacare.com" class="footer-link">contact us immediately</a>.</small>
             </p>
         </div>
     </div>

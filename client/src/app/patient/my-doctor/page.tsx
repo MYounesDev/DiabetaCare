@@ -89,7 +89,7 @@ export default function MyDoctor() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4"
+          className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4"
         >
           <motion.div
             ref={modalRef}
@@ -99,26 +99,26 @@ export default function MyDoctor() {
           >
             {modal.type === 'message' ? (
               <div>
-                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
                   <div>
-                    <h3 className="text-xl font-bold text-green-800">Send Message to Doctor</h3>
+                    <h3 className="text-xl font-bold text-orange-800">Send Message to Doctor</h3>
                     <p className="text-sm text-gray-600 mt-1">Write your message below</p>
                   </div>
                   <button
                     onClick={() => setModal({ isOpen: false, type: null })}
-                    className="p-1 rounded-full hover:bg-green-100 text-green-600"
+                    className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
                   >
                     <X size={20} />
                   </button>
                 </div>
                 <form onSubmit={handleSendMessage} className="p-4 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-green-700 mb-1">Message</label>
+                    <label className="block text-sm font-medium text-orange-700 mb-1">Message</label>
                     <textarea
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       placeholder="Type your message here..."
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white resize-none h-32"
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white resize-none h-32"
                     />
                   </div>
                   <div className="pt-4 border-t border-gray-200 flex justify-end space-x-3">
@@ -131,7 +131,7 @@ export default function MyDoctor() {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                     >
                       <Send size={16} /> Send Message
                     </button>
@@ -140,40 +140,40 @@ export default function MyDoctor() {
               </div>
             ) : modal.type === 'schedule' ? (
               <div>
-                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
                   <div>
-                    <h3 className="text-xl font-bold text-green-800">Schedule Appointment</h3>
+                    <h3 className="text-xl font-bold text-orange-800">Schedule Appointment</h3>
                     <p className="text-sm text-gray-600 mt-1">Select a date and time for your appointment</p>
                   </div>
                   <button
                     onClick={() => setModal({ isOpen: false, type: null })}
-                    className="p-1 rounded-full hover:bg-green-100 text-green-600"
+                    className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
                   >
                     <X size={20} />
                   </button>
                 </div>
                 <div className="p-4 space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-green-700 mb-2">Select Day</label>
+                    <label className="block text-sm font-medium text-orange-700 mb-2">Select Day</label>
                     <div className="grid grid-cols-2 gap-4">
                       {['Mon', 'Tue', 'Wed', 'Thu', 'Fri'].map((day) => (
                         <button
                           key={day}
-                          className="p-3 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors focus:ring-2 focus:ring-green-500 focus:outline-none"
+                          className="p-3 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors focus:ring-2 focus:ring-orange-500 focus:outline-none"
                         >
-                          <div className="font-medium text-green-800">{day}</div>
+                          <div className="font-medium text-orange-800">{day}</div>
                           <div className="text-sm text-gray-500">Available</div>
                         </button>
                       ))}
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-green-700 mb-2">Available Time Slots</label>
+                    <label className="block text-sm font-medium text-orange-700 mb-2">Available Time Slots</label>
                     <div className="grid grid-cols-3 gap-2">
                       {['09:00', '10:00', '11:00', '14:00', '15:00', '16:00'].map((time) => (
                         <button
                           key={time}
-                          className="p-2 border border-gray-200 rounded-lg hover:border-green-500 hover:bg-green-50 transition-colors text-sm focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                          className="p-2 border border-gray-200 rounded-lg hover:border-orange-500 hover:bg-orange-50 transition-colors text-sm focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                         >
                           {time}
                         </button>
@@ -190,7 +190,7 @@ export default function MyDoctor() {
                     </button>
                     <button
                       type="button"
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                     >
                       <Calendar size={16} /> Request Appointment
                     </button>
@@ -208,17 +208,17 @@ export default function MyDoctor() {
     <PageTemplate>
       <AuthWrapper allowedRoles={['patient']}>
         <div className="flex min-h-screen">
-          <div className="flex-1 p-8 bg-gradient-to-br from-green-50 to-teal-100">
+          <div className="flex-1 p-8 bg-gradient-to-br from-orange-50 to-red-100">
             {/* Header section */}
             <div className="mb-8">
-              <h1 className="text-3xl font-bold text-green-800">My Doctor</h1>
+              <h1 className="text-3xl font-bold text-orange-800">My Doctor</h1>
               <p className="text-gray-600 mt-2">View your assigned doctor's information and manage communications</p>
             </div>
 
             {/* Content */}
             {loading ? (
               <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
               </div>
             ) : error ? (
               <div className="bg-red-50 border border-red-200 rounded-xl p-6 flex items-start">
@@ -239,7 +239,7 @@ export default function MyDoctor() {
                 >
                   <div className="p-8">
                     <div className="flex items-center mb-6">
-                      <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-6">
+                      <div className="w-24 h-24 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 mr-6">
                         {doctor.doctor_image ? (
                           <img
                             src={`data:image/jpeg;base64,${Buffer.from(doctor.doctor_image.data).toString("base64")}`}
@@ -251,19 +251,19 @@ export default function MyDoctor() {
                         )}
                       </div>
                       <div>
-                        <h2 className="text-2xl font-bold text-green-800">{doctor.doctor_name}</h2>
+                        <h2 className="text-2xl font-bold text-orange-800">{doctor.doctor_name}</h2>
                         <p className="text-gray-500 mt-1">Primary Care Physician</p>
                         <div className="flex gap-4 mt-4">
                           <button
                             onClick={() => setModal({ isOpen: true, type: 'message' })}
-                            className="flex items-center gap-2 text-green-600 hover:text-green-700"
+                            className="flex items-center gap-2 text-orange-600 hover:text-orange-700"
                           >
                             <MessageCircle size={18} />
                             <span>Send Message</span>
                           </button>
                           <button
                             onClick={() => setModal({ isOpen: true, type: 'schedule' })}
-                            className="flex items-center gap-2 text-green-600 hover:text-green-700"
+                            className="flex items-center gap-2 text-orange-600 hover:text-orange-700"
                           >
                             <Calendar size={18} />
                             <span>Schedule Visit</span>
@@ -306,16 +306,16 @@ export default function MyDoctor() {
                     transition={{ duration: 0.5, delay: 0.2 }}
                     className="bg-white rounded-xl shadow-md p-6"
                   >
-                    <h3 className="text-lg font-semibold text-green-800 mb-4">Quick Stats</h3>
+                    <h3 className="text-lg font-semibold text-orange-800 mb-4">Quick Stats</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="text-center p-4 bg-green-50 rounded-lg">
-                        <CalendarDays className="mx-auto text-green-600 mb-2" size={24} />
-                        <div className="text-2xl font-bold text-green-800">12</div>
+                      <div className="text-center p-4 bg-orange-50 rounded-lg">
+                        <CalendarDays className="mx-auto text-orange-600 mb-2" size={24} />
+                        <div className="text-2xl font-bold text-orange-800">12</div>
                         <div className="text-sm text-gray-600">Total Visits</div>
                       </div>
-                      <div className="text-center p-4 bg-green-50 rounded-lg">
-                        <FileText className="mx-auto text-green-600 mb-2" size={24} />
-                        <div className="text-2xl font-bold text-green-800">8</div>
+                      <div className="text-center p-4 bg-orange-50 rounded-lg">
+                        <FileText className="mx-auto text-orange-600 mb-2" size={24} />
+                        <div className="text-2xl font-bold text-orange-800">8</div>
                         <div className="text-sm text-gray-600">Reports</div>
                       </div>
                     </div>
@@ -328,14 +328,14 @@ export default function MyDoctor() {
                     transition={{ duration: 0.5, delay: 0.3 }}
                     className="bg-white rounded-xl shadow-md p-6"
                   >
-                    <h3 className="text-lg font-semibold text-green-800 mb-4">Next Appointment</h3>
-                    <div className="bg-green-50 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-orange-800 mb-4">Next Appointment</h3>
+                    <div className="bg-orange-50 rounded-lg p-4">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-green-800 font-medium">Regular Checkup</p>
+                          <p className="text-orange-800 font-medium">Regular Checkup</p>
                           <p className="text-sm text-gray-600">Tomorrow, 10:00 AM</p>
                         </div>
-                        <button className="text-green-600 hover:text-green-700">
+                        <button className="text-orange-600 hover:text-orange-700">
                           <ChevronRight size={20} />
                         </button>
                       </div>

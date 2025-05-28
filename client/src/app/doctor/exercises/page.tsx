@@ -593,10 +593,10 @@ export default function DoctorExercises() {
   return (
     <PageTemplate>
       <AuthWrapper allowedRoles={["doctor"]}>
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-green-800 mb-2">Exercise Management</h1>
+            <h1 className="text-3xl font-bold text-orange-800 mb-2">Exercise Management</h1>
             <p className="text-gray-600">Manage exercise types, patient assignments, and track progress</p>
           </div>
 
@@ -607,14 +607,14 @@ export default function DoctorExercises() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-bold text-green-800">Exercise Types</h2>
+                    <h2 className="text-xl font-bold text-orange-800">Exercise Types</h2>
                     <p className="text-sm text-gray-500 mt-1">Manage different types of exercises</p>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowAddTypeModal(true)}
-                    className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
+                    className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
                   >
                     <PlusCircle size={16} /> Add Type
                   </motion.button>
@@ -624,7 +624,7 @@ export default function DoctorExercises() {
               <div className="p-6">
                 {loadingTypes ? (
                   <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -636,14 +636,14 @@ export default function DoctorExercises() {
                         className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow border border-gray-100"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-green-800">{type.exercise_name}</h3>
+                          <h3 className="font-semibold text-orange-800">{type.exercise_name}</h3>
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
                                 setSelectedType(type);
                                 setShowEditTypeModal(true);
                               }}
-                              className="p-1 rounded-lg text-green-600 hover:bg-green-50"
+                              className="p-1 rounded-lg text-orange-600 hover:bg-orange-50"
                             >
                               <Edit size={16} />
                             </button>
@@ -659,7 +659,7 @@ export default function DoctorExercises() {
                           </div>
                         </div>
                         <p className="text-sm text-gray-600 mb-3">{type.description}</p>
-                        <div className="flex items-center gap-2 text-sm text-green-600">
+                        <div className="flex items-center gap-2 text-sm text-orange-600">
                           <Users size={16} />
                           <span>{typeAssignments[type.exercise_id] || 0} patients assigned</span>
                         </div>
@@ -675,14 +675,14 @@ export default function DoctorExercises() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <div>
-                    <h2 className="text-xl font-bold text-green-800">Patient Management</h2>
+                    <h2 className="text-xl font-bold text-orange-800">Patient Management</h2>
                     <p className="text-sm text-gray-500 mt-1">Manage patients and their exercise plans</p>
                   </div>
                   <motion.button
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowAssignModal(true)}
-                    className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
+                    className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
                   >
                     <PlusCircle size={16} /> Assign Exercise
                   </motion.button>
@@ -692,10 +692,10 @@ export default function DoctorExercises() {
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 p-6">
                 {/* Patient List - now takes 1/3 of the space */}
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <h3 className="text-lg font-semibold text-green-800 mb-4">Patients</h3>
+                  <h3 className="text-lg font-semibold text-orange-800 mb-4">Patients</h3>
                   {loadingPatients ? (
                     <div className="flex justify-center items-center h-64">
-                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                     </div>
                   ) : (
                     <PatientList
@@ -708,11 +708,11 @@ export default function DoctorExercises() {
 
                 {/* Exercise Plans - now takes 2/3 of the space to give more room */}
                 <div className="bg-gray-50 rounded-lg p-4 lg:col-span-2">
-                  <h3 className="text-lg font-semibold text-green-800 mb-4">Exercise Plans</h3>
+                  <h3 className="text-lg font-semibold text-orange-800 mb-4">Exercise Plans</h3>
                   {selectedPatientId ? (
                     loadingPlans ? (
                       <div className="flex justify-center items-center h-64">
-                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                       </div>
                     ) : (
                       <PatientPlans
@@ -738,7 +738,7 @@ export default function DoctorExercises() {
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-xl font-bold text-green-800">Exercise Logs</h2>
+                      <h2 className="text-xl font-bold text-orange-800">Exercise Logs</h2>
                       <p className="text-sm text-gray-500 mt-1">
                         Track and manage exercise completion for {getPatientName(selectedPatientId)} - {selectedPlan?.exercise_name || 'Selected Plan'}
                       </p>
@@ -749,7 +749,7 @@ export default function DoctorExercises() {
                 <div className="p-6">
                   {loadingLogs ? (
                     <div className="flex justify-center items-center h-64">
-                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                     </div>
                   ) : (
                     <ExerciseLogsCalendar
@@ -767,16 +767,16 @@ export default function DoctorExercises() {
 
         {/* Add Exercise Type Modal */}
         {showAddTypeModal && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={addTypeModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Add Exercise Type</h2>
-                <button onClick={() => setShowAddTypeModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                <h2 className="text-xl font-bold text-orange-800">Add Exercise Type</h2>
+                <button onClick={() => setShowAddTypeModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                   <X size={20} />
                 </button>
               </div>
@@ -787,22 +787,22 @@ export default function DoctorExercises() {
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-green-700 mb-1">Name</label>
+                  <label className="block text-sm font-medium text-orange-700 mb-1">Name</label>
                   <input
                     type="text"
                     required
                     value={newType.name}
                     onChange={(e) => setNewType({ ...newType, name: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-green-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-orange-700 mb-1">Description</label>
                   <textarea
                     required
                     value={newType.description}
                     onChange={(e) => setNewType({ ...newType, description: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   />
                 </div>
                 <div className="pt-4 border-t border-gray-200 flex justify-end space-x-3">
@@ -816,7 +816,7 @@ export default function DoctorExercises() {
                   <button
                     type="submit"
                     disabled={isSubmittingType}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                   >
                     {isSubmittingType ? <Loader2 size={16} className="animate-spin" /> : <PlusCircle size={16} />} Add
                   </button>
@@ -828,16 +828,16 @@ export default function DoctorExercises() {
 
         {/* Edit Exercise Type Modal */}
         {showEditTypeModal && selectedType && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={editTypeModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Edit Exercise Type</h2>
-                <button onClick={() => setShowEditTypeModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                <h2 className="text-xl font-bold text-orange-800">Edit Exercise Type</h2>
+                <button onClick={() => setShowEditTypeModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                   <X size={20} />
                 </button>
               </div>
@@ -848,22 +848,22 @@ export default function DoctorExercises() {
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-green-700 mb-1">Name</label>
+                  <label className="block text-sm font-medium text-orange-700 mb-1">Name</label>
                   <input
                     type="text"
                     required
                     value={selectedType.exercise_name}
                     onChange={(e) => setSelectedType({ ...selectedType, exercise_name: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-green-700 mb-1">Description</label>
+                  <label className="block text-sm font-medium text-orange-700 mb-1">Description</label>
                   <textarea
                     required
                     value={selectedType.description}
                     onChange={(e) => setSelectedType({ ...selectedType, description: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   />
                 </div>
                 <div className="pt-4 border-t border-gray-200 flex justify-end space-x-3">
@@ -877,7 +877,7 @@ export default function DoctorExercises() {
                   <button
                     type="submit"
                     disabled={isSubmittingType}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                   >
                     {isSubmittingType ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />} Save
                   </button>
@@ -889,21 +889,21 @@ export default function DoctorExercises() {
 
         {/* Delete Exercise Type Modal */}
         {showDeleteTypeModal && selectedType && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={deleteTypeModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Delete Exercise Type</h2>
-                <button onClick={() => setShowDeleteTypeModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                <h2 className="text-xl font-bold text-orange-800">Delete Exercise Type</h2>
+                <button onClick={() => setShowDeleteTypeModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                   <X size={20} />
                 </button>
               </div>
               <div className="p-4">
-                <p className="mb-4 text-green-700">Are you sure you want to delete <span className="font-semibold text-red-600">{selectedType.exercise_name}</span>?</p>
+                <p className="mb-4 text-orange-700">Are you sure you want to delete <span className="font-semibold text-red-600">{selectedType.exercise_name}</span>?</p>
                 {typeFormError && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} /> {typeFormError}
@@ -931,19 +931,19 @@ export default function DoctorExercises() {
 
         {/* Assign Plan Modal */}
         {showAssignModal && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={assignModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-6 bg-gradient-to-r from-green-50 to-teal-50">
+              <div className="flex justify-between items-center border-b border-gray-200 p-6 bg-gradient-to-r from-orange-50 to-red-50">
                 <div>
-                  <h2 className="text-2xl font-bold text-green-800">Assign Exercise Plan</h2>
+                  <h2 className="text-2xl font-bold text-orange-800">Assign Exercise Plan</h2>
                   <p className="text-sm text-gray-600 mt-1">Create a new exercise plan for your patient</p>
                 </div>
-                <button onClick={() => setShowAssignModal(false)} className="p-2 rounded-full hover:bg-green-100 text-green-600 transition-colors">
+                <button onClick={() => setShowAssignModal(false)} className="p-2 rounded-full hover:bg-orange-100 text-orange-600 transition-colors">
                   <X size={24} />
                 </button>
               </div>
@@ -956,7 +956,7 @@ export default function DoctorExercises() {
 
                 {/* Patient Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-green-700">Select Patient</label>
+                  <label className="block text-sm font-medium text-orange-700">Select Patient</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                     <input
@@ -964,7 +964,7 @@ export default function DoctorExercises() {
                       placeholder="Search patient by name or username..."
                       value={searchPatient}
                       onChange={(e) => setSearchPatient(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg mt-2 bg-white">
@@ -990,8 +990,8 @@ export default function DoctorExercises() {
                             fetchExerciseRecommendations(patient.id);
                           }}
                           className={`p-4 cursor-pointer transition-colors ${assignData.patient_id === patient.id
-                            ? 'bg-green-50 border-l-4 border-green-500'
-                            : 'hover:bg-green-50'
+                            ? 'bg-orange-50 border-l-4 border-orange-500'
+                            : 'hover:bg-orange-50'
                             }`}
                         >
                           <div className="flex items-center gap-3">
@@ -999,15 +999,15 @@ export default function DoctorExercises() {
                               <img
                                 src={`data:image/jpeg;base64,${Buffer.from(patient.profile_picture.data).toString("base64")}`}
                                 alt={patient.full_name}
-                                className="w-10 h-10 rounded-full object-cover border-2 border-green-100"
+                                className="w-10 h-10 rounded-full object-cover border-2 border-orange-100"
                               />
                             ) : (
-                              <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-lg border-2 border-green-200">
+                              <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-lg border-2 border-orange-200">
                                 <User size={24} />
                               </div>
                             )}
                             <div>
-                              <div className="font-medium text-green-800">{patient.full_name}</div>
+                              <div className="font-medium text-orange-800">{patient.full_name}</div>
                               <div className="text-sm text-gray-500">{patient.username}</div>
                             </div>
                           </div>
@@ -1019,7 +1019,7 @@ export default function DoctorExercises() {
 
                 {/* Exercise Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-green-700">Select Exercise Type</label>
+                  <label className="block text-sm font-medium text-orange-700">Select Exercise Type</label>
                   <div className="relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
                     <input
@@ -1027,7 +1027,7 @@ export default function DoctorExercises() {
                       placeholder="Search exercise type..."
                       value={searchExercise}
                       onChange={(e) => setSearchExercise(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                     />
                   </div>
                   <div className="max-h-48 overflow-y-auto border border-gray-200 rounded-lg mt-2 bg-white">
@@ -1052,17 +1052,17 @@ export default function DoctorExercises() {
                               setSearchExercise(exercise.exercise_name);
                             }}
                             className={`p-4 cursor-pointer transition-colors ${assignData.exercise_id === exercise.exercise_id
-                                ? 'bg-green-50 border-l-4 border-green-500'
-                                : 'hover:bg-green-50'
+                                ? 'bg-orange-50 border-l-4 border-orange-500'
+                                : 'hover:bg-orange-50'
                               }`}
                           >
                             <div className="flex justify-between items-start">
                               <div>
-                                <div className="font-medium text-green-800">{exercise.exercise_name}</div>
+                                <div className="font-medium text-orange-800">{exercise.exercise_name}</div>
                                 <div className="text-sm text-gray-500 mt-1">{exercise.description}</div>
                               </div>
                               {isRecommended && (
-                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800">
                                   Recommended
                                 </span>
                               )}
@@ -1077,20 +1077,20 @@ export default function DoctorExercises() {
                 {/* Date Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-green-700">Start Date</label>
+                    <label className="block text-sm font-medium text-orange-700">Start Date</label>
                     <CustomDatePicker
                       selectedDate={assignData.start_date ? new Date(assignData.start_date) : null}
                       onChange={(date) => setAssignData({ ...assignData, start_date: date ? date.toISOString().split('T')[0] : '' })}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-green-700">End Date (Optional)</label>
+                    <label className="block text-sm font-medium text-orange-700">End Date (Optional)</label>
                     <CustomDatePicker
                       selectedDate={assignData.end_date ? new Date(assignData.end_date) : null}
                       onChange={(date) => setAssignData({ ...assignData, end_date: date ? date.toISOString().split('T')[0] : '' })}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                     />
                   </div>
                 </div>
@@ -1106,7 +1106,7 @@ export default function DoctorExercises() {
                   <button
                     type="submit"
                     disabled={isSubmittingPlan || !assignData.patient_id || !assignData.exercise_id || !assignData.start_date}
-                    className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all disabled:hover:opacity-50"
+                    className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all disabled:hover:opacity-50"
                   >
                     {isSubmittingPlan ? (
                       <Loader2 size={20} className="animate-spin" />
@@ -1125,19 +1125,19 @@ export default function DoctorExercises() {
 
         {/* Edit Plan Modal */}
         {showEditPlanModal && planToEdit && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={editPlanModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-6 bg-gradient-to-r from-green-50 to-teal-50">
+              <div className="flex justify-between items-center border-b border-gray-200 p-6 bg-gradient-to-r from-orange-50 to-red-50">
                 <div>
-                  <h2 className="text-2xl font-bold text-green-800">Edit Exercise Plan</h2>
+                  <h2 className="text-2xl font-bold text-orange-800">Edit Exercise Plan</h2>
                   <p className="text-sm text-gray-600 mt-1">Update the exercise plan details</p>
                 </div>
-                <button onClick={() => setShowEditPlanModal(false)} className="p-2 rounded-full hover:bg-green-100 text-green-600 transition-colors">
+                <button onClick={() => setShowEditPlanModal(false)} className="p-2 rounded-full hover:bg-orange-100 text-orange-600 transition-colors">
                   <X size={24} />
                 </button>
               </div>
@@ -1150,12 +1150,12 @@ export default function DoctorExercises() {
 
                 {/* Status Selection */}
                 <div className="space-y-2">
-                  <label className="block text-sm font-medium text-green-700">Plan Status</label>
+                  <label className="block text-sm font-medium text-orange-700">Plan Status</label>
                   <select
                     required
                     value={planToEdit.status}
                     onChange={e => setPlanToEdit({ ...planToEdit, status: e.target.value })}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                   >
                     <option value="pending" className="py-2">Pending</option>
                     <option value="active" className="py-2">Active</option>
@@ -1166,20 +1166,20 @@ export default function DoctorExercises() {
                 {/* Date Selection */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-green-700">Start Date</label>
+                    <label className="block text-sm font-medium text-orange-700">Start Date</label>
                     <CustomDatePicker
                       selectedDate={planToEdit.start_date ? new Date(planToEdit.start_date) : null}
                       onChange={(date) => setPlanToEdit({ ...planToEdit, start_date: date ? date.toISOString().split('T')[0] : '' })}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                       required
                     />
                   </div>
                   <div className="space-y-2">
-                    <label className="block text-sm font-medium text-green-700">End Date</label>
+                    <label className="block text-sm font-medium text-orange-700">End Date</label>
                     <CustomDatePicker
                       selectedDate={planToEdit.end_date ? new Date(planToEdit.end_date) : null}
                       onChange={(date) => setPlanToEdit({ ...planToEdit, end_date: date ? date.toISOString().split('T')[0] : '' })}
-                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800 bg-white"
+                      className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800 bg-white"
                     />
                   </div>
                 </div>
@@ -1195,7 +1195,7 @@ export default function DoctorExercises() {
                   <button
                     type="submit"
                     disabled={isSubmittingEditPlan}
-                    className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all disabled:hover:opacity-50"
+                    className="px-6 py-3 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-all disabled:hover:opacity-50"
                   >
                     {isSubmittingEditPlan ? (
                       <Loader2 size={20} className="animate-spin" />
@@ -1214,21 +1214,21 @@ export default function DoctorExercises() {
 
         {/* Delete Plan Modal */}
         {showDeletePlanModal && planToDelete && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={deletePlanModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Delete Exercise Plan</h2>
-                <button onClick={() => setShowDeletePlanModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                <h2 className="text-xl font-bold text-orange-800">Delete Exercise Plan</h2>
+                <button onClick={() => setShowDeletePlanModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                   <X size={20} />
                 </button>
               </div>
               <div className="p-4">
-                <p className="mb-4 text-green-700">Are you sure you want to delete <span className="font-semibold text-red-600">{planToDelete.exercise_name}</span>?</p>
+                <p className="mb-4 text-orange-700">Are you sure you want to delete <span className="font-semibold text-red-600">{planToDelete.exercise_name}</span>?</p>
                 {deletePlanFormError && (
                   <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} /> {deletePlanFormError}
@@ -1256,16 +1256,16 @@ export default function DoctorExercises() {
 
         {/* Edit Log Modal */}
         {showEditLogModal && logToEdit && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={editLogModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                <h2 className="text-xl font-bold text-green-800">Edit Exercise Log</h2>
-                <button onClick={() => setShowEditLogModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                <h2 className="text-xl font-bold text-orange-800">Edit Exercise Log</h2>
+                <button onClick={() => setShowEditLogModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                   <X size={20} />
                 </button>
               </div>
@@ -1276,12 +1276,12 @@ export default function DoctorExercises() {
                   </div>
                 )}
                 <div>
-                  <label className="block text-sm font-medium text-green-700 mb-1">Note</label>
+                  <label className="block text-sm font-medium text-orange-700 mb-1">Note</label>
                   <textarea
                     required
                     value={logToEdit.note}
                     onChange={e => setLogToEdit({ ...logToEdit, note: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   />
                 </div>
                 <StyledCheckbox
@@ -1311,7 +1311,7 @@ export default function DoctorExercises() {
                   <button
                     type="submit"
                     disabled={isSubmittingEditLog}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                   >
                     {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />} Save
                   </button>

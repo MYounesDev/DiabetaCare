@@ -84,10 +84,10 @@ export default function PatientInsulin() {
   return (
     <PageTemplate>
       <AuthWrapper allowedRoles={["patient"]}>
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-green-800 mb-2">My Insulin Monitoring</h1>
+            <h1 className="text-3xl font-bold text-orange-800 mb-2">My Insulin Monitoring</h1>
             <p className="text-gray-600">Track and manage your insulin doses throughout the day</p>
           </div>
 
@@ -95,7 +95,7 @@ export default function PatientInsulin() {
           <div>
             {loadingLogs ? (
               <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
               </div>
             ) : (
               <InsulinLogsCalendar

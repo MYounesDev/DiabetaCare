@@ -286,27 +286,27 @@ interface InsulinLog {
             const insulinLevel = getInsulinLevel(sumInsulin);
 
             const getBgColor = () => {
-                if (isToday) return 'bg-green-50';
-                if (insulinLevel === 'low') return 'bg-blue-50';
+                if (isToday) return 'bg-orange-50';
+                if (insulinLevel === 'low') return 'bg-red-50';
                 if (insulinLevel === 'medium') return 'bg-yellow-50';
                 if (insulinLevel === 'high') return 'bg-red-50';
                 return 'bg-gray-50';
             };
 
             const getBorderColor = () => {
-                if (isToday) return 'border-green-500';
-                if (insulinLevel === 'low') return 'border-blue-300';
+                if (isToday) return 'border-orange-500';
+                if (insulinLevel === 'low') return 'border-red-300';
                 if (insulinLevel === 'medium') return 'border-yellow-300';
                 if (insulinLevel === 'high') return 'border-red-300';
                 return 'border-gray-100';
             };
 
             const getHoverBorderColor = () => {
-                if (isToday) return 'hover:border-green-500';
-                if (insulinLevel === 'low') return 'hover:border-blue-500';
+                if (isToday) return 'hover:border-orange-500';
+                if (insulinLevel === 'low') return 'hover:border-red-500';
                 if (insulinLevel === 'medium') return 'hover:border-yellow-500';
                 if (insulinLevel === 'high') return 'hover:border-red-500';
-                return 'hover:border-green-300';
+                return 'hover:border-orange-300';
             };
 
             days.push(
@@ -327,7 +327,7 @@ interface InsulinLog {
                     <div className="flex justify-between items-start">
                         <span className={`
                             text-sm font-medium
-                            ${isToday ? 'text-green-700' : 'text-gray-700'}
+                            ${isToday ? 'text-orange-700' : 'text-gray-700'}
                         `}>
                             {day}
                         </span>
@@ -338,7 +338,7 @@ interface InsulinLog {
                                     animate={{ scale: 1 }}
                                     className={`
                                         px-2 py-1 rounded-full
-                                        ${insulinLevel === 'low' ? 'bg-blue-100 text-blue-600' : ''}
+                                        ${insulinLevel === 'low' ? 'bg-red-100 text-red-600' : ''}
                                         ${insulinLevel === 'medium' ? 'bg-yellow-100 text-yellow-600' : ''}
                                         ${insulinLevel === 'high' ? 'bg-red-100 text-red-600' : ''}
                                         ${insulinLevel === 'none' ? 'bg-gray-100 text-gray-600' : ''}
@@ -356,9 +356,9 @@ interface InsulinLog {
                         <motion.div
                             initial={{ opacity: 0, y: 5 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="absolute inset-0 flex items-center justify-center bg-green-50 bg-opacity-90 rounded-lg"
+                            className="absolute inset-0 flex items-center justify-center bg-orange-50 bg-opacity-90 rounded-lg"
                         >
-                            <Plus size={20} className="text-green-600" />
+                            <Plus size={20} className="text-orange-600" />
                         </motion.div>
                     )}
                 </motion.div>
@@ -372,22 +372,22 @@ interface InsulinLog {
         <>
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 {/* Calendar Header */}
-                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-teal-50">
+                <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-red-50">
                     <div className="flex justify-between items-center">
-                        <h2 className="text-2xl font-bold text-green-800">Insulin Logs</h2>
+                        <h2 className="text-2xl font-bold text-orange-800">Insulin Logs</h2>
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={handlePrevMonth}
-                                className="p-2 rounded-lg hover:bg-white transition-colors text-green-600"
+                                className="p-2 rounded-lg hover:bg-white transition-colors text-orange-600"
                             >
                                 <ChevronLeft size={20} />
                             </button>
-                            <span className="text-lg font-semibold text-green-800">
+                            <span className="text-lg font-semibold text-orange-800">
                                 {getMonthName(currentDate)} {currentDate.getFullYear()}
                             </span>
                             <button
                                 onClick={handleNextMonth}
-                                className="p-2 rounded-lg hover:bg-white transition-colors text-green-600"
+                                className="p-2 rounded-lg hover:bg-white transition-colors text-orange-600"
                             >
                                 <ChevronRight size={20} />
                             </button>
@@ -413,11 +413,11 @@ interface InsulinLog {
                 <div className="px-6 pb-4">
                     <div className="flex items-center justify-center gap-6 text-sm">
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-green-100 border border-green-300" />
+                            <div className="w-3 h-3 rounded-full bg-orange-100 border border-orange-300" />
                             <span className="text-gray-600">Today</span>
                         </div>
                         <div className="flex items-center gap-2">
-                            <div className="w-3 h-3 rounded-full bg-blue-100 border border-blue-300" />
+                            <div className="w-3 h-3 rounded-full bg-red-100 border border-red-300" />
                             <span className="text-gray-600">Low (≤2 mL)</span>
                         </div>
                         <div className="flex items-center gap-2">
@@ -434,23 +434,23 @@ interface InsulinLog {
 
             {/* Add Log Modal */}
             {showAddModal && (
-                <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
                     <motion.div
                         ref={addModalRef}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
                     >
-                        <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                            <h2 className="text-xl font-bold text-green-800">Add Insulin Log</h2>
-                            <button onClick={() => setShowAddModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+                        <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                            <h2 className="text-xl font-bold text-orange-800">Add Insulin Log</h2>
+                            <button onClick={() => setShowAddModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                                 <X size={20} />
                             </button>
                         </div>
                         {!recommendation ? (
                             <form onSubmit={handleTimeSubmit} className="p-4 space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-green-700 mb-1">Date</label>
+                                    <label className="block text-sm font-medium text-orange-700 mb-1">Date</label>
                                     <input
                                         type="text"
                                         value={selectedDate}
@@ -459,12 +459,12 @@ interface InsulinLog {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-green-700 mb-1">Time</label>
+                                    <label className="block text-sm font-medium text-orange-700 mb-1">Time</label>
                                     <input
                                         type="time"
                                         value={newTime}
                                         onChange={(e) => setNewTime(e.target.value)}
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                                     />
                                 </div>
                                 <div className="flex justify-end gap-3">
@@ -478,7 +478,7 @@ interface InsulinLog {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                                     >
                                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} Get Recommendation
                                     </button>
@@ -487,22 +487,22 @@ interface InsulinLog {
                         ) : (
                             <form onSubmit={handleAddSubmit} className="p-4 space-y-4">
                                 {/* Recommendation Display */}
-                                <div className={`p-4 rounded-lg ${canTrustResult ? 'bg-green-50' : 'bg-red-50'} mb-4`}>
+                                <div className={`p-4 rounded-lg ${canTrustResult ? 'bg-orange-50' : 'bg-red-50'} mb-4`}>
                                     <div className="flex items-start gap-3">
                                         {canTrustResult ? (
-                                            <Info className="h-5 w-5 text-green-600 mt-0.5" />
+                                            <Info className="h-5 w-5 text-orange-600 mt-0.5" />
                                         ) : (
                                             <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
                                         )}
                                         <div>
-                                            <h3 className={`font-medium ${canTrustResult ? 'text-green-800' : 'text-red-800'}`}>
+                                            <h3 className={`font-medium ${canTrustResult ? 'text-orange-800' : 'text-red-800'}`}>
                                                 Recommended Insulin Dosage
                                             </h3>
                                             <p className="text-sm mt-1 text-gray-700">
                                                 {recommendation.insulin_dosage_ml} mL
                                             </p>
                                             <div className="mt-2 text-xs">
-                                                <div className={`flex items-center gap-1 ${canTrustResult ? 'text-green-600' : 'text-red-600'}`}>
+                                                <div className={`flex items-center gap-1 ${canTrustResult ? 'text-orange-600' : 'text-red-600'}`}>
                                                     <span>Records: {totalRecords}</span>
                                                     {!canTrustResult && (
                                                         <span className="ml-1">
@@ -521,7 +521,7 @@ interface InsulinLog {
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-green-700 mb-1">Date</label>
+                                    <label className="block text-sm font-medium text-orange-700 mb-1">Date</label>
                                     <input
                                         type="text"
                                         value={selectedDate}
@@ -530,33 +530,33 @@ interface InsulinLog {
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-green-700 mb-1">Time</label>
+                                    <label className="block text-sm font-medium text-orange-700 mb-1">Time</label>
                                     <input
                                         type="time"
                                         value={newTime}
                                         disabled
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-green-700 mb-1">Insulin Dosage (mL)</label>
+                                    <label className="block text-sm font-medium text-orange-700 mb-1">Insulin Dosage (mL)</label>
                                     <input
                                         type="number"
                                         step="0.1"
                                         value={newValue}
                                         onChange={(e) => setNewValue(e.target.value)}
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                                         placeholder="Enter dosage..."
                                     />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-green-700 mb-1">Note</label>
+                                    <label className="block text-sm font-medium text-orange-700 mb-1">Note</label>
                                     <textarea
                                         name="note"
                                         rows={3}
                                         value={newNote}
                                         onChange={(e) => setNewNote(e.target.value)}
-                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                                        className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                                         placeholder="Add any additional notes..."
                                     />
                                 </div>
@@ -574,7 +574,7 @@ interface InsulinLog {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !newValue}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                                     >
                                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} Add Log
                                     </button>
@@ -587,22 +587,22 @@ interface InsulinLog {
 
             {/* Edit Log Modal */}
             {showEditModal && selectedLog && (
-                <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
                     <motion.div
                         ref={editModalRef}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
                     >
-                        <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                            <h2 className="text-xl font-bold text-green-800">Edit Insulin Log</h2>
-                            <button onClick={() => setShowEditModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+                        <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                            <h2 className="text-xl font-bold text-orange-800">Edit Insulin Log</h2>
+                            <button onClick={() => setShowEditModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                                 <X size={20} />
                             </button>
                         </div>
                         <form onSubmit={handleEditSubmit} className="p-4 space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-green-700 mb-1">Date</label>
+                                <label className="block text-sm font-medium text-orange-700 mb-1">Date</label>
                                 <input
                                     type="text"
                                     value={formatToYYYYMMDD(selectedLog.log_date)}
@@ -611,22 +611,22 @@ interface InsulinLog {
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-green-700 mb-1">Time</label>
+                                <label className="block text-sm font-medium text-orange-700 mb-1">Time</label>
                                 <input
                                     type="time"
                                     value={editTime}
                                     onChange={(e) => setEditTime(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-green-700 mb-1">Insulin Dosage (mL)</label>
+                                <label className="block text-sm font-medium text-orange-700 mb-1">Insulin Dosage (mL)</label>
                                 <input
                                     type="number"
                                     step="0.1"
                                     value={editValue}
                                     onChange={(e) => setEditValue(e.target.value)}
-                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                                     placeholder="Enter dosage..."
                                 />
                             </div>
@@ -650,7 +650,7 @@ interface InsulinLog {
                                     <button
                                         type="submit"
                                         disabled={isSubmitting || !editValue}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                                        className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                                     >
                                         {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />} Save
                                     </button>
@@ -663,26 +663,26 @@ interface InsulinLog {
 
             {/* Day Logs Modal */}
             {showLogsModal && (
-                <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+                <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
                     <motion.div
                         ref={logsModalRef}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
                     >
-                        <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                        <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
                             <div>
-                                <h2 className="text-xl font-bold text-green-800">Insulin Logs</h2>
+                                <h2 className="text-xl font-bold text-orange-800">Insulin Logs</h2>
                                 <p className="text-sm text-gray-600 mt-1">{selectedDate}</p>
                             </div>
                             <div className="flex items-center gap-2">
                                 <button
                                     onClick={() => handleAddClick(selectedDate)}
-                                    className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
+                                    className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
                                 >
                                     <Plus size={16} /> Add
                                 </button>
-                                <button onClick={() => setShowLogsModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+                                <button onClick={() => setShowLogsModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                                     <X size={20} />
                                 </button>
                             </div>
@@ -691,7 +691,7 @@ interface InsulinLog {
                             <div className="space-y-3 max-h-96 overflow-y-auto">
                                 {dayLogs.map((log) => {
                                     const getLogColor = (dosage: number) => {
-                                        if (dosage <= 1) return 'bg-green-100 text-green-600';
+                                        if (dosage <= 1) return 'bg-orange-100 text-orange-600';
                                         if (dosage == 2.0) return 'bg-yellow-100 text-yellow-600';
                                         if (dosage >= 3) return 'bg-red-100 text-red-600';
                                         return 'bg-gray-100 text-gray-600';
@@ -721,7 +721,7 @@ interface InsulinLog {
                             <div className="mt-4 pt-4 border-t border-gray-200">
                                 <div className="flex flex-wrap gap-3 justify-center text-sm">
                                     <div className="flex items-center gap-2">
-                                        <div className="w-3 h-3 rounded-full bg-green-100 border border-green-300" />
+                                        <div className="w-3 h-3 rounded-full bg-orange-100 border border-orange-300" />
                                         <span className="text-gray-600">0-1 mL</span>
                                     </div>
                                     <div className="flex items-center gap-2">

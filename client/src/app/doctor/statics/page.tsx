@@ -293,10 +293,10 @@ export default function StaticsPage() {
     return (
         <PageTemplate>
             <AuthWrapper allowedRoles={["doctor"]}>
-                <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
+                <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
                     {/* Header Section */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-green-800 mb-2">Patient Statics</h1>
+                        <h1 className="text-3xl font-bold text-orange-800 mb-2">Patient Statics</h1>
                         <p className="text-gray-600">View comprehensive patient health statics and analytics</p>
                     </div>
 
@@ -305,12 +305,12 @@ export default function StaticsPage() {
                         {/* Patient List */}
                         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                             <div className="p-6 border-b border-gray-200">
-                                <h2 className="text-xl font-bold text-green-800">Patients</h2>
+                                <h2 className="text-xl font-bold text-orange-800">Patients</h2>
                             </div>
                             <div className="p-4">
                                 {loading ? (
                                     <div className="flex justify-center items-center h-64">
-                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                                     </div>
                                 ) : (
                                     <PatientList
@@ -327,7 +327,7 @@ export default function StaticsPage() {
                             {selectedPatientId ? (
                                 loadingData ? (
                                     <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm">
-                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                                     </div>
                                 ) : graphData && statistics ? (
                                     <motion.div
@@ -338,7 +338,7 @@ export default function StaticsPage() {
                                         {/* Date Range Controls */}
                                         <div className="bg-white rounded-xl shadow-sm p-4 mb-6">
                                             <div className="flex items-center gap-4">
-                                                <Calendar className="h-5 w-5 text-green-600" />
+                                                <Calendar className="h-5 w-5 text-orange-600" />
                                                 <div className="flex items-center gap-4">
                                                     <button
                                                         onClick={() => {
@@ -349,8 +349,8 @@ export default function StaticsPage() {
                                                         }}
                                                         className={`px-3 py-1 rounded-lg transition-colors ${
                                                             dateRange.endDate.getTime() - dateRange.startDate.getTime() === 30 * 24 * 60 * 60 * 1000
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : 'hover:bg-green-50'
+                                                            ? 'bg-orange-100 text-orange-800'
+                                                            : 'hover:bg-orange-50'
                                                         }`}
                                                     >
                                                         Last 30 Days
@@ -364,8 +364,8 @@ export default function StaticsPage() {
                                                         }}
                                                         className={`px-3 py-1 rounded-lg transition-colors ${
                                                             dateRange.endDate.getTime() - dateRange.startDate.getTime() === 30 * 24 * 60 * 60 * 1000
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : 'hover:bg-green-50'
+                                                            ? 'bg-orange-100 text-orange-800'
+                                                            : 'hover:bg-orange-50'
                                                         }`}
                                                     >
                                                         Last 30 Days
@@ -379,8 +379,8 @@ export default function StaticsPage() {
                                                         }}
                                                         className={`px-3 py-1 rounded-lg transition-colors ${
                                                             dateRange.endDate.getTime() - dateRange.startDate.getTime() === 90 * 24 * 60 * 60 * 1000
-                                                            ? 'bg-green-100 text-green-800'
-                                                            : 'hover:bg-green-50'
+                                                            ? 'bg-orange-100 text-orange-800'
+                                                            : 'hover:bg-orange-50'
                                                         }`}
                                                     >
                                                         Last 90 Days
@@ -398,10 +398,10 @@ export default function StaticsPage() {
                                                 className="bg-white rounded-xl shadow-sm p-4"
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <HeartPulse className="h-5 w-5 text-green-600" />
+                                                    <HeartPulse className="h-5 w-5 text-orange-600" />
                                                     <p className="text-gray-600 text-sm">Average Blood Sugar</p>
                                                 </div>
-                                                <p className="text-2xl font-semibold text-green-800">
+                                                <p className="text-2xl font-semibold text-orange-800">
                                                     {statistics.averageBloodSugar.toFixed(1)}
                                                 </p>
                                             </motion.div>
@@ -413,10 +413,10 @@ export default function StaticsPage() {
                                                 className="bg-white rounded-xl shadow-sm p-4"
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <Activity className="h-5 w-5 text-green-600" />
+                                                    <Activity className="h-5 w-5 text-orange-600" />
                                                     <p className="text-gray-600 text-sm">Exercise Completion</p>
                                                 </div>
-                                                <p className="text-2xl font-semibold text-green-800">
+                                                <p className="text-2xl font-semibold text-orange-800">
                                                     {statistics.completedExercises}/{statistics.totalExercises}
                                                 </p>
                                             </motion.div>
@@ -428,10 +428,10 @@ export default function StaticsPage() {
                                                 className="bg-white rounded-xl shadow-sm p-4"
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <Utensils className="h-5 w-5 text-green-600" />
+                                                    <Utensils className="h-5 w-5 text-orange-600" />
                                                     <p className="text-gray-600 text-sm">Diet Completion</p>
                                                 </div>
-                                                <p className="text-2xl font-semibold text-green-800">
+                                                <p className="text-2xl font-semibold text-orange-800">
                                                     {statistics.completedDiets}/{statistics.totalDiets}
                                                 </p>
                                             </motion.div>
@@ -443,10 +443,10 @@ export default function StaticsPage() {
                                                 className="bg-white rounded-xl shadow-sm p-4"
                                             >
                                                 <div className="flex items-center gap-3 mb-2">
-                                                    <ClipboardList className="h-5 w-5 text-green-600" />
+                                                    <ClipboardList className="h-5 w-5 text-orange-600" />
                                                     <p className="text-gray-600 text-sm">Blood Sugar Range</p>
                                                 </div>
-                                                <p className="text-2xl font-semibold text-green-800">
+                                                <p className="text-2xl font-semibold text-orange-800">
                                                     {statistics.minBloodSugar.toFixed(1)} - {statistics.maxBloodSugar.toFixed(1)}
                                                 </p>
                                             </motion.div>
@@ -459,7 +459,7 @@ export default function StaticsPage() {
                                             transition={{ duration: 0.3, delay: 0.4 }}
                                             className="bg-white rounded-xl shadow-sm p-6"
                                         >
-                                            <h3 className="text-lg font-semibold text-green-800 mb-4">Blood Sugar Trends</h3>
+                                            <h3 className="text-lg font-semibold text-orange-800 mb-4">Blood Sugar Trends</h3>
                                             <div className="h-[400px]">
                                                 <Line options={chartOptions} data={prepareChartData()} />
                                             </div>

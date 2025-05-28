@@ -61,9 +61,9 @@ export default function Login() {
   };
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-orange-50 to-red-100">
       {/* Left side - Decorative */}
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-green-400 to-teal-500 p-12 flex-col justify-between items-center">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-orange-400 to-red-500 p-12 flex-col justify-between items-center">
         <div className={`transition-all duration-1000 transform ${animate ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="flex items-center gap-3">
             <Hospital size={40} className="text-white" />
@@ -92,12 +92,12 @@ export default function Login() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className={`bg-white rounded-xl shadow-xl p-8 w-full max-w-md transition-all duration-1000 transform ${animate ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="flex justify-center mb-6">
-            <Hospital className="text-green-500" size={32} />
-            <span className="text-green-600 font-bold text-xl ml-2">DiabetaCare</span>
+            <Hospital className="text-orange-500" size={32} />
+            <span className="text-orange-600 font-bold text-xl ml-2">DiabetaCare</span>
           </div>
           
-          <h2 className="text-2xl font-bold text-green-800 text-center mb-2">Welcome Back</h2>
-          <p className="text-green-600 text-center mb-8">Sign in to your account</p>
+          <h2 className="text-2xl font-bold text-orange-800 text-center mb-2">Welcome Back</h2>
+          <p className="text-orange-600 text-center mb-8">Sign in to your account</p>
           
           {error && (
             <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 text-sm">
@@ -108,7 +108,7 @@ export default function Login() {
           <div>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label htmlFor="username" className="block text-sm font-medium text-green-700 mb-1">
+                <label htmlFor="username" className="block text-sm font-medium text-orange-700 mb-1">
                   Username
                 </label>
                 <input
@@ -117,13 +117,13 @@ export default function Login() {
                   name="username"
                   value={formData.username}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
                   placeholder="Enter your username"
                 />
               </div>
               
               <div className="mb-6">
-                <label htmlFor="password" className="block text-sm font-medium text-green-700 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-orange-700 mb-1">
                   Password
                 </label>
                 <div className="relative">
@@ -133,19 +133,19 @@ export default function Login() {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
+                    className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
                     placeholder="••••••••"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-green-500 hover:text-green-700"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-orange-500 hover:text-orange-700"
                   >
                     {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
                   </button>
                 </div>
                 <div className="flex justify-end mt-2">
-                  <a className="text-sm text-green-600 hover:text-green-700 transition-colors cursor-pointer">
+                  <a className="text-sm text-orange-600 hover:text-orange-700 transition-colors cursor-pointer">
                     Forgot password?
                   </a>
                 </div>
@@ -154,8 +154,8 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
-                  hover:from-green-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg
+                className={`w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
+                  hover:from-orange-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg
                   ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
               >
                 {loading ? (
@@ -175,9 +175,9 @@ export default function Login() {
           
           <div className="mt-8 pt-6 border-t border-gray-200">
             <div className="text-center">
-              <p className="text-green-800">
+              <p className="text-orange-800">
                 Don't have an account?{' '}
-                <Link href="/register" className="text-green-600 font-medium hover:text-green-700 transition-colors cursor-pointer">
+                <Link href="/register" className="text-orange-600 font-medium hover:text-orange-700 transition-colors cursor-pointer">
                   Register now
                 </Link>
               </p>

@@ -21,9 +21,9 @@ const PatientPlans: React.FC<PatientPlansProps> = ({ plans, selectedPlanId, onSe
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return <CheckCircle className="text-green-500" size={16} />;
+        return <CheckCircle className="text-orange-500" size={16} />;
       case 'active':
-        return <Clock className="text-blue-500" size={16} />;
+        return <Clock className="text-red-500" size={16} />;
       case 'pending':
         return <AlertCircle className="text-yellow-500" size={16} />;
       default:
@@ -42,7 +42,7 @@ const PatientPlans: React.FC<PatientPlansProps> = ({ plans, selectedPlanId, onSe
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-green-800">Exercise Plans</h2>
+        <h2 className="text-xl font-bold text-orange-800">Exercise Plans</h2>
       </div>
       
       <div className="max-h-[calc(100vh-300px)] overflow-y-auto">
@@ -56,15 +56,15 @@ const PatientPlans: React.FC<PatientPlansProps> = ({ plans, selectedPlanId, onSe
             {plans.map(plan => (
               <div
                 key={plan.exercise_logs_id}
-                className={`p-4 transition-colors hover:bg-green-50 cursor-pointer ${
-                  selectedPlanId === plan.exercise_logs_id ? 'bg-green-50 border-l-4 border-green-500' : ''
+                className={`p-4 transition-colors hover:bg-orange-50 cursor-pointer ${
+                  selectedPlanId === plan.exercise_logs_id ? 'bg-orange-50 border-l-4 border-orange-500' : ''
                 }`}
                 onClick={() => onSelectPlan(plan.exercise_logs_id)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-semibold text-green-800">{plan.exercise_name}</h3>
+                      <h3 className="font-semibold text-orange-800">{plan.exercise_name}</h3>
                       {getStatusIcon(plan.status)}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -86,7 +86,7 @@ const PatientPlans: React.FC<PatientPlansProps> = ({ plans, selectedPlanId, onSe
                         e.stopPropagation();
                         onEditPlan(plan);
                       }}
-                      className="p-1 rounded-full hover:bg-green-100 text-green-600 transition-colors"
+                      className="p-1 rounded-full hover:bg-orange-100 text-orange-600 transition-colors"
                     >
                       <Edit size={16} />
                     </button>

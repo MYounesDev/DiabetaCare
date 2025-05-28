@@ -49,7 +49,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <div className="container mx-auto px-4 py-16">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -63,8 +63,8 @@ export default function Home() {
             animate={{ scale: [1, 1.02, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
           >
-            <Hospital size={48} className="text-green-600" />
-            <h1 className="text-5xl font-bold bg-gradient-to-r from-green-600 to-green-700 bg-clip-text text-transparent">
+            <Hospital size={48} className="text-orange-600" />
+            <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-600 to-orange-700 bg-clip-text text-transparent">
               DiabetaCare
             </h1>
           </motion.div>
@@ -72,7 +72,7 @@ export default function Home() {
           {/* Loading Animation */}
           <div className="relative w-24 h-24">
             <motion.div 
-              className="absolute inset-0 border-4 border-green-200 rounded-full"
+              className="absolute inset-0 border-4 border-orange-200 rounded-full"
               style={{ borderTopColor: '#059669' }}
               animate={{ rotate: 360 }}
               transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
@@ -89,7 +89,7 @@ export default function Home() {
                 transition={{ delay: index * 0.2 }}
                 className="flex flex-col items-center p-4 bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300"
               >
-                <feature.icon size={32} className="text-green-500 mb-2" />
+                <feature.icon size={32} className="text-orange-500 mb-2" />
                 <p className="text-sm font-medium text-gray-600 text-center">{feature.text}</p>
               </motion.div>
             ))}

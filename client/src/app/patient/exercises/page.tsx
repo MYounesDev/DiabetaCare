@@ -226,10 +226,10 @@ export default function PatientExercises() {
   return (
     <PageTemplate>
       <AuthWrapper allowedRoles={["patient"]}>
-        <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-green-800 mb-2">My Exercises</h1>
+            <h1 className="text-3xl font-bold text-orange-800 mb-2">My Exercises</h1>
             <p className="text-gray-600">Track your exercise progress and maintain a healthy routine</p>
           </div>
 
@@ -238,14 +238,14 @@ export default function PatientExercises() {
             {/* Exercises List */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-green-800">Assigned Exercises</h2>
+                <h2 className="text-xl font-bold text-orange-800">Assigned Exercises</h2>
                 <p className="text-sm text-gray-500 mt-1">Your personalized exercise plan</p>
               </div>
 
               <div className="p-6">
                 {loading ? (
                   <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                   </div>
                 ) : error ? (
                   <motion.div
@@ -272,15 +272,15 @@ export default function PatientExercises() {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={`bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow border border-gray-100 ${
-                          selectedExercise?.id === exercise.id ? 'ring-2 ring-green-500' : ''
+                          selectedExercise?.id === exercise.id ? 'ring-2 ring-orange-500' : ''
                         }`}
                         onClick={() => setSelectedExercise(exercise)}
                       >
                         <div className="flex justify-between items-start mb-4">
-                          <h3 className="font-semibold text-green-800">{exercise.exercise_name}</h3>
+                          <h3 className="font-semibold text-orange-800">{exercise.exercise_name}</h3>
                           <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                             exercise.status === 'completed' 
-                              ? 'bg-green-100 text-green-800'
+                              ? 'bg-orange-100 text-orange-800'
                               : 'bg-yellow-100 text-yellow-800'
                           }`}>
                             {exercise.status}
@@ -310,7 +310,7 @@ export default function PatientExercises() {
                             setSelectedExercise(exercise);
                             setShowLogModal(true);
                           }}
-                          className="mt-4 w-full px-4 py-2 bg-green-50 text-green-700 rounded-lg hover:bg-green-100 transition-colors flex items-center justify-center gap-2"
+                          className="mt-4 w-full px-4 py-2 bg-orange-50 text-orange-700 rounded-lg hover:bg-orange-100 transition-colors flex items-center justify-center gap-2"
                         >
                           <Activity size={16} />
                           Enter Log
@@ -328,7 +328,7 @@ export default function PatientExercises() {
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex justify-between items-center">
                     <div>
-                      <h2 className="text-xl font-bold text-green-800">Exercise Logs</h2>
+                      <h2 className="text-xl font-bold text-orange-800">Exercise Logs</h2>
                       <p className="text-sm text-gray-500 mt-1">
                         Track your progress for {selectedExercise.exercise_name}
                       </p>
@@ -339,7 +339,7 @@ export default function PatientExercises() {
                 <div className="p-6">
                   {loadingLogs ? (
                     <div className="flex justify-center items-center h-64">
-                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                     </div>
                   ) : (
                     <ExerciseLogsCalendar
@@ -356,18 +356,18 @@ export default function PatientExercises() {
 
           {/* Log Progress Modal */}
           {showLogModal && (
-            <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+            <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
               <motion.div
                 ref={logModalRef}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
               >
-                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                  <h2 className="text-xl font-bold text-green-800">Log Exercise Progress</h2>
+                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                  <h2 className="text-xl font-bold text-orange-800">Log Exercise Progress</h2>
                   <button 
                     onClick={() => setShowLogModal(false)} 
-                    className="p-1 rounded-full hover:bg-green-100 text-green-600"
+                    className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
                   >
                     <X size={20} />
                   </button>
@@ -380,7 +380,7 @@ export default function PatientExercises() {
                       <CustomDatePicker
                         selectedDate={logData.log_date ? new Date(logData.log_date) : null}
                         onChange={(date) => setLogData({ ...logData, log_date: date ? date.toISOString().split('T')[0] : '' })}
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-orange-500 focus:outline-none text-orange-800"
                       />
                     </div>
 
@@ -392,7 +392,7 @@ export default function PatientExercises() {
                             type="checkbox"
                             checked={logData.is_completed}
                             onChange={(e) => setLogData({ ...logData, is_completed: e.target.checked })}
-                            className="rounded border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
+                            className="rounded border-gray-300 shadow-sm focus:ring-orange-500 focus:outline-none text-orange-800"
                           />
                           <span className="ml-2 text-sm text-gray-600">Mark as completed</span>
                         </label>
@@ -405,7 +405,7 @@ export default function PatientExercises() {
                         value={logData.note}
                         onChange={(e) => setLogData({ ...logData, note: e.target.value })}
                         rows={3}
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm  focus:ring-green-500 focus:outline-none text-green-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm  focus:ring-orange-500 focus:outline-none text-orange-800"
                         placeholder="How did it go? Any challenges?"
                       />
                     </div>
@@ -416,7 +416,7 @@ export default function PatientExercises() {
                       </div>
                     )}
                     {logSuccess && (
-                      <div className="text-green-600 text-sm bg-green-50 p-2 rounded-lg border border-green-200">
+                      <div className="text-orange-600 text-sm bg-orange-50 p-2 rounded-lg border border-orange-200">
                         {logSuccess}
                       </div>
                     )}
@@ -433,7 +433,7 @@ export default function PatientExercises() {
                     <button
                       type="submit"
                       disabled={isSubmittingLog}
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                     >
                       {isSubmittingLog ? (
                         <Loader2 size={16} className="animate-spin" />
@@ -450,16 +450,16 @@ export default function PatientExercises() {
 
           {/* Edit Log Modal */}
           {showEditLogModal && logToEdit && (
-            <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+            <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
               <motion.div
                 ref={editLogModalRef}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
               >
-                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-                  <h2 className="text-xl font-bold text-green-800">Edit Exercise Log</h2>
-                  <button onClick={() => setShowEditLogModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+                <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+                  <h2 className="text-xl font-bold text-orange-800">Edit Exercise Log</h2>
+                  <button onClick={() => setShowEditLogModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                     <X size={20} />
                   </button>
                 </div>
@@ -470,12 +470,12 @@ export default function PatientExercises() {
                     </div>
                   )}
                   <div>
-                    <label className="block text-sm font-medium text-green-700 mb-1">Note</label>
+                    <label className="block text-sm font-medium text-orange-700 mb-1">Note</label>
                     <textarea
                       required
                       value={logToEdit.note}
                       onChange={e => setLogToEdit({ ...logToEdit, note: e.target.value })}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                     />
                   </div>
                   <StyledCheckbox
@@ -503,7 +503,7 @@ export default function PatientExercises() {
                     <button
                       type="submit"
                       disabled={isSubmittingEditLog}
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                     >
                       {isSubmittingEditLog ? <Loader2 size={16} className="animate-spin" /> : <Edit size={16} />} Save
                     </button>

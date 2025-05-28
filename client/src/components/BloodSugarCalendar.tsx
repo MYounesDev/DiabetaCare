@@ -186,7 +186,7 @@ export default function BloodSugarCalendar({
   const getValueColor = (value: number) => {
     if (value < 70) return 'text-red-600 bg-red-100'; // Low
     if (value > 180) return 'text-red-600 bg-red-100'; // High
-    if (value >= 70 && value <= 99) return 'text-green-600 bg-green-100'; // Normal
+    if (value >= 70 && value <= 99) return 'text-orange-600 bg-orange-100'; // Normal
     return 'text-yellow-600 bg-yellow-100'; // Intermediate
   };
 
@@ -221,7 +221,7 @@ export default function BloodSugarCalendar({
           onClick={() => handleDayClick(dateString)}
           className={`
             h-24 p-2 rounded-lg border cursor-pointer transition-all relative
-            ${isToday ? 'border-green-500 bg-green-50' : 'border-gray-100 hover:border-green-300'}
+            ${isToday ? 'border-orange-500 bg-orange-50' : 'border-gray-100 hover:border-orange-300'}
             ${count > 0 ? 'bg-white' : 'bg-gray-50'}
             ${isHovered ? 'shadow-md' : 'hover:shadow-sm'}
           `}
@@ -229,7 +229,7 @@ export default function BloodSugarCalendar({
           <div className="flex justify-between items-start">
             <span className={`
               text-sm font-medium
-              ${isToday ? 'text-green-700' : 'text-gray-700'}
+              ${isToday ? 'text-orange-700' : 'text-gray-700'}
             `}>
               {day}
             </span>
@@ -252,9 +252,9 @@ export default function BloodSugarCalendar({
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute inset-0 flex items-center justify-center bg-green-50 bg-opacity-90 rounded-lg"
+              className="absolute inset-0 flex items-center justify-center bg-orange-50 bg-opacity-90 rounded-lg"
             >
-              <Plus size={20} className="text-green-600" />
+              <Plus size={20} className="text-orange-600" />
             </motion.div>
           )}
         </motion.div>
@@ -268,24 +268,24 @@ export default function BloodSugarCalendar({
     <>
       <div className="bg-white rounded-xl shadow-sm overflow-hidden">
         {/* Calendar Header */}
-        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-teal-50">
+        <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-red-50">
           <div className="flex justify-between items-center">
-            <h2 className="text-2xl font-bold text-green-800">Blood Sugar Measurements</h2>
+            <h2 className="text-2xl font-bold text-orange-800">Blood Sugar Measurements</h2>
             <div className="flex items-center gap-4">
               <button
                 onClick={handlePrevMonth}
                 className="p-2 rounded-lg hover:bg-white transition-colors"
               >
-                <ChevronLeft size={20} className="text-green-600" />
+                <ChevronLeft size={20} className="text-orange-600" />
               </button>
-              <span className="text-lg font-semibold text-green-800">
+              <span className="text-lg font-semibold text-orange-800">
                 {getMonthName(currentDate)} {currentDate.getFullYear()}
               </span>
               <button
                 onClick={handleNextMonth}
                 className="p-2 rounded-lg hover:bg-white transition-colors"
               >
-                <ChevronRight size={20} className="text-green-600" />
+                <ChevronRight size={20} className="text-orange-600" />
               </button>
             </div>
           </div>
@@ -309,11 +309,11 @@ export default function BloodSugarCalendar({
         <div className="p-4 border-t border-gray-200 bg-gray-50">
           <div className="flex items-center justify-center gap-6 text-sm">
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-100 border border-green-300" />
+              <div className="w-3 h-3 rounded-full bg-orange-100 border border-orange-300" />
               <span className="text-gray-600">Today</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-green-100 border border-green-600" />
+              <div className="w-3 h-3 rounded-full bg-orange-100 border border-orange-600" />
               <span className="text-gray-600">Normal (70-99 mg/dL)</span>
             </div>
             <div className="flex items-center gap-2">
@@ -330,22 +330,22 @@ export default function BloodSugarCalendar({
 
       {/* Add Measurement Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
           <motion.div
             ref={addModalRef}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
           >
-            <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-              <h2 className="text-xl font-bold text-green-800">Add Blood Sugar Measurement</h2>
-              <button onClick={() => setShowAddModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+            <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-800">Add Blood Sugar Measurement</h2>
+              <button onClick={() => setShowAddModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleAddSubmit} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-green-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-orange-700 mb-1">Date</label>
                 <input
                   type="text"
                   value={selectedDate}
@@ -354,21 +354,21 @@ export default function BloodSugarCalendar({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-green-700 mb-1">Time</label>
+                <label className="block text-sm font-medium text-orange-700 mb-1">Time</label>
                 <input
                   type="time"
                   value={newTime}
                   onChange={(e) => setNewTime(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-green-700 mb-1">Blood Sugar Value (mg/dL)</label>
+                <label className="block text-sm font-medium text-orange-700 mb-1">Blood Sugar Value (mg/dL)</label>
                 <input
                   type="number"
                   value={newValue}
                   onChange={(e) => setNewValue(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   placeholder="Enter value..."
                 />
               </div>
@@ -383,7 +383,7 @@ export default function BloodSugarCalendar({
                 <button
                   type="submit"
                   disabled={isSubmitting || !newValue}
-                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                 >
                   {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />} Add
                 </button>
@@ -395,22 +395,22 @@ export default function BloodSugarCalendar({
 
       {/* Edit Measurement Modal */}
       {showEditModal && selectedMeasurement && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
           <motion.div
             ref={editModalRef}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
           >
-            <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
-              <h2 className="text-xl font-bold text-green-800">Edit Blood Sugar Measurement</h2>
-              <button onClick={() => setShowEditModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+            <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+              <h2 className="text-xl font-bold text-orange-800">Edit Blood Sugar Measurement</h2>
+              <button onClick={() => setShowEditModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                 <X size={20} />
               </button>
             </div>
             <form onSubmit={handleEditSubmit} className="p-4 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-green-700 mb-1">Date</label>
+                <label className="block text-sm font-medium text-orange-700 mb-1">Date</label>
                 <input
                   type="text"
                   value={formatDateToYYYYMMDD(new Date(selectedMeasurement.measured_at))}
@@ -419,21 +419,21 @@ export default function BloodSugarCalendar({
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-green-700 mb-1">Time</label>
+                <label className="block text-sm font-medium text-orange-700 mb-1">Time</label>
                 <input
                   type="time"
                   value={editTime}
                   onChange={(e) => setEditTime(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-green-700 mb-1">Blood Sugar Value (mg/dL)</label>
+                <label className="block text-sm font-medium text-orange-700 mb-1">Blood Sugar Value (mg/dL)</label>
                 <input
                   type="number"
                   value={editValue}
                   onChange={(e) => setEditValue(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
+                  className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
                   placeholder="Enter value..."
                 />
               </div>
@@ -457,7 +457,7 @@ export default function BloodSugarCalendar({
                   <button
                     type="submit"
                     disabled={isSubmitting || !editValue}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:opacity-90 transition-opacity"
                   >
                     {isSubmitting ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />} Save
                   </button>
@@ -470,26 +470,26 @@ export default function BloodSugarCalendar({
 
       {/* Day Measurements Modal */}
       {showMeasurementsModal && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
+        <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
           <motion.div
             ref={measurementsModalRef}
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
           >
-            <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+            <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
               <div>
-                <h2 className="text-xl font-bold text-green-800">Blood Sugar Measurements</h2>
+                <h2 className="text-xl font-bold text-orange-800">Blood Sugar Measurements</h2>
                 <p className="text-sm text-gray-600 mt-1">{selectedDate}</p>
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => handleAddClick(selectedDate)}
-                  className="p-2 rounded-lg bg-gradient-to-r from-green-500 to-teal-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
+                  className="p-2 rounded-lg bg-gradient-to-r from-orange-500 to-red-500 text-white flex items-center gap-1 hover:opacity-90 transition-opacity"
                 >
                   <Plus size={16} /> Add
                 </button>
-                <button onClick={() => setShowMeasurementsModal(false)} className="p-1 rounded-full hover:bg-green-100 text-green-600">
+                <button onClick={() => setShowMeasurementsModal(false)} className="p-1 rounded-full hover:bg-orange-100 text-orange-600">
                   <X size={20} />
                 </button>
               </div>
