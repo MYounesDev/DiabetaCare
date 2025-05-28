@@ -77,7 +77,7 @@ interface Statistics {
     averageInsulin: number;
 }
 
-export default function ReportsPage() {
+export default function StaticsPage() {
     const [patients, setPatients] = useState<Patient[]>([]);
     const [selectedPatientId, setSelectedPatientId] = useState<number | null>(null);
     const [graphData, setGraphData] = useState<GraphData | null>(null);
@@ -296,8 +296,8 @@ export default function ReportsPage() {
                 <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
                     {/* Header Section */}
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-green-800 mb-2">Patient Reports</h1>
-                        <p className="text-gray-600">View comprehensive patient health reports and analytics</p>
+                        <h1 className="text-3xl font-bold text-green-800 mb-2">Patient Statics</h1>
+                        <p className="text-gray-600">View comprehensive patient health statics and analytics</p>
                     </div>
 
                     {/* Main Content Grid */}
@@ -322,7 +322,7 @@ export default function ReportsPage() {
                             </div>
                         </div>
 
-                        {/* Reports Content - takes 2/3 of the space */}
+                        {/* Statics Content - takes 2/3 of the space */}
                         <div className="lg:col-span-2">
                             {selectedPatientId ? (
                                 loadingData ? (
@@ -472,7 +472,7 @@ export default function ReportsPage() {
                                 )
                             ) : (
                                 <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm">
-                                    <p className="text-gray-400 text-xl">Select a patient to view their reports</p>
+                                    <p className="text-gray-400 text-xl">Select a patient to view their statics</p>
                                 </div>
                             )}
                         </div>

@@ -8,10 +8,17 @@ const appServe = app.isPackaged ? serve({
 
 const createWindow = () => {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js")
+    }
+  });
+  win.maximize();
+  win.setFullScreen(true);
+
+  // Exit the app when "Escape" is pressed
+  win.webContents.on("before-input-event", (event, input) => {
+    if (input.key === "Escape") {
+      app.quit();
     }
   });
 
@@ -21,12 +28,14 @@ const createWindow = () => {
     });
   } else {
     win.loadURL("http://localhost:3000");
- //   win.webContents.openDevTools();
+    // win.webContents.openDevTools();
     win.webContents.on("did-fail-load", (e, code, desc) => {
       win.webContents.reloadIgnoringCache();
     });
   }
-}
+};
+
+
 
 app.on("ready", () => {
     createWindow();

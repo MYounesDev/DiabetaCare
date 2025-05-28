@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useState } from 'react';
-import { User, Hospital, Activity, ClipboardList, Utensils, HeartPulse, Droplet, Stethoscope, ChevronLeft, ChevronRight, Calendar, FileText, Settings, Home, Syringe } from 'lucide-react';
+import { User, Hospital, Activity, ClipboardList, Utensils, HeartPulse, Droplet, Stethoscope, ChevronLeft, ChevronRight, Calendar, ChartSpline, Settings, Home, Syringe } from 'lucide-react';
 
 type SideBarProps = {
   role: 'admin' | 'doctor' | 'patient';
@@ -59,9 +59,9 @@ export default function SideBar({ role }: SideBarProps) {
               <Syringe className="text-green-500" size={20} />
               {isOpen && <span className="text-green-700">Insulin Management</span>}
             </Link>
-            <Link href="/doctor/reports" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
-              <FileText className="text-green-500" size={20} />
-              {isOpen && <span className="text-green-700">Reports</span>}
+            <Link href="/doctor/statics" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+              <ChartSpline className="text-green-500" size={20} />
+              {isOpen && <span className="text-green-700">Statics</span>}
             </Link>
             <Link href="/doctor/settings" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <Settings className="text-green-500" size={20} />
