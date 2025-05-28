@@ -796,6 +796,23 @@ export const doctorService = {
     
 
 
+  // Get patient symptoms and average blood sugar
+  getPatientSummary: async (patientId) => {
+    try {
+      const [symptomsResponse, bloodSugarResponse] = await Promise.all([
+        api.get(`/symptoms/patient/${patientId}`),
+        api.get(`/blood-sugar-measurements/patient/avg/${patientId}`)
+      ]);
+
+      return {
+        symptoms: symptomsResponse.data.symptoms,
+        avgBloodSugar: bloodSugarResponse.data.averageValue
+      };
+    } catch (error) {
+      throw error;
+    }
+  },
+
 };
 
 
@@ -847,6 +864,9 @@ export const patientService = {
   updateInsulinLog: doctorService.updateInsulinLog,
   deleteInsulinLog: doctorService.deleteInsulinLog,
  
+ 
+  // --- PATIENT SUMMARY ---
+  getPatientSummary: doctorService.getPatientSummary,
  
  
   // --- DOCTOR ---

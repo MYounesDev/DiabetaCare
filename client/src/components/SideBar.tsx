@@ -39,6 +39,10 @@ export default function SideBar({ role }: SideBarProps) {
               <User className="text-orange-500" size={20} />
               {isOpen && <span className="text-orange-700">Patients</span>}
             </Link>
+            <Link href="/doctor/patients-filter" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+              <User className="text-orange-500" size={20} />
+              {isOpen && <span className="text-orange-700">Patients Filter</span>}
+            </Link>
             <Link href="/doctor/exercises" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <ClipboardList className="text-orange-500" size={20} />
               {isOpen && <span className="text-orange-700">Exercises</span>}
@@ -93,6 +97,14 @@ export default function SideBar({ role }: SideBarProps) {
             <Link href="/patient/my-doctor" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
               <Stethoscope className="text-orange-500" size={20} />
               {isOpen && <span className="text-orange-700">My Doctor</span>}
+            </Link>
+            <Link href="/patient/statics" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+              <ChartSpline className="text-orange-500" size={20} />
+              {isOpen && <span className="text-orange-700">Statics</span>}
+            </Link>
+            <Link href="/patient/settings" className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/20 transition-colors">
+              <Settings className="text-orange-500" size={20} />
+              {isOpen && <span className="text-orange-700">Settings</span>}
             </Link>
           </>
         ) : (

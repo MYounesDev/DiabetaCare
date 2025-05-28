@@ -7,12 +7,12 @@ import { motion } from 'framer-motion';
 
 export default function Home() {
   const router = useRouter();
-  
+
   useEffect(() => {
     const initializeAuth = async () => {
-    /*  // TODO: remove this 2 lines after testing
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');*/
+      /*  // TODO: remove this 2 lines after testing
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');*/
 
       // Check if user is already logged in
       // Wait for animations to complete (3 seconds total)
@@ -51,14 +51,14 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50">
       <div className="container mx-auto px-4 py-16">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="flex flex-col items-center justify-center space-y-12"
         >
           {/* Logo and App Name */}
-          <motion.div 
+          <motion.div
             className="flex items-center gap-4"
             animate={{ scale: [1, 1.02, 1] }}
             transition={{ duration: 2, repeat: Infinity }}
@@ -70,13 +70,8 @@ export default function Home() {
           </motion.div>
 
           {/* Loading Animation */}
-          <div className="relative w-24 h-24">
-            <motion.div 
-              className="absolute inset-0 border-4 border-orange-200 rounded-full"
-              style={{ borderTopColor: '#059669' }}
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
-            />
+          <div className="flex justify-center items-center h-20">
+            <div className="animate-spin rounded-full h-15 w-25 border-t-2 border-b-2 border-orange-500"></div>
           </div>
 
           {/* Features Grid */}

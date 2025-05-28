@@ -154,7 +154,7 @@ export default function StaticsPage() {
                 setLoadingData(true);
                 const startDateStr = dateRange.startDate ? dateRange.startDate.toISOString() : undefined;
                 const endDateStr = dateRange.endDate ? dateRange.endDate.toISOString() : undefined;
-                
+
                 const response = await doctorService.getPatientGraphData(
                     selectedPatientId,
                     startDateStr,
@@ -335,7 +335,7 @@ export default function StaticsPage() {
                             <div className="p-4">
                                 {loading ? (
                                     <div className="flex justify-center items-center h-64">
-                                        <CircularProgress color="warning" />
+                                        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
                                     </div>
                                 ) : (
                                     <PatientList
@@ -351,9 +351,9 @@ export default function StaticsPage() {
                         <div className="lg:col-span-2">
                             {selectedPatientId ? (
                                 loadingData ? (
-                                    <div className="flex justify-center items-center h-64 bg-white rounded-xl shadow-sm">
-                                        <CircularProgress color="warning" />
-                                    </div>
+                                    <div className="flex justify-center items-center h-64">
+                                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                                  </div>
                                 ) : graphData && statistics ? (
                                     <motion.div
                                         initial={{ opacity: 0 }}
@@ -373,11 +373,10 @@ export default function StaticsPage() {
                                                             start.setDate(end.getDate() - 7);
                                                             setDateRange({ startDate: start, endDate: end });
                                                         }}
-                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${
-                                                            dateRange.endDate.getTime() - dateRange.startDate.getTime() === 7 * 24 * 60 * 60 * 1000
-                                                            ? 'bg-orange-100 text-orange-800'
-                                                            : 'hover:bg-orange-50'
-                                                        }`}
+                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${dateRange.endDate.getTime() - dateRange.startDate.getTime() === 7 * 24 * 60 * 60 * 1000
+                                                                ? 'bg-orange-100 text-orange-800'
+                                                                : 'hover:bg-orange-50'
+                                                            }`}
                                                     >
                                                         Last Week
                                                     </button>
@@ -388,11 +387,10 @@ export default function StaticsPage() {
                                                             start.setDate(end.getDate() - 30);
                                                             setDateRange({ startDate: start, endDate: end });
                                                         }}
-                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${
-                                                            dateRange.endDate.getTime() - dateRange.startDate.getTime() === 30 * 24 * 60 * 60 * 1000
-                                                            ? 'bg-orange-100 text-orange-800'
-                                                            : 'hover:bg-orange-50'
-                                                        }`}
+                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${dateRange.endDate.getTime() - dateRange.startDate.getTime() === 30 * 24 * 60 * 60 * 1000
+                                                                ? 'bg-orange-100 text-orange-800'
+                                                                : 'hover:bg-orange-50'
+                                                            }`}
                                                     >
                                                         Last 30 Days
                                                     </button>
@@ -403,11 +401,10 @@ export default function StaticsPage() {
                                                             start.setDate(end.getDate() - 90);
                                                             setDateRange({ startDate: start, endDate: end });
                                                         }}
-                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${
-                                                            dateRange.endDate.getTime() - dateRange.startDate.getTime() === 90 * 24 * 60 * 60 * 1000
-                                                            ? 'bg-orange-100 text-orange-800'
-                                                            : 'hover:bg-orange-50'
-                                                        }`}
+                                                        className={`px-3 py-1 rounded-lg transition-colors text-gray-600 text-sm ${dateRange.endDate.getTime() - dateRange.startDate.getTime() === 90 * 24 * 60 * 60 * 1000
+                                                                ? 'bg-orange-100 text-orange-800'
+                                                                : 'hover:bg-orange-50'
+                                                            }`}
                                                     >
                                                         Last 90 Days
                                                     </button>

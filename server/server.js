@@ -864,6 +864,7 @@ app.get('/blood-sugar-measurements/patient/:patient_id', authenticate, authorize
   try {
     const result = await pool.query(query, [patient_id]);
     const bloodSugarMeasurements = result.rows;
+    console.log(bloodSugarMeasurements);
     res.status(200).json({
       message: 'Blood sugar measurements retrieved successfully',
       bloodSugarMeasurements: bloodSugarMeasurements
@@ -971,7 +972,23 @@ app.delete('/blood-sugar-measurements/patient/delete/:blood_sugar_measurement_id
 });
 
 
+app.get('/blood-sugar-measurements/patient/avg/:patient_id', authenticate, authorize('admin', 'doctor', 'patient'), async (req, res) => {
+  const { patient_id } = req.params;
 
+  if (!patient_id) {
+    return res.status(400).json({ message: 'Patient ID is required' });
+  }
+
+  try {
+    const query = `SELECT AVG(value) as average_value FROM blood_sugar_measurements WHERE patient_id = $1`;
+    const result = await pool.query(query, [patient_id]);
+    const averageValue = result.rows[0].average_value || 0;
+    res.status(200).json({ averageValue });
+  } catch (error) {
+    console.error('Error retrieving average blood sugar value:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+});
 
 
 
