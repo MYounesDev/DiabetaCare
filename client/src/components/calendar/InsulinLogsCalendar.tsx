@@ -180,11 +180,11 @@ interface InsulinLog {
                     patient_id: patientId,
                     datetime: formatToISOString(dateTime)
                 });
-                setRecommendation(recommendationResult.data.recommendedInsulin);
+                setRecommendation(recommendationResult.data.recommendedInsulin || {insulin_dosage_ml: 0, note: '', canTrustResult: false});
                 setCanTrustResult(recommendationResult.data.canTrustResult);
                 setTotalRecords(recommendationResult.data.totalRecords);
                 setNeededRecords(recommendationResult.data.neededRecords);
-                setNewValue(recommendationResult.data.recommendedInsulin.insulin_dosage_ml.toString());
+                setNewValue(recommendationResult.data.recommendedInsulin?.insulin_dosage_ml?.toString() || '0.0');
             } catch (error) {
                 console.error('Error fetching recommendation:', error);
             } finally {

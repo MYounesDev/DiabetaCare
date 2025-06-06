@@ -277,7 +277,7 @@ export default function PatientDiets() {
                         <button
                           onClick={(e) => {
                             setLogData({
-                              log_date: new Date(new Date().setDate(new Date().getDate() + 1)).toISOString().split('T')[0],
+                              log_date: new Date().toISOString().split('T')[0],
                               is_completed: false,
                               note: "",
                             });
