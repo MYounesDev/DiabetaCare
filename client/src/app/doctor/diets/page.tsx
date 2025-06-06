@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { doctorService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
 import { motion } from "framer-motion";
 import {
   ClipboardList,
@@ -17,11 +17,11 @@ import {
   Users,
   Search,
 } from "lucide-react";
-import PatientList from '@/app/doctor/diets/PatientList';
-import PatientPlans from './PatientPlans';
-import DietLogsCalendar from '@/components/DietLogsCalendar';
-import StyledCheckbox from '@/components/StyledCheckbox';
-import CustomDatePicker from '@/components/DatePicker';
+import PatientList, { BasePatient } from '@/components/patients/PatientList';
+import PatientPlans, { BasePlan } from '@/components/patients/PatientPlans';
+import DietLogsCalendar from '@/components/calendar/DietLogsCalendar';
+import StyledCheckbox from '@/components/ui/StyledCheckbox';
+import CustomDatePicker from '@/components/ui/DatePicker';
 
 interface Patient {
   id: string;
@@ -701,9 +701,11 @@ export default function DoctorDiets() {
                     </div>
                   ) : (
                     <PatientList
-                      patients={mappedPatients}
+                      patients={patients}
                       selectedPatientId={selectedPatientId}
-                      onSelectPatient={handleSelectPatient}
+                      onSelectPatient={(id) => handleSelectPatient(id as string)}
+                      idField="diet_logs_id"
+                      title="Patients"
                     />
                   )}
                 </div>
@@ -720,9 +722,12 @@ export default function DoctorDiets() {
                       <PatientPlans
                         plans={mappedPatientPlans}
                         selectedPlanId={selectedPlanId}
-                        onSelectPlan={handleSelectPlan}
-                        onEditPlan={handleEditPlan}
-                        onDeletePlan={handleDeletePlan}
+                        onSelectPlan={(id) => handleSelectPlan(id as string)}
+                        onEditPlan={(plan) => handleEditPlan(plan)}
+                        onDeletePlan={(plan) => handleDeletePlan(plan)}
+                        idField="diet_logs_id"
+                        nameField="diet_name"
+                        planType="Diet"
                       />
                     )
                   ) : (

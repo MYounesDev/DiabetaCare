@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from "react";
 import { patientService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
-import InsulinLogsCalendar from '@/components/InsulinLogsCalendar';
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
+import InsulinLogsCalendar from '@/components/calendar/InsulinLogsCalendar';
 
 interface InsulinLog {
   insulin_log_id: number;

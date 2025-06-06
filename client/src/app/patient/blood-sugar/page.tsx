@@ -1,9 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import { patientService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
-import BloodSugarCalendar, { BloodSugarMeasurement } from '../../../components/BloodSugarCalendar';
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
+import BloodSugarCalendar, { BloodSugarMeasurement } from '@/components/calendar/BloodSugarCalendar';
 
 export default function PatientBloodSugar() {
   // State for blood sugar measurements

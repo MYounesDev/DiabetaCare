@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { patientService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
 import { motion } from "framer-motion";
 import {
   ClipboardList,
@@ -16,9 +16,9 @@ import {
   Utensils,
   Trash2,
 } from "lucide-react";
-import DietLogsCalendar from '@/components/DietLogsCalendar';
-import StyledCheckbox from '@/components/StyledCheckbox';
-import CustomDatePicker from '@/components/DatePicker';
+import DietLogsCalendar from '@/components/calendar/DietLogsCalendar';
+import StyledCheckbox from '@/components/ui/StyledCheckbox';
+import CustomDatePicker from '@/components/ui/DatePicker';
 
 interface Diet {
   id: string;

@@ -9,7 +9,7 @@ import {
   getCurrentDate,
   formatToISOString,
   combineDateTime
-} from '../utils/dateUtils';
+} from '@/utils/dateUtils';
 
 interface InsulinLog {
     insulin_log_id: number;

@@ -5,7 +5,7 @@ import {
   toLocalDate,
   formatToYYYYMMDD,
   getCurrentDate,
-} from '../utils/dateUtils';
+} from '@/utils/dateUtils';
 
 export interface DietLog {
   diet_logs_id: number;

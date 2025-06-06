@@ -1,8 +1,8 @@
 "use client"
 import { useState, useEffect, useRef } from 'react';
 import { patientService } from '@/services/api';
-import PageTemplate from '@/components/PageTemplate';
-import AuthWrapper from '@/components/AuthWrapper';
+import PageTemplate from '@/components/layout/PageTemplate';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   UserCircle,

@@ -1166,19 +1166,20 @@ app.post('/patient-exercises/patient/add', authenticate, authorize('admin', 'doc
 });
 
 app.put('/patient-exercises/patient/update', authenticate, authorize('admin', 'doctor'), async (req, res) => {
-  const { patient_exercise_id, patient_id, exercise_id, status, start_date, end_date } = req.body;
+  const { patient_exercise_id, patient_id, status, start_date, end_date } = req.body;
 
   const doctor_id = req.user.id;
 
-  if (!patient_exercise_id || !patient_id || !exercise_id || !doctor_id || !status || !start_date) {
+  console.log(req.body);
+  if (!patient_exercise_id || !patient_id || !doctor_id || !status || !start_date) {
     return res.status(400).json({ message: 'All fields are required' });
   }
 
 
-  const query = `UPDATE patient_exercises SET patient_id = $1, exercise_id = $2, doctor_id = $3, status = $4, start_date = $5, end_date = $6 WHERE id = $7 RETURNING *`;
+  const query = `UPDATE patient_exercises SET patient_id = $1, doctor_id = $2, status = $3, start_date = $4, end_date = $5 WHERE id = $6 RETURNING *`;
 
   try {
-    const result = await pool.query(query, [patient_id, exercise_id, doctor_id, status, start_date, end_date, patient_exercise_id]);
+    const result = await pool.query(query, [patient_id, doctor_id, status, start_date, end_date, patient_exercise_id]);
     const updatedPatientExercise = result.rows[0];
 
     res.status(200).json({

@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from "react";
 import { patientService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
 import { motion } from "framer-motion";
 import {
     ClipboardList,

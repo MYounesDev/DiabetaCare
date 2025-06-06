@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { doctorService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
 import { motion } from "framer-motion";
 import {
   ClipboardList,
@@ -17,7 +17,7 @@ import {
   Search,
   Users
 } from "lucide-react";
-import PatientList, { Patient as PatientListPatient } from "@/app/doctor/exercises/PatientList";
+import PatientList, { BasePatient as PatientListPatient } from "@/components/patients/PatientList";
 
 // TypeScript interfaces
 interface Symptom {

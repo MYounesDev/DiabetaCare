@@ -1,7 +1,7 @@
 import React from 'react';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
-import { toLocalDate, toUTCDate } from '../utils/dateUtils';
+import { toLocalDate, toUTCDate } from '@/utils/dateUtils';
 
 interface CustomDatePickerProps {
   selectedDate: Date | null;
@@ -52,7 +52,6 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
         showYearDropdown
         dropdownMode="select"
         isClearable
-        timeZone="Europe/Istanbul"
       />
     </div>
   );

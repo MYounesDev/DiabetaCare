@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import { doctorService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
-import PatientList from '@/app/doctor/exercises/PatientList';
-import BloodSugarCalendar, { BloodSugarMeasurement } from '../../../components/BloodSugarCalendar';
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
+import PatientList from '@/components/patients/PatientList';
+import BloodSugarCalendar, { BloodSugarMeasurement } from '@/components/calendar/BloodSugarCalendar';
 
 interface Patient {
   id: string;

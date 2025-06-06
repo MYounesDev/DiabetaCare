@@ -4,7 +4,7 @@ import { User, Hospital, Activity, ArrowLeft, Check } from 'lucide-react';
 import { authService } from '@/services/api';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import CustomDatePicker from '@/components/DatePicker';
+import CustomDatePicker from '@/components/ui/DatePicker';
 
 interface FormData {
   full_name: string;

@@ -1,10 +1,10 @@
 "use client"
 import { useState, useEffect, useRef } from 'react';
 import { doctorService } from '@/services/api';
-import PageTemplate from '@/components/PageTemplate';
-import AuthWrapper from '@/components/AuthWrapper';
+import PageTemplate from '@/components/layout/PageTemplate';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 import { motion } from 'framer-motion';
-import CustomDatePicker from '@/components/DatePicker';
+import CustomDatePicker from '@/components/ui/DatePicker';
 import {
   Users,
   UserPlus,
@@ -169,9 +169,12 @@ export default function DoctorPatients() {
     const matchesSymptom = !filterSymptom || 
                           summary.symptoms.some(s => s.symptom_name.toLowerCase().includes(filterSymptom.toLowerCase()));
 
-    let matchesBloodSugar = true;
-    if (filterBloodSugar !== 'all' && summary.avgBloodSugar > 0) {
+    let matchesBloodSugar = false;
+    if (true) {
       switch (filterBloodSugar) {
+        case 'all':
+          matchesBloodSugar = true;
+          break;
         case 'normal':
           matchesBloodSugar = summary.avgBloodSugar >= 70 && summary.avgBloodSugar <= 99;
           break;
@@ -179,10 +182,10 @@ export default function DoctorPatients() {
           matchesBloodSugar = summary.avgBloodSugar > 125;
           break;
         case 'low':
-          matchesBloodSugar = summary.avgBloodSugar < 70;
+          matchesBloodSugar = summary.avgBloodSugar < 70 && summary.avgBloodSugar > 0;
           break;
       }
-    }
+    } 
 
     return matchesSearch && matchesSymptom && matchesBloodSugar;
   });

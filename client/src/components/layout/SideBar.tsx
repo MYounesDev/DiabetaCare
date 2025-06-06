@@ -1,3 +1,4 @@
+"use client";
 import Link from 'next/link';
 import { useState } from 'react';
 import { User, Hospital, Activity, ClipboardList, Utensils, HeartPulse, Droplet, Stethoscope, ChevronLeft, ChevronRight, Calendar, ChartSpline, Settings, Home, Syringe } from 'lucide-react';

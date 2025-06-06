@@ -1,8 +1,8 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import { doctorService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
 import { motion } from "framer-motion";
 import {
   ClipboardList,
@@ -19,8 +19,8 @@ import {
   Droplet,
   Calendar,
 } from "lucide-react";
-import PatientList from '@/app/doctor/exercises/PatientList';
-import InsulinLogsCalendar from '@/components/InsulinLogsCalendar';
+import PatientList from '@/components/patients/PatientList';
+import InsulinLogsCalendar from '@/components/calendar/InsulinLogsCalendar';
 
 
 interface InsulinRecommendation {

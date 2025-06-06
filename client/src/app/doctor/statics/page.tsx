@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { doctorService } from '../../../services/api';
-import PatientList, { Patient } from './PatientList';
+import PatientList, { BasePatient } from '@/components/patients/PatientList';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -19,8 +19,8 @@ import { Line, Bar } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns';
 import { Card, CardContent, Typography, Box, Paper, Tabs, Tab, CircularProgress } from '@mui/material';
 import type { ChartData } from 'chart.js';
-import PageTemplate from '@/components/PageTemplate';
-import AuthWrapper from '@/components/AuthWrapper';
+import PageTemplate from '@/components/layout/PageTemplate';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 import { motion } from 'framer-motion';
 import { Activity, ClipboardList, Utensils, HeartPulse, Clock, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 
@@ -114,6 +114,11 @@ interface Statistics {
             [key: string]: number;
         };
     };
+}
+
+// Update the patient interface to match the shared component
+interface Patient extends BasePatient {
+    id: number;
 }
 
 export default function StaticsPage() {
@@ -341,7 +346,8 @@ export default function StaticsPage() {
                                     <PatientList
                                         patients={patients}
                                         selectedPatientId={selectedPatientId}
-                                        onSelectPatient={setSelectedPatientId}
+                                        onSelectPatient={(id) => setSelectedPatientId(id as number)}
+                                        idField="id"
                                     />
                                 )}
                             </div>

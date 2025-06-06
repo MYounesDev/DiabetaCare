@@ -3,8 +3,8 @@ import { Activity, ClipboardList, Utensils, HeartPulse, Droplet, AlertCircle, Tr
 import { Bar, Line } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, PointElement, LineElement } from 'chart.js';
 import { motion } from 'framer-motion';
-import PageTemplate from '@/components/PageTemplate';
-import AuthWrapper from '@/components/AuthWrapper';
+import PageTemplate from '@/components/layout/PageTemplate';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 import { useState, useEffect } from 'react';
 import { patientService } from '@/services/api';
 

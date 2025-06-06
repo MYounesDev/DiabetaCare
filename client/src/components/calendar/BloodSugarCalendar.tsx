@@ -8,7 +8,7 @@ import {
   getCurrentDate,
   combineDateTime,
   formatToISOString
-} from '../utils/dateUtils';
+} from '@/utils/dateUtils';
 
 export interface BloodSugarMeasurement {
   blood_sugar_measurement_id: number;

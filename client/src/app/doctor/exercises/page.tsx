@@ -1,8 +1,8 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { doctorService } from "@/services/api";
-import PageTemplate from "@/components/PageTemplate";
-import AuthWrapper from "@/components/AuthWrapper";
+import PageTemplate from "@/components/layout/PageTemplate";
+import AuthWrapper from "@/components/auth/AuthWrapper";
 import { motion } from "framer-motion";
 import {
   ClipboardList,
@@ -17,31 +17,40 @@ import {
   Users,
   Search,
 } from "lucide-react";
-import PatientList from '@/app/doctor/exercises/PatientList';
-import PatientPlans from './PatientPlans';
-import ExerciseLogsCalendar from '@/components/ExerciseLogsCalendar';
-import StyledCheckbox from '@/components/StyledCheckbox';
-import CustomDatePicker from '@/components/DatePicker';
+import PatientList, { BasePatient } from '@/components/patients/PatientList';
+import PatientPlans, { BasePlan } from '@/components/patients/PatientPlans';
+import ExerciseLogsCalendar from '@/components/calendar/ExerciseLogsCalendar';
+import StyledCheckbox from '@/components/ui/StyledCheckbox';
+import CustomDatePicker from '@/components/ui/DatePicker';
 
 interface Patient {
   id: string;
   full_name: string;
+  username?: string;
+  profile_picture?: any;
 }
 
 interface Exercise {
   exercise_id: string;
   exercise_name: string;
+  description?: string;
 }
 
 interface PatientExercise {
   id: string;
   patient_id: string;
+  exercise_name: string;
+  exercise_id: string;
+  start_date: string;
+  end_date: string;
+  status: string;
   patient_exercise_id: string;
 }
 
 interface ExerciseType {
   exercise_id: string;
   exercise_name: string;
+  description?: string;
 }
 
 interface ExerciseLog {
@@ -55,7 +64,7 @@ export default function DoctorExercises() {
   // Exercise Types
   const [exerciseTypes, setExerciseTypes] = useState<ExerciseType[]>([]);
   const [loadingTypes, setLoadingTypes] = useState(true);
-  const [typeError, setTypeError] = useState<string | null>(null);
+  const [typeError, setTypeError] = useState<string>("");
   const [showAddTypeModal, setShowAddTypeModal] = useState(false);
   const [showEditTypeModal, setShowEditTypeModal] = useState(false);
   const [showDeleteTypeModal, setShowDeleteTypeModal] = useState(false);
@@ -64,7 +73,7 @@ export default function DoctorExercises() {
   const [isSubmittingType, setIsSubmittingType] = useState(false);
   const [typeFormError, setTypeFormError] = useState("");
   const [typeFormSuccess, setTypeFormSuccess] = useState("");
-  const [typeAssignments, setTypeAssignments] = useState({});
+  const [typeAssignments, setTypeAssignments] = useState<Record<string, number>>({});
   const addTypeModalRef = useRef<HTMLDivElement>(null);
   const editTypeModalRef = useRef<HTMLDivElement>(null);
   const deleteTypeModalRef = useRef<HTMLDivElement>(null);
@@ -72,7 +81,7 @@ export default function DoctorExercises() {
   // Patient Exercises
   const [patientExercises, setPatientExercises] = useState<PatientExercise[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(true);
-  const [planError, setPlanError] = useState<string | null>(null);
+  const [planError, setPlanError] = useState<string>("");
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [assignData, setAssignData] = useState({
     patient_id: "",
@@ -86,7 +95,6 @@ export default function DoctorExercises() {
   const [searchExercise, setSearchExercise] = useState("");
   const [isSubmittingPlan, setIsSubmittingPlan] = useState(false);
   const [planFormError, setPlanFormError] = useState("");
-  const [planFormSuccess, setPlanFormSuccess] = useState("");
   const assignModalRef = useRef<HTMLDivElement>(null);
 
   // New state for recommended exercises
@@ -95,7 +103,7 @@ export default function DoctorExercises() {
   // Completed Exercise Logs
   const [completedLogs, setCompletedLogs] = useState<ExerciseLog[]>([]);
   const [loadingLogs, setLoadingLogs] = useState(true);
-  const [logsError, setLogsError] = useState(null);
+  const [logsError, setLogsError] = useState<string>("");
 
   // Patients for assignment
   const [patients, setPatients] = useState<Patient[]>([]);
@@ -188,7 +196,7 @@ export default function DoctorExercises() {
   // Fetch exercise types with assignments
   const fetchExerciseTypes = async () => {
     setLoadingTypes(true);
-    setTypeError(null);
+    setTypeError("");
     try {
       const res = await doctorService.getExerciseTypes();
       const types = res.data.exercisePlans || [];
@@ -210,11 +218,11 @@ export default function DoctorExercises() {
   };
 
   // Fetch patient exercises
-  const fetchPatientExercises = async (patientId: string) => {
+  const fetchPatientExercises = async (patientId: string | null) => {
     if (!patientId) return;
 
     setLoadingPlans(true);
-    setPlanError(null);
+    setPlanError("");
     try {
       const res = await doctorService.getPatientExercisesByPatient(patientId);
       setPatientExercises(res.data.patientExercises || []);
@@ -227,7 +235,7 @@ export default function DoctorExercises() {
   };
 
   // Fetch completed logs
-  const fetchCompletedLogs = async (patient_exercise_id: string) => {
+  const fetchCompletedLogs = async (patient_exercise_id: string | null) => {
     if (!patient_exercise_id) return;
 
     setLoadingLogs(true);
@@ -286,7 +294,7 @@ export default function DoctorExercises() {
   }, [showAddTypeModal, showEditTypeModal, showDeleteTypeModal, showAssignModal, showEditLogModal, showEditPlanModal, showDeletePlanModal]);
 
   // Add Exercise Type
-  const handleAddType = async (e) => {
+  const handleAddType = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingType(true);
     setTypeFormError("");
@@ -297,15 +305,16 @@ export default function DoctorExercises() {
       setShowAddTypeModal(false);
       setNewType({ name: "", description: "" });
       fetchExerciseTypes();
-    } catch (err) {
-      setTypeFormError(err.message || "Failed to add exercise type");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to add exercise type";
+      setTypeFormError(errorMessage);
     } finally {
       setIsSubmittingType(false);
     }
   };
   
   // Fetch exercise recommendations
-  const fetchExerciseRecommendations = async (id) => {
+  const fetchExerciseRecommendations = async (id: string) => {
     try {
       const res = await doctorService.getExerciseRecommendation(id);
       setRecommendedExercises(res.data.result_reco || []);
@@ -316,19 +325,20 @@ export default function DoctorExercises() {
   }
 
   // Edit Exercise Type
-  const handleEditType = async (e) => {
+  const handleEditType = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingType(true);
     setTypeFormError("");
     setTypeFormSuccess("");
     try {
       if (!selectedType) return;
-      await doctorService.updateExerciseType(selectedType.exercise_id, selectedType.exercise_name, selectedType.description);
+      await doctorService.updateExerciseType(selectedType.exercise_id, selectedType.exercise_name, selectedType.description || '');
       setTypeFormSuccess("Exercise type updated successfully!");
       setShowEditTypeModal(false);
       fetchExerciseTypes();
-    } catch (err) {
-      setTypeFormError(err.message || "Failed to update exercise type");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update exercise type";
+      setTypeFormError(errorMessage);
     } finally {
       setIsSubmittingType(false);
     }
@@ -345,19 +355,19 @@ export default function DoctorExercises() {
       setTypeFormSuccess("Exercise type deleted successfully!");
       setShowDeleteTypeModal(false);
       fetchExerciseTypes();
-    } catch (err) {
-      setTypeFormError(err.message || "Failed to delete exercise type");
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete exercise type";
+      setTypeFormError(errorMessage);
     } finally {
       setIsSubmittingType(false);
     }
   };
 
   // Assign Exercise Plan to Patient
-  const handleAssignPlan = async (e) => {
+  const handleAssignPlan = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmittingPlan(true);
     setPlanFormError("");
-    setPlanFormSuccess("");
     try {
       // Only include end_date if it's not empty
       const dataToSubmit = {
@@ -365,7 +375,6 @@ export default function DoctorExercises() {
         end_date: assignData.end_date || null
       };
       await doctorService.addPatientExercise(dataToSubmit);
-      setPlanFormSuccess("Exercise plan assigned successfully!");
       setShowAssignModal(false);
       setAssignData({
         patient_id: "",
@@ -375,39 +384,36 @@ export default function DoctorExercises() {
         start_date: "",
         end_date: "",
       });
-      fetchPatientExercises(selectedPatientId);
-    } catch (err) {
-      setPlanFormError(err.message || "Failed to assign exercise plan");
+      if (selectedPatientId) {
+        fetchPatientExercises(selectedPatientId);
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to assign exercise plan";
+      setPlanFormError(errorMessage);
     } finally {
       setIsSubmittingPlan(false);
     }
   };
 
-  // UI helpers - fixed to work with actual data structures
-  const getPatientName = (id) => {
+  // UI helpers with type annotations
+  const getPatientName = (id: string | null) => {
     const p = patients.find(pt => pt.id === id);
     return p ? p.full_name : id;
   };
 
-  const getExerciseName = (id) => {
-    const ex = exerciseTypes.find(et => et.exercise_id === id);
-    return ex ? ex.exercise_name : id;
-  };
-
-  // Selection handlers
-  const handleSelectPatient = async (id) => {
+  // Selection handlers with type annotations
+  const handleSelectPatient = async (id: string) => {
     setSelectedPatientId(id);
     setSelectedPlanId(null);
-
   };
 
-  const handleSelectPlan = (id) => {
+  const handleSelectPlan = (id: string) => {
     setSelectedPlanId(id);
   };
 
-  const handleEditPlan = (plan) => {
+  const handleEditPlan = (plan: any) => {
     // Format dates to YYYY-MM-DD for the date inputs without timezone issues
-    const formatDate = (dateString) => {
+    const formatDate = (dateString: string | undefined) => {
       if (!dateString) return '';
       const date = new Date(dateString);
       const year = date.getFullYear();
@@ -424,47 +430,46 @@ export default function DoctorExercises() {
     setPlanToEdit(formattedPlan);
     setShowEditPlanModal(true);
     setEditPlanFormError("");
-    setEditPlanFormSuccess("");
   };
 
-  const handleEditPlanSubmit = async (e) => {
+  const handleEditPlanSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!planToEdit) return;
     setIsSubmittingEditPlan(true);
     setEditPlanFormError("");
-    setEditPlanFormSuccess("");
     try {
       // Get the original plan data to ensure we have all required fields
-      const originalPlan = patientExercises.find(p => p.id === planToEdit.exercise_logs_id);
+      const originalPlan = patientExercises.find(p => p.id === planToEdit.id);
       if (!originalPlan) {
         throw new Error("Original plan data not found");
       }
 
       // Prepare the update data with all required fields
       const updateData = {
-        patient_exercise_id: planToEdit.exercise_logs_id,
+        patient_exercise_id: planToEdit.id,
         patient_id: originalPlan.patient_id,
-        exercise_id: originalPlan.exercise_id,
-        doctor_id: originalPlan.doctor_id,
+        doctor_id: originalPlan.doctor_id || '',
         status: planToEdit.status,
         start_date: planToEdit.start_date,
         end_date: planToEdit.end_date || null
       };
 
       await doctorService.updatePatientExercise(updateData);
-      setEditPlanFormSuccess("Plan updated successfully!");
       setShowEditPlanModal(false);
       setPlanToEdit(null);
-      fetchPatientExercises(selectedPatientId);
-    } catch (err) {
-      setEditPlanFormError(err.message || "Failed to update plan");
+      if (selectedPatientId) {
+        fetchPatientExercises(selectedPatientId);
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to update plan";
+      setEditPlanFormError(errorMessage);
     } finally {
       setIsSubmittingEditPlan(false);
     }
   };
 
-  const handleDeletePlan = (plan) => {
-    if (!plan || !plan.exercise_logs_id) {
+  const handleDeletePlan = (plan: any) => {
+    if (!plan || !plan.id) {
       setDeletePlanFormError("Invalid plan selected");
       return;
     }
@@ -474,26 +479,29 @@ export default function DoctorExercises() {
   };
 
   const handleDeletePlanConfirm = async () => {
-    if (!planToDelete || !planToDelete.exercise_logs_id) {
+    if (!planToDelete || !planToDelete.id) {
       setDeletePlanFormError("Invalid plan selected");
       return;
     }
     setIsSubmittingDeletePlan(true);
     setDeletePlanFormError(""); 
     try {
-      await doctorService.deletePatientExercise(planToDelete.exercise_logs_id);
+      await doctorService.deletePatientExercise(planToDelete.id);
       setShowDeletePlanModal(false);
       setPlanToDelete(null);
       setSelectedPlanId(null); // hide the calendar after delete the plan
-      fetchPatientExercises(selectedPatientId);
-    } catch (err) {
-      setDeletePlanFormError(err.message || "Failed to delete plan");
+      if (selectedPatientId) {
+        fetchPatientExercises(selectedPatientId);
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete plan";
+      setDeletePlanFormError(errorMessage);
     } finally {
       setIsSubmittingDeletePlan(false);
     }
   };
 
-  const handleAddLog = (date) => {
+  const handleAddLog = (date: string) => {
     if (!selectedPatientId || !selectedPlanId) return;
 
     // Create a new log with all required fields
@@ -503,7 +511,8 @@ export default function DoctorExercises() {
       patient_exercise_id: selectedPlanId,
       log_date: date, // Already in YYYY-MM-DD format from the calendar
       is_completed: false,
-      note: ""
+      note: "",
+      exercise_logs_id: 0 // Placeholder for new logs
     };
 
     setLogToEdit(newLog);
@@ -512,14 +521,14 @@ export default function DoctorExercises() {
     setEditLogFormSuccess("");
   };
 
-  const handleEditLog = (log) => {
-    setLogToEdit({ id: log.id, ...log });
+  const handleEditLog = (log: any) => {
+    setLogToEdit({ ...log });
     setShowEditLogModal(true);
     setEditLogFormError("");
     setEditLogFormSuccess("");
   };
 
-  const handleEditLogSubmit = async (e) => {
+  const handleEditLogSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!logToEdit) return;
     setIsSubmittingEditLog(true);
@@ -536,15 +545,18 @@ export default function DoctorExercises() {
       setEditLogFormSuccess("Log saved successfully!");
       setShowEditLogModal(false);
       setLogToEdit(null);
-      fetchCompletedLogs(selectedPlanId);
-    } catch (err) {
-      setEditLogFormError(err.message || "Failed to save log");
+      if (selectedPlanId) {
+        fetchCompletedLogs(selectedPlanId);
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to save log";
+      setEditLogFormError(errorMessage);
     } finally {
       setIsSubmittingEditLog(false);
     }
   };
 
-  const handleDeleteLog = async (log) => {
+  const handleDeleteLog = async (log: any) => {
     if (!log || !log.exercise_logs_id) {
       setEditLogFormError("Invalid log selected");
       return;
@@ -557,9 +569,12 @@ export default function DoctorExercises() {
       setEditLogFormSuccess("Log deleted successfully!");
       setShowEditLogModal(false);
       setLogToEdit(null);
-      fetchCompletedLogs(selectedPlanId);
-    } catch (err) {
-      setEditLogFormError(err.message || "Failed to delete log");
+      if (selectedPlanId) {
+        fetchCompletedLogs(selectedPlanId);
+      }
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to delete log";
+      setEditLogFormError(errorMessage);
     } finally {
       setIsSubmittingEditLog(false);
     }
@@ -567,24 +582,24 @@ export default function DoctorExercises() {
 
   // Fix mapping for patient list
   const mappedPatients = patients.map(patient => ({
-    exercise_logs_id: patient.exercise_logs_id || patient.id,
+    id: patient.id,
     full_name: patient.full_name,
-    username: patient.username,
+    username: patient.username || '',
     profile_picture: patient.profile_picture
   }));
 
   // Fix mapping for patient plans
   const mappedPatientPlans = selectedPatientPlans.map(plan => ({
-    exercise_logs_id: plan.exercise_logs_id || plan.id || plan.exercise_id,
-    exercise_name: plan.exercise_name || getExerciseName(plan.exercise_id),
-    status: plan.status || 'pending',
+    id: plan.id,
+    exercise_name: plan.exercise_name,
+    status: plan.status,
     start_date: plan.start_date,
     end_date: plan.end_date
   }));
 
   // Fix mapping for logs
   const mappedLogs = selectedPlanLogs.map(log => ({
-    exercise_logs_id: log.exercise_logs_id || log.id,
+    exercise_logs_id: log.exercise_logs_id,
     log_date: log.log_date ? formatDateToYYYYMMDD(new Date(log.log_date)) : '',
     note: log.note || "",
     is_completed: log.is_completed || false
@@ -701,7 +716,9 @@ export default function DoctorExercises() {
                     <PatientList
                       patients={mappedPatients}
                       selectedPatientId={selectedPatientId}
-                      onSelectPatient={handleSelectPatient}
+                      onSelectPatient={(id) => handleSelectPatient(id as string)}
+                      idField="id"
+                      title="Patients"
                     />
                   )}
                 </div>
@@ -718,9 +735,12 @@ export default function DoctorExercises() {
                       <PatientPlans
                         plans={mappedPatientPlans}
                         selectedPlanId={selectedPlanId}
-                        onSelectPlan={handleSelectPlan}
-                        onEditPlan={handleEditPlan}
-                        onDeletePlan={handleDeletePlan}
+                        onSelectPlan={(id) => handleSelectPlan(id as string)}
+                        onEditPlan={(plan) => handleEditPlan(plan)}
+                        onDeletePlan={(plan) => handleDeletePlan(plan)}
+                        idField="id"
+                        nameField="exercise_name"
+                        planType="Exercise"
                       />
                     )
                   ) : (

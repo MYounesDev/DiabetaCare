@@ -5,7 +5,7 @@ import {
   toLocalDate,
   formatToYYYYMMDD,
   getCurrentDate,
-} from '../utils/dateUtils';
+} from '@/utils/dateUtils';
 
 export interface ExerciseLog {
   exercise_logs_id: number;

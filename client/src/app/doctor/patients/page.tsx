@@ -1,10 +1,10 @@
 "use client"
 import { useState, useEffect, useRef } from 'react';
 import { doctorService } from '@/services/api';
-import PageTemplate from '@/components/PageTemplate';
-import AuthWrapper from '@/components/AuthWrapper';
+import PageTemplate from '@/components/layout/PageTemplate';
+import AuthWrapper from '@/components/auth/AuthWrapper';
 import { motion } from 'framer-motion';
-import CustomDatePicker from '@/components/DatePicker';
+import CustomDatePicker from '@/components/ui/DatePicker';
 
 import {
   Users,
