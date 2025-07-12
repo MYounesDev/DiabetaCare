@@ -59,15 +59,15 @@ DiabetaCare is an innovative healthcare platform designed to revolutionize diabe
 ┌─────────────────────────────────────────────────────────────┐
 │                    Modern React Stack                       │
 ├─────────────────────────────────────────────────────────────┤
-│ • Next.js 15.3.2 (App Router)                              │
-│ • React 19.1.0 (Latest Features)                           │
-│ • TypeScript 5.8.3 (Type Safety)                           │
-│ • TailwindCSS 4.1.11 (Styling)                             │
-│ • Material UI 7.1.0 (Components)                           │
-│ • Framer Motion 12.12.1 (Animations)                       │
-│ • Chart.js + React-ChartJS-2 (Data Visualization)          │
-│ • Date-fns 4.1.0 (Date Handling)                           │
-│ • Axios 1.9.0 (HTTP Client)                                │
+│ • Next.js 15.3.2 (App Router)                               │
+│ • React 19.1.0 (Latest Features)                            │
+│ • TypeScript 5.8.3 (Type Safety)                            │
+│ • TailwindCSS 4.1.11 (Styling)                              │
+│ • Material UI 7.1.0 (Components)                            │
+│ • Framer Motion 12.12.1 (Animations)                        │
+│ • Chart.js + React-ChartJS-2 (Data Visualization)           │
+│ • Date-fns 4.1.0 (Date Handling)                            │
+│ • Axios 1.9.0 (HTTP Client)                                 │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -76,7 +76,7 @@ DiabetaCare is an innovative healthcare platform designed to revolutionize diabe
 ┌─────────────────────────────────────────────────────────────┐
 │                   Robust Server Stack                       │
 ├─────────────────────────────────────────────────────────────┤
-│ • Express.js 5.1.0 (API Framework)                         │
+│ • Express.js 5.1.0 (API Framework)                          │
 │ • PostgreSQL (Primary Database)                             │
 │ • JWT Authentication (Security)                             │
 │ • Bcrypt (Password Hashing)                                 │
@@ -92,10 +92,10 @@ DiabetaCare is an innovative healthcare platform designed to revolutionize diabe
 ┌─────────────────────────────────────────────────────────────┐
 │                   Electron Integration                      │
 ├─────────────────────────────────────────────────────────────┤
-│ • Electron 36.2.1 (Desktop Framework)                      │
-│ • Electron Builder (Packaging)                             │
-│ • Cross-Platform Support (Windows, macOS, Linux)           │
-│ • Full-Screen Mode with Escape Exit                        │
+│ • Electron 36.2.1 (Desktop Framework)                       │
+│ • Electron Builder (Packaging)                              │
+│ • Cross-Platform Support (Windows, macOS, Linux)            │
+│ • Full-Screen Mode with Escape Exit                         │
 │ • Hot Reload for Development                                │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -104,48 +104,48 @@ DiabetaCare is an innovative healthcare platform designed to revolutionize diabe
 
 ```
 DiabetaCare/
-├── 🖥️ client/                          # Frontend Application
-│   ├── 📱 src/
-│   │   ├── 🏠 app/                     # Next.js App Router
-│   │   │   ├── 👨‍⚕️ doctor/            # Doctor-specific pages
-│   │   │   │   ├── 🏥 home/            # Doctor dashboard
-│   │   │   │   ├── 👥 patients/        # Patient management
-│   │   │   │   ├── 🩸 blood-sugar/     # Blood sugar monitoring
-│   │   │   │   ├── 💉 insulin-management/ # Insulin tracking
-│   │   │   │   ├── 🏃‍♂️ exercises/      # Exercise management
-│   │   │   │   ├── 🥗 diets/           # Diet management
-│   │   │   │   ├── 🤒 symptoms/        # Symptom tracking
-│   │   │   │   └── 📊 statics/         # Analytics & reports
-│   │   │   ├── 👤 patient/             # Patient-specific pages
-│   │   │   │   ├── 🏠 home/            # Patient dashboard
-│   │   │   │   ├── 🩸 blood-sugar/     # Blood sugar tracking
-│   │   │   │   ├── 💉 my-insulin/      # Insulin management
-│   │   │   │   ├── 🏃‍♂️ exercises/      # Exercise tracking
-│   │   │   │   ├── 🥗 diets/           # Diet tracking
-│   │   │   │   ├── 🤒 symptoms/        # Symptom reporting
-│   │   │   │   ├── 📊 statics/         # Personal analytics
-│   │   │   │   └── 👨‍⚕️ my-doctor/      # Doctor communication
-│   │   │   ├── 🔐 login/               # Authentication
-│   │   │   ├── 📝 register/            # User registration
-│   │   │   └── 🚫 unauthorized/        # Access control
-│   │   ├── 🧩 components/              # Reusable components
-│   │   │   ├── 🏗️ layout/              # Layout components
-│   │   │   ├── 🔐 auth/                # Authentication components
-│   │   │   ├── 📅 calendar/            # Calendar components
-│   │   │   ├── 👥 patients/            # Patient-specific components
-│   │   │   └── 🎨 ui/                  # UI components
-│   │   ├── 🔌 services/                # API services
-│   │   └── 🛠️ utils/                   # Utility functions
-│   ├── 🖥️ main/                        # Electron main process
-│   └── 📦 public/                      # Static assets
-├── ⚙️ server/                          # Backend API
-│   ├── 🚀 server.js                    # Main Express server
-│   ├── 🛠️ utils/                       # Utility functions
-│   ├── 📧 templates/                   # Email templates
-│   └── 🔒 certs/                       # SSL certificates
-├── 📸 Screenshots/                     # Application screenshots
-├── 🗄️ Database/                        # Database scripts
-└── 📋 Documentation/                   # Project documentation
+├── 🖥️ client/                                # Frontend Application
+│   ├── 📱 src/                               
+│   │   ├── 🏠 app/                           # Next.js App Router
+│   │   │   ├── 👨‍⚕️ doctor/                    # Doctor-specific pages
+│   │   │   │   ├── 🏥 home/                  # Doctor dashboard
+│   │   │   │   ├── 👥 patients/              # Patient management
+│   │   │   │   ├── 🩸 blood-sugar/           # Blood sugar monitoring
+│   │   │   │   ├── 💉 insulin-management/    # Insulin tracking
+│   │   │   │   ├── 🏃‍♂️ exercises/            # Exercise management
+│   │   │   │   ├── 🥗 diets/                 # Diet management
+│   │   │   │   ├── 🤒 symptoms/              # Symptom tracking
+│   │   │   │   └── 📊 statics/               # Analytics & reports
+│   │   │   ├── 👤 patient/                   # Patient-specific pages
+│   │   │   │   ├── 🏠 home/                  # Patient dashboard
+│   │   │   │   ├── 🩸 blood-sugar/           # Blood sugar tracking
+│   │   │   │   ├── 💉 my-insulin/            # Insulin management
+│   │   │   │   ├── 🏃‍♂️ exercises/            # Exercise tracking
+│   │   │   │   ├── 🥗 diets/                 # Diet tracking
+│   │   │   │   ├── 🤒 symptoms/              # Symptom reporting
+│   │   │   │   ├── 📊 statics/               # Personal analytics
+│   │   │   │   └── 👨‍⚕️ my-doctor/             # Doctor communication
+│   │   │   ├── 🔐 login/                     # Authentication
+│   │   │   ├── 📝 register/                  # User registration
+│   │   │   └── 🚫 unauthorized/              # Access control
+│   │   ├── 🧩 components/                    # Reusable components
+│   │   │   ├── 🏗️ layout/                    # Layout components
+│   │   │   ├── 🔐 auth/                      # Authentication components
+│   │   │   ├── 📅 calendar/                  # Calendar components
+│   │   │   ├── 👥 patients/                  # Patient-specific components
+│   │   │   └── 🎨 ui/                        # UI components
+│   │   ├── 🔌 services/                      # API services
+│   │   └── 🛠️ utils/                         # Utility functions
+│   ├── 🖥️ main/                              # Electron main process
+│   └── 📦 public/                            # Static assets
+├── ⚙️ server/                                # Backend API
+│   ├── 🚀 server.js                          # Main Express server
+│   ├── 🛠️ utils/                             # Utility functions
+│   ├── 📧 templates/                         # Email templates
+│   └── 🔒 certs/                             # SSL certificates
+├── 📸 Screenshots/                           # Application screenshots
+├── 🗄️ Database/                              # Database scripts
+└── 📋 Documentation/                         # Project documentation
 ```
 
 ## 🚀 Quick Start Guide
