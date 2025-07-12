@@ -16,6 +16,16 @@ DiabetaCare is an innovative healthcare platform designed to revolutionize diabe
 - **💻 Cross-Platform**: Available as both web application and desktop app
 - **🔐 Secure & HIPAA-Compliant**: Enterprise-grade security with role-based access control
 
+## 📸 Screenshots
+
+| 1. Patients List | 2. Blood Sugar Measurements |
+|:---:|:---:|
+| <img src="Screenshots/patients-list.png" width="450" alt="Patients list"> | <img src="Screenshots/blood-sugar-measurements.png" width="450" alt="Blood sugar measurements"> |
+
+| 3. Insulin Tracking | 4. Exercise Calendar |
+|:---:|:---:|
+| <img src="Screenshots/insulin-tracking.png" width="450" alt="Insulin tracking"> | <img src="Screenshots/exercise-calendar.png" width="450" alt="Exercise calendar"> |
+
 ## 🚀 Key Features
 
 ### 👨‍⚕️ For Healthcare Providers (Doctors)
