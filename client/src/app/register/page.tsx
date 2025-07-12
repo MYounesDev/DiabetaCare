@@ -117,9 +117,9 @@ export default function Register() {
 
 
   return (
-    <div className="flex min-h-screen bg-gradient-to-br from-orange-50 to-red-100">
+    <div className="flex min-h-screen bg-gradient-to-br from-green-50 to-teal-100">
       {/* Left side - Decorative */}
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-orange-400 to-red-500 p-12 flex-col justify-between items-center">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-green-400 to-teal-500 p-12 flex-col justify-between items-center">
         <div className={`transition-all duration-1000 transform ${animate ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="flex items-center gap-3">
             <Hospital size={40} className="text-white" />
@@ -148,28 +148,28 @@ export default function Register() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <div className={`bg-white rounded-xl shadow-xl p-8 w-full max-w-md transition-all duration-1000 transform ${animate ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
           <div className="flex justify-center mb-6">
-            <Hospital className="text-orange-500" size={32} />
-            <span className="text-orange-600 font-bold text-xl ml-2">DiabetaCare</span>
+            <Hospital className="text-green-500" size={32} />
+            <span className="text-green-600 font-bold text-xl ml-2">DiabetaCare</span>
           </div>
           
           {isRegistered ? (
             <div className="text-center py-12">
               <div className="flex justify-center mb-6">
-                <div className="bg-orange-100 p-4 rounded-full">
-                  <Check size={48} className="text-orange-500" />
+                <div className="bg-green-100 p-4 rounded-full">
+                  <Check size={48} className="text-green-500" />
                 </div>
               </div>
-              <h2 className="text-2xl font-bold text-orange-800 mb-4">Registration Successful!</h2>
-              <p className="text-orange-600 mb-8">
+              <h2 className="text-2xl font-bold text-green-800 mb-4">Registration Successful!</h2>
+              <p className="text-green-600 mb-8">
                 Please check your email for login credentials.
               </p>
-              <p className="text-orange-600 mb-8">
+              <p className="text-green-600 mb-8">
                 You will be redirected to the login page shortly...
               </p>
               <Link
                 href = '/login'
-                className="w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
-                  hover:from-orange-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg"
+                className="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
+                  hover:from-green-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg"
               >
                 <ArrowLeft size={20} />
                 Go to Login
@@ -177,11 +177,11 @@ export default function Register() {
             </div>
           ) : (
             <div>
-              <h2 className="text-2xl font-bold text-orange-800 text-center mb-2">Create Account</h2>
-              <p className="text-orange-600 text-center mb-8">Register to begin your healthcare journey</p>
+              <h2 className="text-2xl font-bold text-green-800 text-center mb-2">Create Account</h2>
+              <p className="text-green-600 text-center mb-8">Register to begin your healthcare journey</p>
               
               {error && (
-                <div className="bg-red-50 text-red-600 p-3 rounded-lg mb-6 text-sm">
+                <div className="bg-teal-50 text-teal-600 p-3 rounded-lg mb-6 text-sm">
                   {error}
                 </div>
               )}
@@ -190,8 +190,8 @@ export default function Register() {
                 <form onSubmit={handleSubmit}>
                   {/* Full Name */}
                   <div>
-                    <label htmlFor="full_name" className="block text-sm font-medium text-orange-700 mb-1">
-                      Full Name <span className="text-red-500">*</span>
+                    <label htmlFor="full_name" className="block text-sm font-medium text-green-700 mb-1">
+                      Full Name <span className="text-teal-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -199,15 +199,15 @@ export default function Register() {
                       name="full_name"
                       value={formData.full_name}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                       placeholder="Enter your full name"
                     />
                   </div>
 
                   {/* Username */}
                   <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-orange-700 mb-1">
-                      Username <span className="text-red-500">*</span>
+                    <label htmlFor="username" className="block text-sm font-medium text-green-700 mb-1">
+                      Username <span className="text-teal-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -215,15 +215,15 @@ export default function Register() {
                       name="username"
                       value={formData.username}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                       placeholder="Choose a username"
                     />
                   </div>
                   
                   {/* Email */}
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-orange-700 mb-1">
-                      Email <span className="text-red-500">*</span>
+                    <label htmlFor="email" className="block text-sm font-medium text-green-700 mb-1">
+                      Email <span className="text-teal-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -231,14 +231,14 @@ export default function Register() {
                       name="email"
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                       placeholder="you@example.com"
                     />
                   </div>
                   
                   {/* Phone Number */}
                   <div>
-                    <label htmlFor="phone_number" className="block text-sm font-medium text-orange-700 mb-1">
+                    <label htmlFor="phone_number" className="block text-sm font-medium text-green-700 mb-1">
                       Phone Number
                     </label>
                     <input
@@ -247,28 +247,28 @@ export default function Register() {
                       name="phone_number"
                       value={formData.phone_number}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                       placeholder="Enter your phone number"
                     />
                   </div>
                   
                   {/* Birth Date */}
                   <div>
-                    <label htmlFor="birth_date" className="block text-sm font-medium text-orange-700 mb-1">
+                    <label htmlFor="birth_date" className="block text-sm font-medium text-green-700 mb-1">
                       Birth Date
                     </label>
                     <div className="relative">
                       <CustomDatePicker
                         selectedDate={formData.birth_date ? new Date(formData.birth_date) : null}
                         onChange={(date) => handleChange(date)}
-                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                        className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                       />
                     </div>
                   </div>
                   
                   {/* Gender */}
                   <div>
-                    <label htmlFor="gender" className="block text-sm font-medium text-orange-700 mb-1">
+                    <label htmlFor="gender" className="block text-sm font-medium text-green-700 mb-1">
                       Gender
                     </label>
                     <select
@@ -276,7 +276,7 @@ export default function Register() {
                       name="gender"
                       value={formData.gender}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                     >
                       <option value="">Select gender</option>
                       <option value="male">Male</option>
@@ -286,15 +286,15 @@ export default function Register() {
                   
                   {/* Role */}
                   <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-orange-700 mb-1">
-                      Role <span className="text-red-500">*</span>
+                    <label htmlFor="role" className="block text-sm font-medium text-green-700 mb-1">
+                      Role <span className="text-teal-500">*</span>
                     </label>
                     <select
                       id="role"
                       name="role"
                       value={formData.role}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-all outline-none text-orange-800"
+                      className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all outline-none text-green-800"
                     >
                       <option value="">Select role</option>
                       <option value="patient">Patient</option>
@@ -305,8 +305,8 @@ export default function Register() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className={`w-full bg-gradient-to-r from-orange-500 to-red-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
-                        hover:from-orange-600 hover:to-red-600 transition-all shadow-md hover:shadow-lg
+                      className={`w-full bg-gradient-to-r from-green-500 to-teal-500 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 
+                        hover:from-green-600 hover:to-teal-600 transition-all shadow-md hover:shadow-lg
                         ${loading ? 'opacity-75 cursor-not-allowed' : ''}`}
                     >
                       {loading ? (
@@ -328,14 +328,14 @@ export default function Register() {
               <div className="mt-8 pt-6 border-t border-gray-200">
                 <Link
                 href = '/login'
-                  className="w-full text-orange-600 font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:text-orange-700 transition-colors"
+                  className="w-full text-green-600 font-medium py-3 px-4 rounded-lg flex items-center justify-center gap-2 hover:text-green-700 transition-colors"
                 >
                   <ArrowLeft size={20} />
                   Back to Login
                 </Link>
               </div>
               
-              <div className="mt-4 text-center text-sm text-orange-700">
+              <div className="mt-4 text-center text-sm text-green-700">
                 <p>
                   By registering, you'll receive your login credentials via email
                 </p>

@@ -92,21 +92,21 @@ export default function PatientStatistics() {
     return (
         <AuthWrapper allowedRoles={['patient']}>
             <PageTemplate>
-                <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
+                <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
                     <div className="mb-8">
-                        <h1 className="text-3xl font-bold text-orange-800 mb-2">Patient Statistics Dashboard</h1>
+                        <h1 className="text-3xl font-bold text-green-800 mb-2">Patient Statistics Dashboard</h1>
                         <p className="text-gray-600">Track your health metrics and progress</p>
                     </div>
 
                     {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-4">
+                        <div className="bg-teal-100 border border-teal-400 text-teal-700 px-4 py-3 rounded-xl mb-4">
                             {error}
                         </div>
                     )}
 
                     {loading ? (
                         <div className="flex justify-center items-center h-64">
-                            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                         </div>
                     ) : (
                         <>
@@ -116,10 +116,10 @@ export default function PatientStatistics() {
                                     className="bg-white p-6 rounded-xl shadow-sm"
                                 >
                                     <div className="flex items-center">
-                                        <Activity className="h-8 w-8 text-orange-600 mr-3" />
+                                        <Activity className="h-8 w-8 text-green-600 mr-3" />
                                         <div>
                                             <p className="text-sm text-gray-600">Exercises</p>
-                                            <p className="text-2xl font-semibold text-orange-800">{patientExercises}</p>
+                                            <p className="text-2xl font-semibold text-green-800">{patientExercises}</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -129,10 +129,10 @@ export default function PatientStatistics() {
                                     className="bg-white p-6 rounded-xl shadow-sm"
                                 >
                                     <div className="flex items-center">
-                                        <Utensils className="h-8 w-8 text-orange-600 mr-3" />
+                                        <Utensils className="h-8 w-8 text-green-600 mr-3" />
                                         <div>
                                             <p className="text-sm text-gray-600">Diet Plans</p>
-                                            <p className="text-2xl font-semibold text-orange-800">{dietPlans}</p>
+                                            <p className="text-2xl font-semibold text-green-800">{dietPlans}</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -142,10 +142,10 @@ export default function PatientStatistics() {
                                     className="bg-white p-6 rounded-xl shadow-sm"
                                 >
                                     <div className="flex items-center">
-                                        <HeartPulse className="h-8 w-8 text-orange-600 mr-3" />
+                                        <HeartPulse className="h-8 w-8 text-green-600 mr-3" />
                                         <div>
                                             <p className="text-sm text-gray-600">Symptoms Reported</p>
-                                            <p className="text-2xl font-semibold text-orange-800">{totalSymptoms}</p>
+                                            <p className="text-2xl font-semibold text-green-800">{totalSymptoms}</p>
                                         </div>
                                     </div>
                                 </motion.div>
@@ -155,17 +155,17 @@ export default function PatientStatistics() {
                                     className="bg-white p-6 rounded-xl shadow-sm"
                                 >
                                     <div className="flex items-center">
-                                        <AlertCircle className="h-8 w-8 text-orange-600 mr-3" />
+                                        <AlertCircle className="h-8 w-8 text-green-600 mr-3" />
                                         <div>
                                             <p className="text-sm text-gray-600">Blood Sugar Alerts</p>
-                                            <p className="text-2xl font-semibold text-orange-800">{bloodSugarAlerts}</p>
+                                            <p className="text-2xl font-semibold text-green-800">{bloodSugarAlerts}</p>
                                         </div>
                                     </div>
                                 </motion.div>
                             </div>
 
                             <div className="bg-white p-6 rounded-xl shadow-sm mb-6">
-                                <h2 className="text-xl font-bold text-orange-800 mb-4">Blood Sugar Trends</h2>
+                                <h2 className="text-xl font-bold text-green-800 mb-4">Blood Sugar Trends</h2>
                                 <div className="h-[300px]">
                                     <Line data={bloodSugarData} options={chartOptions} />
                                 </div>

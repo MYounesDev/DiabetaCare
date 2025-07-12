@@ -237,10 +237,10 @@ export default function DoctorInsulinManagement() {
   return (
     <PageTemplate>
       <AuthWrapper allowedRoles={["doctor"]}>
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-orange-800 mb-2">Insulin Management</h1>
+            <h1 className="text-3xl font-bold text-green-800 mb-2">Insulin Management</h1>
             <p className="text-gray-600">Manage insulin recommendations and track patient insulin logs</p>
           </div>
 
@@ -251,12 +251,12 @@ export default function DoctorInsulinManagement() {
               <div className="p-6 border-b border-gray-200">
                 <div className="flex justify-between items-center">
                   <div className="flex items-center gap-3">
-                    <Droplet className="h-6 w-6 text-orange-600" />
-                    <h2 className="text-xl font-bold text-orange-800">Insulin Recommendations</h2>
+                    <Droplet className="h-6 w-6 text-green-600" />
+                    <h2 className="text-xl font-bold text-green-800">Insulin Recommendations</h2>
                   </div>
                   <button
                     onClick={() => setShowAddRecommendationModal(true)}
-                    className="flex items-center gap-2 px-4 py-2 text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg hover:opacity-90 transition-opacity"
+                    className="flex items-center gap-2 px-4 py-2 text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg hover:opacity-90 transition-opacity"
                   >
                     <PlusCircle size={20} />
                     Add New
@@ -269,7 +269,7 @@ export default function DoctorInsulinManagement() {
                       placeholder="Search recommendations..."
                       value={searchRecommendation}
                       onChange={(e) => setSearchRecommendation(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 border rounded-lg  focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                      className="w-full pl-10 pr-4 py-2 border rounded-lg  focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                     />
                     <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
                   </div>
@@ -278,7 +278,7 @@ export default function DoctorInsulinManagement() {
               <div className="p-4">
                 {loadingRecommendations ? (
                   <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -290,20 +290,20 @@ export default function DoctorInsulinManagement() {
                         className="p-4 border rounded-lg hover:shadow-md transition-shadow bg-white"
                       >
                         <div className="flex justify-between items-start mb-2">
-                          <h3 className="font-semibold text-lg text-orange-800">{recommendation.level_description}</h3>
+                          <h3 className="font-semibold text-lg text-green-800">{recommendation.level_description}</h3>
                           <div className="flex gap-2">
                             <button
                               onClick={() => {
                                 setRecommendationToEdit(recommendation);
                                 setShowEditRecommendationModal(true);
                               }}
-                              className="p-2 rounded-lg text-orange-600 hover:bg-orange-50 transition-colors"
+                              className="p-2 rounded-lg text-green-600 hover:bg-green-50 transition-colors"
                             >
                               <Edit size={16} />
                             </button>
                             <button
                               onClick={() => handleDeleteRecommendation(recommendation.insulin_recommendations_id)}
-                              className="p-2 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
+                              className="p-2 rounded-lg text-teal-600 hover:bg-teal-50 transition-colors"
                             >
                               <Trash2 size={16} />
                             </button>
@@ -333,14 +333,14 @@ export default function DoctorInsulinManagement() {
               <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                 <div className="p-6 border-b border-gray-200">
                   <div className="flex items-center gap-3">
-                    <Users className="h-6 w-6 text-orange-600" />
-                    <h2 className="text-xl font-bold text-orange-800">Patients</h2>
+                    <Users className="h-6 w-6 text-green-600" />
+                    <h2 className="text-xl font-bold text-green-800">Patients</h2>
                   </div>
                 </div>
                 <div className="p-4">
                   {loadingPatients ? (
                     <div className="flex justify-center items-center h-64">
-                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                      <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                     </div>
                   ) : (
                     <PatientList
@@ -359,9 +359,9 @@ export default function DoctorInsulinManagement() {
                   <div className="bg-white rounded-xl shadow-sm overflow-hidden">
                     <div className="p-6 border-b border-gray-200">
                       <div className="flex items-center gap-3">
-                        <Calendar className="h-6 w-6 text-orange-600" />
+                        <Calendar className="h-6 w-6 text-green-600" />
                         <div>
-                          <h2 className="text-xl font-bold text-orange-800">Insulin Logs</h2>
+                          <h2 className="text-xl font-bold text-green-800">Insulin Logs</h2>
                           <p className="text-sm text-gray-500 mt-1">
                             Track and manage insulin administration for {patients.find(p => p.id === selectedPatientId)?.full_name}
                           </p>
@@ -371,7 +371,7 @@ export default function DoctorInsulinManagement() {
                     <div className="p-6">
                       {loadingLogs ? (
                         <div className="flex justify-center items-center h-64">
-                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                         </div>
                       ) : (
                         <InsulinLogsCalendar
@@ -400,21 +400,21 @@ export default function DoctorInsulinManagement() {
 
         {/* Add Recommendation Modal */}
         {showAddRecommendationModal && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={addModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
                 <div>
-                  <h2 className="text-xl font-bold text-orange-800">Add Insulin Recommendation</h2>
+                  <h2 className="text-xl font-bold text-green-800">Add Insulin Recommendation</h2>
                   <p className="text-sm text-gray-600 mt-1">Create a new insulin recommendation</p>
                 </div>
                 <button
                   onClick={() => setShowAddRecommendationModal(false)}
-                  className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
+                  className="p-1 rounded-full hover:bg-green-100 text-green-600"
                 >
                   <X size={20} />
                 </button>
@@ -438,7 +438,7 @@ export default function DoctorInsulinManagement() {
                         type="text"
                         name="level_description"
                         required
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                         placeholder="e.g., Normal, High, Very High"
                       />
                     </div>
@@ -449,7 +449,7 @@ export default function DoctorInsulinManagement() {
                           type="number"
                           name="min_blood_sugar"
                           required
-                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                         />
                       </div>
                       <div>
@@ -458,7 +458,7 @@ export default function DoctorInsulinManagement() {
                           type="number"
                           name="max_blood_sugar"
                           required
-                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                         />
                       </div>
                     </div>
@@ -469,7 +469,7 @@ export default function DoctorInsulinManagement() {
                         name="insulin_dosage_ml"
                         step="0.1"
                         required
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                       />
                     </div>
                     <div>
@@ -478,7 +478,7 @@ export default function DoctorInsulinManagement() {
                         name="note"
                         required
                         rows={3}
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                         placeholder="Additional information about this recommendation..."
                       />
                     </div>
@@ -493,7 +493,7 @@ export default function DoctorInsulinManagement() {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg hover:opacity-90 transition-opacity"
                     >
                       Add Recommendation
                     </button>
@@ -506,16 +506,16 @@ export default function DoctorInsulinManagement() {
 
         {/* Edit Recommendation Modal */}
         {showEditRecommendationModal && recommendationToEdit && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={editModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
                 <div>
-                  <h2 className="text-xl font-bold text-orange-800">Edit Insulin Recommendation</h2>
+                  <h2 className="text-xl font-bold text-green-800">Edit Insulin Recommendation</h2>
                   <p className="text-sm text-gray-600 mt-1">Update recommendation details</p>
                 </div>
                 <button
@@ -523,7 +523,7 @@ export default function DoctorInsulinManagement() {
                     setShowEditRecommendationModal(false);
                     setRecommendationToEdit(null);
                   }}
-                  className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
+                  className="p-1 rounded-full hover:bg-green-100 text-green-600"
                 >
                   <X size={20} />
                 </button>
@@ -549,7 +549,7 @@ export default function DoctorInsulinManagement() {
                         name="level_description"
                         defaultValue={recommendationToEdit.level_description}
                         required
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-green-500 focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                       />
                     </div>
                     <div className="grid grid-cols-2 gap-4">
@@ -560,7 +560,7 @@ export default function DoctorInsulinManagement() {
                           name="min_blood_sugar"
                           defaultValue={recommendationToEdit.min_blood_sugar}
                           required
-                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                         />
                       </div>
                       <div>
@@ -570,7 +570,7 @@ export default function DoctorInsulinManagement() {
                           name="max_blood_sugar"
                           defaultValue={recommendationToEdit.max_blood_sugar}
                           required
-                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-orange-500 focus:outline-none text-orange-800"
+                          className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
                         />
                       </div>
                     </div>
@@ -582,7 +582,7 @@ export default function DoctorInsulinManagement() {
                         step="0.1"
                         defaultValue={recommendationToEdit.insulin_dosage_ml}
                         required
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-orange-500 focus:outline-none text-orange-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
                       />
                     </div>
                     <div>
@@ -592,7 +592,7 @@ export default function DoctorInsulinManagement() {
                         defaultValue={recommendationToEdit.note}
                         required
                         rows={3}
-                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-orange-500 focus:outline-none text-orange-800"
+                        className="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:ring-green-500 focus:outline-none text-green-800"
                       />
                     </div>
                   </div>
@@ -609,7 +609,7 @@ export default function DoctorInsulinManagement() {
                     </button>
                     <button
                       type="submit"
-                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg hover:opacity-90 transition-opacity"
+                      className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg hover:opacity-90 transition-opacity"
                     >
                       Update Recommendation
                     </button>

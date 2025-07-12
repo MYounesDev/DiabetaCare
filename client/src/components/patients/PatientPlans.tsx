@@ -33,9 +33,9 @@ function PatientPlans<T extends BasePlan>({
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'completed':
-        return <CheckCircle className="text-orange-500" size={16} />;
+        return <CheckCircle className="text-green-500" size={16} />;
       case 'active':
-        return <Clock className="text-red-500" size={16} />;
+        return <Clock className="text-teal-500" size={16} />;
       case 'pending':
         return <AlertCircle className="text-yellow-500" size={16} />;
       default:
@@ -54,7 +54,7 @@ function PatientPlans<T extends BasePlan>({
   return (
     <div className="bg-white rounded-xl shadow-md overflow-hidden">
       <div className="p-4 border-b border-gray-200">
-        <h2 className="text-xl font-bold text-orange-800">{planType} Plans</h2>
+        <h2 className="text-xl font-bold text-green-800">{planType} Plans</h2>
       </div>
       
       <div className={`max-h-[${maxHeight}] overflow-y-auto`}>
@@ -71,15 +71,15 @@ function PatientPlans<T extends BasePlan>({
               return (
                 <div
                   key={planId}
-                  className={`p-4 transition-colors hover:bg-orange-50 cursor-pointer ${
-                    selectedPlanId === planId ? 'bg-orange-50 border-l-4 border-orange-500' : ''
+                  className={`p-4 transition-colors hover:bg-green-50 cursor-pointer ${
+                    selectedPlanId === planId ? 'bg-green-50 border-l-4 border-green-500' : ''
                   }`}
                   onClick={() => onSelectPlan(planId)}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-orange-800">{planName}</h3>
+                        <h3 className="font-semibold text-green-800">{planName}</h3>
                         {getStatusIcon(plan.status)}
                       </div>
                       <div className="flex items-center gap-4 text-sm text-gray-500">
@@ -101,7 +101,7 @@ function PatientPlans<T extends BasePlan>({
                           e.stopPropagation();
                           onEditPlan(plan);
                         }}
-                        className="p-1 rounded-full hover:bg-orange-100 text-orange-600 transition-colors"
+                        className="p-1 rounded-full hover:bg-green-100 text-green-600 transition-colors"
                       >
                         <Edit size={16} />
                       </button>
@@ -110,7 +110,7 @@ function PatientPlans<T extends BasePlan>({
                           e.stopPropagation();
                           onDeletePlan(plan);
                         }}
-                        className="p-1 rounded-full hover:bg-red-100 text-red-500 transition-colors"
+                        className="p-1 rounded-full hover:bg-teal-100 text-teal-500 transition-colors"
                       >
                         <Trash2 size={16} />
                       </button>

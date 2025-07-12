@@ -18,7 +18,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   onChange,
   dateFormat = "dd/MM/yyyy",
   placeholderText = "Select date",
-  className = "w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800",
+  className = "w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800",
   required = false,
   label
 }) => {
@@ -37,7 +37,7 @@ const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-orange-700 mb-1">
+        <label className="block text-sm font-medium text-green-700 mb-1">
           {label}
         </label>
       )}

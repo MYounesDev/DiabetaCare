@@ -297,23 +297,23 @@ export default function DoctorPatients() {
     <PageTemplate>
       <AuthWrapper allowedRoles={['doctor']}>
         <div className="flex min-h-screen">
-          <div className="flex-1 p-8 bg-gradient-to-br from-orange-50 to-red-100">
+          <div className="flex-1 p-8 bg-gradient-to-br from-green-50 to-teal-100">
             {/* Header section */}
             <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold text-orange-800">Patients Management</h1>
+              <h1 className="text-3xl font-bold text-green-800">Patients Management</h1>
 
               <div className="flex gap-4">
                 {/* View mode toggle */}
                 <div className="flex items-center bg-white rounded-lg shadow-sm overflow-hidden border border-gray-200">
                   <button
                     onClick={() => setViewMode('card')}
-                    className={`p-2 ${viewMode === 'card' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' : 'text-gray-600 hover:bg-orange-50'}`}
+                    className={`p-2 ${viewMode === 'card' ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white' : 'text-gray-600 hover:bg-green-50'}`}
                   >
                     <Grid size={20} />
                   </button>
                   <button
                     onClick={() => setViewMode('list')}
-                    className={`p-2 ${viewMode === 'list' ? 'bg-gradient-to-r from-orange-500 to-red-500 text-white' : 'text-gray-600 hover:bg-orange-50'}`}
+                    className={`p-2 ${viewMode === 'list' ? 'bg-gradient-to-r from-green-500 to-teal-500 text-white' : 'text-gray-600 hover:bg-green-50'}`}
                   >
                     <List size={20} />
                   </button>
@@ -323,7 +323,7 @@ export default function DoctorPatients() {
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={() => setShowAddModal(true)}
-                  className="flex items-center gap-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-lg shadow transition-colors"
+                  className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-lg shadow transition-colors"
                 >
                   <UserPlus size={18} />
                   Add New Patient
@@ -341,7 +341,7 @@ export default function DoctorPatients() {
                   placeholder="Search patients..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-800"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-green-800"
                 />
               </div>
 
@@ -352,7 +352,7 @@ export default function DoctorPatients() {
                   placeholder="Filter by symptom..."
                   value={filterSymptom}
                   onChange={(e) => setFilterSymptom(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-800"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-green-800"
                 />
               </div>
 
@@ -360,7 +360,7 @@ export default function DoctorPatients() {
               <select
                 value={filterBloodSugar}
                 onChange={(e) => setFilterBloodSugar(e.target.value as any)}
-                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500 text-orange-800"
+                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 text-green-800"
               >
                 <option value="all">All Blood Sugar Levels</option>
                 <option value="normal">Normal (70-99 mg/dL)</option>
@@ -372,12 +372,12 @@ export default function DoctorPatients() {
             {/* Patient grid/list */}
             {loading ? (
               <div className="flex justify-center items-center h-64">
-                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
               </div>
             ) : error ? (
               <div className="text-center py-16 bg-white rounded-xl shadow-md">
-                <AlertCircle className="mx-auto text-red-500 mb-4" size={48} />
-                <h3 className="text-xl font-medium text-red-500">{error}</h3>
+                <AlertCircle className="mx-auto text-teal-500 mb-4" size={48} />
+                <h3 className="text-xl font-medium text-teal-500">{error}</h3>
               </div>
             ) : (
               filteredPatients.length === 0 ? (
@@ -404,16 +404,16 @@ export default function DoctorPatients() {
                               <img
                                 src={`data:image/jpeg;base64,${Buffer.from(patient.profile_picture.data).toString("base64")}`}
                                 alt={patient.full_name}
-                                className="w-16 h-16 rounded-full object-cover border-2 border-orange-100"
+                                className="w-16 h-16 rounded-full object-cover border-2 border-green-100"
                               />
                             ) : (
-                              <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-700 font-bold text-xl border-2 border-orange-200">
+                              <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center text-green-700 font-bold text-xl border-2 border-green-200">
                                 <User size={32} />
                               </div>
                             )}
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-semibold text-orange-800">{patient.full_name}</h3>
+                            <h3 className="text-xl font-semibold text-green-800">{patient.full_name}</h3>
                             <p className="text-gray-500">@{patient.username}</p>
                           </div>
                         </div>
@@ -423,13 +423,13 @@ export default function DoctorPatients() {
                           <div className="mt-4 space-y-3">
                             {/* Symptoms */}
                             <div>
-                              <h4 className="text-sm font-semibold text-orange-700 mb-1">Symptoms:</h4>
+                              <h4 className="text-sm font-semibold text-green-700 mb-1">Symptoms:</h4>
                               <div className="flex flex-wrap gap-2">
                                 {patientSummaries[patient.id].symptoms.length > 0 ? (
                                   patientSummaries[patient.id].symptoms.map((symptom: any) => (
                                     <span
                                       key={symptom.symptom_id}
-                                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800"
+                                      className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
                                     >
                                       {symptom.symptom_name}
                                     </span>
@@ -442,16 +442,16 @@ export default function DoctorPatients() {
 
                             {/* Average Blood Sugar */}
                             <div>
-                              <h4 className="text-sm font-semibold text-orange-700 mb-1">Average Blood Sugar:</h4>
+                              <h4 className="text-sm font-semibold text-green-700 mb-1">Average Blood Sugar:</h4>
                               {patientSummaries[patient.id].avgBloodSugar > 0 ? (
                                 <div className={`text-lg font-semibold ${
                                   patientSummaries[patient.id].avgBloodSugar >= 70 && patientSummaries[patient.id].avgBloodSugar <= 99
                                     ? 'text-green-600'
                                     : patientSummaries[patient.id].avgBloodSugar > 125
-                                    ? 'text-red-600'
+                                    ? 'text-teal-600'
                                     : patientSummaries[patient.id].avgBloodSugar < 70
                                     ? 'text-yellow-600'
-                                    : 'text-orange-600'
+                                    : 'text-green-600'
                                 }`}>
                                   {(Number(patientSummaries[patient.id].avgBloodSugar)).toFixed(1)} mg/dL
                                 </div>
@@ -469,7 +469,7 @@ export default function DoctorPatients() {
                               setSelectedPatient(patient);
                               setShowViewModal(true);
                             }}
-                            className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           >
                             <Eye size={20} />
                           </button>
@@ -478,7 +478,7 @@ export default function DoctorPatients() {
                               setSelectedPatient(patient);
                               setShowEditModal(true);
                             }}
-                            className="p-2 text-orange-600 hover:bg-orange-50 rounded-lg transition-colors"
+                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                           >
                             <Edit size={20} />
                           </button>
@@ -487,7 +487,7 @@ export default function DoctorPatients() {
                               setSelectedPatient(patient);
                               setShowDeleteModal(true);
                             }}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                            className="p-2 text-teal-600 hover:bg-teal-50 rounded-lg transition-colors"
                           >
                             <Trash2 size={20} />
                           </button>
@@ -521,13 +521,13 @@ export default function DoctorPatients() {
                                     className="h-10 w-10 rounded-full object-cover"
                                   />
                                 ) : (
-                                  <div className="h-10 w-10 rounded-full bg-orange-100 flex items-center justify-center">
-                                    <User size={20} className="text-orange-600" />
+                                  <div className="h-10 w-10 rounded-full bg-green-100 flex items-center justify-center">
+                                    <User size={20} className="text-green-600" />
                                   </div>
                                 )}
                               </div>
                               <div className="ml-4">
-                                <div className="text-sm font-medium text-orange-800">{patient.full_name}</div>
+                                <div className="text-sm font-medium text-green-800">{patient.full_name}</div>
                                 <div className="text-sm text-gray-500">@{patient.username}</div>
                               </div>
                             </div>
@@ -538,7 +538,7 @@ export default function DoctorPatients() {
                                 patientSummaries[patient.id].symptoms.map((symptom: any) => (
                                   <span
                                     key={symptom.symptom_id}
-                                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-orange-100 text-orange-800"
+                                    className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800"
                                   >
                                     {symptom.symptom_name}
                                   </span>
@@ -554,10 +554,10 @@ export default function DoctorPatients() {
                                 patientSummaries[patient.id].avgBloodSugar >= 70 && patientSummaries[patient.id].avgBloodSugar <= 99
                                   ? 'bg-green-100 text-green-800'
                                   : patientSummaries[patient.id].avgBloodSugar > 125
-                                  ? 'bg-red-100 text-red-800'
+                                  ? 'bg-teal-100 text-teal-800'
                                   : patientSummaries[patient.id].avgBloodSugar < 70
                                   ? 'bg-yellow-100 text-yellow-800'
-                                  : 'bg-orange-100 text-orange-800'
+                                  : 'bg-green-100 text-green-800'
                               }`}>
                                 {patientSummaries[patient.id].avgBloodSugar} mg/dL
                               </span>
@@ -572,7 +572,7 @@ export default function DoctorPatients() {
                                   setSelectedPatient(patient);
                                   setShowViewModal(true);
                                 }}
-                                className="text-orange-600 hover:text-orange-900"
+                                className="text-green-600 hover:text-green-900"
                               >
                                 <Eye size={18} />
                               </button>
@@ -581,7 +581,7 @@ export default function DoctorPatients() {
                                   setSelectedPatient(patient);
                                   setShowEditModal(true);
                                 }}
-                                className="text-orange-600 hover:text-orange-900"
+                                className="text-green-600 hover:text-green-900"
                               >
                                 <Edit size={18} />
                               </button>
@@ -590,7 +590,7 @@ export default function DoctorPatients() {
                                   setSelectedPatient(patient);
                                   setShowDeleteModal(true);
                                 }}
-                                className="text-red-600 hover:text-red-900"
+                                className="text-teal-600 hover:text-teal-900"
                               >
                                 <Trash2 size={18} />
                               </button>
@@ -608,18 +608,18 @@ export default function DoctorPatients() {
 
         {/* Add Patient Modal with blur effect */}
         {showAddModal && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={addModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
-                <h2 className="text-xl font-bold text-orange-800">Add New Patient</h2>
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                <h2 className="text-xl font-bold text-green-800">Add New Patient</h2>
                 <button
                   onClick={() => setShowAddModal(false)}
-                  className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
+                  className="p-1 rounded-full hover:bg-green-100 text-green-600"
                 >
                   <X size={20} />
                 </button>
@@ -627,58 +627,58 @@ export default function DoctorPatients() {
 
               <form onSubmit={handleAddPatient} className="p-4 space-y-4">
                 {formError && (
-                  <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
+                  <div className="bg-teal-50 text-teal-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} />
                     {formError}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Full Name</label>
                   <input
                     type="text"
                     required
                     value={newPatient.full_name}
                     onChange={(e) => setNewPatient({ ...newPatient, full_name: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Username</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Username</label>
                   <input
                     type="text"
                     required
                     value={newPatient.username}
                     onChange={(e) => setNewPatient({ ...newPatient, username: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Email</label>
                   <input
                     type="email"
                     required
                     value={newPatient.email}
                     onChange={(e) => setNewPatient({ ...newPatient, email: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Phone Number</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Phone Number</label>
                   <input
                     type="tel"
                     required
                     value={newPatient.phone_number}
                     onChange={(e) => setNewPatient({ ...newPatient, phone_number: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Birth Date</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Birth Date</label>
                   <CustomDatePicker
                     selectedDate={newPatient.birth_date}
                     onChange={(date) => setNewPatient({ ...newPatient, birth_date: date })}
@@ -687,12 +687,12 @@ export default function DoctorPatients() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Gender</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Gender</label>
                   <select
                     required
                     value={newPatient.gender}
                     onChange={(e) => setNewPatient({ ...newPatient, gender: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -710,7 +710,7 @@ export default function DoctorPatients() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
                   >
                     {isSubmitting ? (
                       <>
@@ -732,18 +732,18 @@ export default function DoctorPatients() {
 
         {/* Edit Patient Modal with blur effect */}
         {showEditModal && selectedPatient && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={editModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
-                <h2 className="text-xl font-bold text-orange-800">Edit Patient</h2>
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                <h2 className="text-xl font-bold text-green-800">Edit Patient</h2>
                 <button
                   onClick={() => setShowEditModal(false)}
-                  className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
+                  className="p-1 rounded-full hover:bg-green-100 text-green-600"
                 >
                   <X size={20} />
                 </button>
@@ -751,54 +751,54 @@ export default function DoctorPatients() {
 
               <form onSubmit={handleUpdatePatient} className="p-4 space-y-4">
                 {formError && (
-                  <div className="bg-red-50 text-red-600 p-3 rounded-lg text-sm flex items-center gap-2">
+                  <div className="bg-teal-50 text-teal-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <AlertCircle size={16} />
                     {formError}
                   </div>
                 )}
 
                 {formSuccess && (
-                  <div className="bg-orange-50 text-orange-600 p-3 rounded-lg text-sm flex items-center gap-2">
+                  <div className="bg-green-50 text-green-600 p-3 rounded-lg text-sm flex items-center gap-2">
                     <CheckCircle size={16} />
                     {formSuccess}
                   </div>
                 )}
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Full Name</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Full Name</label>
                   <input
                     type="text"
                     required
                     value={selectedPatient.full_name}
                     onChange={(e) => setSelectedPatient({ ...selectedPatient, full_name: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Email</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Email</label>
                   <input
                     type="email"
                     required
                     value={selectedPatient.email}
                     onChange={(e) => setSelectedPatient({ ...selectedPatient, email: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Phone Number</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Phone Number</label>
                   <input
                     type="tel"
                     required
                     value={selectedPatient.phone_number}
                     onChange={(e) => setSelectedPatient({ ...selectedPatient, phone_number: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Birth Date</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Birth Date</label>
                   <CustomDatePicker
                     selectedDate={selectedPatient.birth_date ? new Date(selectedPatient.birth_date) : null}
                     onChange={(date) => {
@@ -814,12 +814,12 @@ export default function DoctorPatients() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-orange-700 mb-1">Gender</label>
+                  <label className="block text-sm font-medium text-green-700 mb-1">Gender</label>
                   <select
                     required
                     value={selectedPatient.gender}
                     onChange={(e) => setSelectedPatient({ ...selectedPatient, gender: e.target.value })}
-                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:outline-none text-orange-800"
+                    className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:outline-none text-green-800"
                   >
                     <option value="male">Male</option>
                     <option value="female">Female</option>
@@ -837,7 +837,7 @@ export default function DoctorPatients() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-orange-500 to-red-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-green-500 to-teal-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
                   >
                     {isSubmitting ? (
                       <>
@@ -859,18 +859,18 @@ export default function DoctorPatients() {
 
         {/* View Patient Modal with blur effect */}
         {showViewModal && selectedPatient && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={viewModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white rounded-xl shadow-lg max-w-md w-full max-h-[90vh] overflow-y-auto"
             >
-              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-orange-50">
-                <h2 className="text-xl font-bold text-orange-800">Patient Details</h2>
+              <div className="flex justify-between items-center border-b border-gray-200 p-4 bg-green-50">
+                <h2 className="text-xl font-bold text-green-800">Patient Details</h2>
                 <button
                   onClick={() => setShowViewModal(false)}
-                  className="p-1 rounded-full hover:bg-orange-100 text-orange-600"
+                  className="p-1 rounded-full hover:bg-green-100 text-green-600"
                 >
                   <X size={20} />
                 </button>
@@ -878,7 +878,7 @@ export default function DoctorPatients() {
 
               <div className="p-4">
                 <div className="flex items-center justify-center mb-6">
-                  <div className="w-24 h-24 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
+                  <div className="w-24 h-24 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                     {selectedPatient.profile_picture ? (
                       <img
                         src={`data:image/jpeg;base64,${Buffer.from(selectedPatient.profile_picture).toString("base64")}`}
@@ -894,37 +894,37 @@ export default function DoctorPatients() {
                 <div className="space-y-4">
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Full Name</h3>
-                    <p className="text-lg font-medium text-orange-800">{selectedPatient.full_name}</p>
+                    <p className="text-lg font-medium text-green-800">{selectedPatient.full_name}</p>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Username</h3>
-                    <p className="text-lg font-medium text-orange-800">{selectedPatient.username}</p>
+                    <p className="text-lg font-medium text-green-800">{selectedPatient.username}</p>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Email</h3>
-                    <p className="text-lg font-medium text-orange-800">{selectedPatient.email}</p>
+                    <p className="text-lg font-medium text-green-800">{selectedPatient.email}</p>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Phone Number</h3>
-                    <p className="text-lg font-medium text-orange-800">{selectedPatient.phone_number}</p>
+                    <p className="text-lg font-medium text-green-800">{selectedPatient.phone_number}</p>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Birth Date</h3>
-                    <p className="text-lg font-medium text-orange-800">{formatDate(selectedPatient.birth_date)}</p>
+                    <p className="text-lg font-medium text-green-800">{formatDate(selectedPatient.birth_date)}</p>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Gender</h3>
-                    <p className="text-lg font-medium text-orange-800">{formatGender(selectedPatient.gender)}</p>
+                    <p className="text-lg font-medium text-green-800">{formatGender(selectedPatient.gender)}</p>
                   </div>
 
                   <div>
                     <h3 className="text-sm font-medium text-gray-500">Age</h3>
-                    <p className="text-lg font-medium text-orange-800">{calculateAge(selectedPatient.birth_date)} years</p>
+                    <p className="text-lg font-medium text-green-800">{calculateAge(selectedPatient.birth_date)} years</p>
                   </div>
                 </div>
 
@@ -934,7 +934,7 @@ export default function DoctorPatients() {
                       setShowViewModal(false);
                       setShowEditModal(true);
                     }}
-                    className="px-4 py-2 text-sm font-medium text-orange-600 hover:text-orange-800 flex items-center gap-2"
+                    className="px-4 py-2 text-sm font-medium text-green-600 hover:text-green-800 flex items-center gap-2"
                   >
                     <Edit size={16} />
                     Edit Details
@@ -953,7 +953,7 @@ export default function DoctorPatients() {
 
         {/* Delete Confirmation Modal with blur effect */}
         {showDeleteModal && selectedPatient && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-orange-900/10 flex items-center justify-center z-50 p-4">
+          <div className="fixed inset-0 backdrop-blur-sm bg-green-900/10 flex items-center justify-center z-50 p-4">
             <motion.div
               ref={deleteModalRef}
               initial={{ opacity: 0, scale: 0.9 }}
@@ -962,12 +962,12 @@ export default function DoctorPatients() {
             >
               <div className="p-6">
                 <div className="flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center text-red-500">
+                  <div className="w-12 h-12 rounded-full bg-teal-100 flex items-center justify-center text-teal-500">
                     <AlertCircle size={24} />
                   </div>
                 </div>
 
-                <h3 className="text-lg text-center mb-2 font-bold text-red-700">Delete Patient</h3>
+                <h3 className="text-lg text-center mb-2 font-bold text-teal-700">Delete Patient</h3>
                 <p className="text-gray-600 text-center mb-6">
                   Are you sure you want to delete {selectedPatient.full_name}? This action cannot be undone.
                 </p>
@@ -981,7 +981,7 @@ export default function DoctorPatients() {
                   </button>
                   <button
                     onClick={handleDeletePatient}
-                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-red-500 to-rose-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
+                    className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-teal-500 to-rose-500 rounded-lg flex items-center gap-2 disabled:opacity-50 hover:scale-105 transition-transform"
                   >
                     Delete
                   </button>
