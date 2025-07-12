@@ -94,7 +94,7 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
           onClick={() => log ? onEditLog(log) : onAddLog(dateString)}
           className={`
             h-24 p-2 rounded-lg border cursor-pointer transition-all relative
-            ${isToday ? 'border-orange-500 bg-orange-50' : 'border-gray-100 hover:border-orange-300'}
+            ${isToday ? 'border-green-500 bg-green-50' : 'border-gray-100 hover:border-green-300'}
             ${log ? 'bg-white' : 'bg-gray-50'}
             ${isHovered ? 'shadow-md' : 'hover:shadow-sm'}
           `}
@@ -102,7 +102,7 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
           <div className="flex justify-between items-start">
             <span className={`
               text-sm font-medium
-              ${isToday ? 'text-orange-700' : 'text-gray-700'}
+              ${isToday ? 'text-green-700' : 'text-gray-700'}
             `}>
               {day}
             </span>
@@ -112,7 +112,7 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
                 animate={{ scale: 1 }}
                 className={`
                   p-1 rounded-full
-                  ${log.is_completed ? 'bg-orange-100 text-orange-600' : 'bg-yellow-100 text-yellow-600'}
+                  ${log.is_completed ? 'bg-green-100 text-green-600' : 'bg-yellow-100 text-yellow-600'}
                 `}
               >
                 {log.is_completed ? <CheckCircle size={16} /> : <AlertCircle size={16} />}
@@ -128,9 +128,9 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
             <motion.div
               initial={{ opacity: 0, y: 5 }}
               animate={{ opacity: 1, y: 0 }}
-              className="absolute inset-0 flex items-center justify-center bg-orange-50 bg-opacity-90 rounded-lg"
+              className="absolute inset-0 flex items-center justify-center bg-green-50 bg-opacity-90 rounded-lg"
             >
-              <Plus size={20} className="text-orange-600" />
+              <Plus size={20} className="text-green-600" />
             </motion.div>
           )}
         </motion.div>
@@ -143,24 +143,24 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
   return (
     <div className="bg-white rounded-xl shadow-sm overflow-hidden">
       {/* Calendar Header */}
-      <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-orange-50 to-red-50">
+      <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-green-50 to-teal-50">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold text-orange-800">Diet Logs</h2>
+          <h2 className="text-2xl font-bold text-green-800">Diet Logs</h2>
           <div className="flex items-center gap-4">
             <button
               onClick={handlePrevMonth}
               className="p-2 rounded-lg hover:bg-white transition-colors"
             >
-              <ChevronLeft size={20} className="text-orange-600" />
+              <ChevronLeft size={20} className="text-green-600" />
             </button>
-            <span className="text-lg font-semibold text-orange-800">
+            <span className="text-lg font-semibold text-green-800">
               {getMonthName(currentDate)} {currentDate.getFullYear()}
             </span>
             <button
               onClick={handleNextMonth}
               className="p-2 rounded-lg hover:bg-white transition-colors"
             >
-              <ChevronRight size={20} className="text-orange-600" />
+              <ChevronRight size={20} className="text-green-600" />
             </button>
           </div>
         </div>
@@ -184,11 +184,11 @@ export default function DietLogsCalendar({ logs, onAddLog, onEditLog, onDeleteLo
       <div className="p-4 border-t border-gray-200 bg-gray-50">
         <div className="flex items-center justify-center gap-6 text-sm">
           <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-orange-100 border border-orange-300" />
+            <div className="w-3 h-3 rounded-full bg-green-100 border border-green-300" />
             <span className="text-gray-600">Today</span>
           </div>
           <div className="flex items-center gap-2">
-            <CheckCircle size={16} className="text-orange-600" />
+            <CheckCircle size={16} className="text-green-600" />
             <span className="text-gray-600">Completed</span>
           </div>
           <div className="flex items-center gap-2">

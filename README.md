@@ -1,231 +1,368 @@
-# DiabetaCare: Comprehensive Diabetes Management System
+# 🩺 DiabetaCare: Intelligent Diabetes Management Platform
 
-DiabetaCare is a full-stack application designed to help patients with diabetes monitor and manage their condition effectively while facilitating seamless communication with healthcare providers. The application offers comprehensive tools for tracking blood sugar levels, insulin intake, exercise routines, and diet plans.
+![DiabetaCare Demo](Screenshots/DiabetaCare.gif)
 
-## 📋 Table of Contents
-- [Overview](#overview)
-- [Key Features](#key-features)
-- [Technical Stack](#technical-stack)
-- [Screenshots](#screenshots)
-- [Project Structure](#project-structure)
-- [Installation and Setup](#installation-and-setup)
-- [Usage Guide](#usage-guide)
-- [Database Schema](#database-schema)
-- [API Endpoints](#api-endpoints)
-- [Authentication and Authorization](#authentication-and-authorization)
-- [Deployment](#deployment)
+> **A comprehensive full-stack diabetes management system that bridges the gap between patients and healthcare providers through intelligent monitoring, personalized recommendations, and seamless communication.**
 
-## 🔍 Overview
+## 🎯 Project Overview
 
-DiabetaCare bridges the gap between patients and healthcare providers by offering a centralized platform for diabetes management. Patients can log and track their health metrics, while doctors can monitor patient progress, provide feedback, and adjust treatment plans as needed. The system is designed to improve patient outcomes through consistent monitoring and timely interventions.
+DiabetaCare is an innovative healthcare platform designed to revolutionize diabetes management by providing patients with comprehensive tools for monitoring their condition while enabling healthcare providers to deliver personalized care through data-driven insights and automated recommendations.
 
-## ✨ Key Features
+### 🌟 What Makes DiabetaCare Special?
 
-### For Patients
-- **Blood Sugar Monitoring**: Log and visualize blood sugar readings with automatic categorization (low, normal, intermediate, high)
-- **Insulin Tracking**: Record insulin doses and view historical data
-- **Exercise Planning**: Access personalized exercise routines and mark completion status
-- **Diet Management**: Follow diet recommendations and nutritional guidance
-- **Symptom Reporting**: Report any unusual symptoms for doctor review
-- **Doctor Communication**: Direct messaging with assigned healthcare providers
-- **Health Analytics**: Visual representation of health metrics over time
+- **🤖 AI-Powered Recommendations**: Intelligent exercise and diet suggestions based on blood sugar levels and symptoms
+- **📊 Real-Time Analytics**: Advanced data visualization and trend analysis
+- **🔔 Smart Alert System**: Automated notifications for concerning health metrics
+- **💻 Cross-Platform**: Available as both web application and desktop app
+- **🔐 Secure & HIPAA-Compliant**: Enterprise-grade security with role-based access control
 
-### For Doctors
-- **Patient Dashboard**: Overview of all assigned patients with key health indicators
-- **Patient Management**: Add new patients and view detailed patient profiles
-- **Health Monitoring**: Track patients' blood sugar trends, insulin usage, and symptom reports
-- **Treatment Adjustment**: Update exercise plans, diet recommendations, and medication regimes
-- **Alert System**: Receive notifications for concerning health metrics
-- **Communication**: Direct messaging with patients for guidance and support
+## 🚀 Key Features
 
-## 🛠️ Technical Stack
+### 👨‍⚕️ For Healthcare Providers (Doctors)
 
-### Frontend
-- **Framework**: Next.js 15.3.2 with React 19.1.0
-- **UI Libraries**: 
-  - TailwindCSS for styling
-  - Material UI components
-  - Framer Motion for animations
-- **State Management**: React hooks and context API
-- **Data Visualization**: Chart.js with React-ChartJS-2
-- **Date Handling**: Date-fns
-- **HTTP Client**: Axios
-- **Desktop Application**: Electron integration
+| Feature | Description |
+|---------|-------------|
+| 🏥 **Patient Dashboard** | Comprehensive overview of all assigned patients with key health indicators |
+| 👥 **Patient Management** | Add new patients, view detailed profiles, and manage patient relationships |
+| 📈 **Health Monitoring** | Track blood sugar trends, insulin usage, exercise adherence, and symptom reports |
+| 🎯 **Treatment Planning** | Create personalized exercise routines, diet plans, and medication regimes |
+| ⚠️ **Alert System** | Receive real-time notifications for concerning health metrics |
+| 💬 **Direct Communication** | Secure messaging system with patients for guidance and support |
+| 📊 **Analytics & Reports** | Advanced data visualization and statistical analysis |
 
-### Backend
-- **Server**: Express.js 5.1.0
-- **Database**: PostgreSQL with pg client
-- **Authentication**: JWT (JSON Web Tokens)
-- **Password Security**: bcrypt for password hashing
-- **Email Services**: Nodemailer with Handlebars for templating
-- **API Documentation**: Swagger with swagger-jsdoc and swagger-ui-express
+### 👤 For Patients
 
-## 📸 Screenshots
+| Feature | Description |
+|---------|-------------|
+| 🩸 **Blood Sugar Tracking** | Log and visualize readings with automatic categorization (low, normal, intermediate, high) |
+| 💉 **Insulin Management** | Record doses, view historical data, and get dosage recommendations |
+| 🏃‍♂️ **Exercise Planning** | Access personalized routines and track completion status |
+| 🥗 **Diet Management** | Follow customized diet recommendations and nutritional guidance |
+| 🤒 **Symptom Reporting** | Report unusual symptoms for immediate doctor review |
+| 👨‍⚕️ **Doctor Communication** | Direct messaging with assigned healthcare providers |
+| 📊 **Health Analytics** | Visual representation of health metrics and progress over time |
 
-| 1. Login | 2. Dashboard |
-|:---:|:---:|
-| ![Login page](Screenshots/login.png) | ![Dashboard page](Screenshots/dashboard.png) |
-|:---:|:---:|
+## 🛠️ Technology Stack
 
-| 3. Patients List | 4. Blood Sugar Measurements |
-|:---:|:---:|
-| ![Patients list](Screenshots/patients-list.png) | ![Blood sugar measurements](Screenshots/blood-sugar-measurements.png) |
-|:---:|:---:|
+### 🎨 Frontend Architecture
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Modern React Stack                       │
+├─────────────────────────────────────────────────────────────┤
+│ • Next.js 15.3.2 (App Router)                              │
+│ • React 19.1.0 (Latest Features)                           │
+│ • TypeScript 5.8.3 (Type Safety)                           │
+│ • TailwindCSS 4.1.11 (Styling)                             │
+│ • Material UI 7.1.0 (Components)                           │
+│ • Framer Motion 12.12.1 (Animations)                       │
+│ • Chart.js + React-ChartJS-2 (Data Visualization)          │
+│ • Date-fns 4.1.0 (Date Handling)                           │
+│ • Axios 1.9.0 (HTTP Client)                                │
+└─────────────────────────────────────────────────────────────┘
+```
 
-| 5. Insulin Tracking | 6. Exercise Calendar |
-|:---:|:---:|
-| ![Insulin tracking](Screenshots/insulin-tracking.png) | ![Exercise calendar](Screenshots/exercise-calendar.png) |
-|:---:|:---:|
+### ⚙️ Backend Architecture
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Robust Server Stack                       │
+├─────────────────────────────────────────────────────────────┤
+│ • Express.js 5.1.0 (API Framework)                         │
+│ • PostgreSQL (Primary Database)                             │
+│ • JWT Authentication (Security)                             │
+│ • Bcrypt (Password Hashing)                                 │
+│ • Nodemailer (Email Services)                               │
+│ • Handlebars (Email Templates)                              │
+│ • Swagger (API Documentation)                               │
+│ • CORS (Cross-Origin Support)                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### 🖥️ Desktop Application
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Electron Integration                      │
+├─────────────────────────────────────────────────────────────┤
+│ • Electron 36.2.1 (Desktop Framework)                      │
+│ • Electron Builder (Packaging)                             │
+│ • Cross-Platform Support (Windows, macOS, Linux)           │
+│ • Full-Screen Mode with Escape Exit                        │
+│ • Hot Reload for Development                                │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ## 📁 Project Structure
 
-### Client-Side Structure
 ```
-client/
-├── src/
-│   ├── app/                    # Next.js app directory
-│   │   ├── login/              # Login page
-│   │   ├── register/           # Registration page
-│   │   ├── doctor/             # Doctor-specific pages
-│   │   │   └── home/           # Doctor dashboard
-│   │   └── patient/            # Patient-specific pages
-│   │       ├── home/           # Patient dashboard
-│   │       ├── blood-sugar/    # Blood sugar tracking
-│   │       ├── my-insulin/     # Insulin tracking
-│   │       └── exercises/      # Exercise management
-│   ├── components/             # Reusable React components
-│   │   ├── layout/             # Layout components like PageTemplate
-│   │   ├── auth/               # Authentication components
-│   │   └── calendar/           # Calendar and scheduling components
-│   ├── services/               # API service connections
-│   └── utils/                  # Utility functions
-├── main/                       # Electron main process files
-└── public/                     # Static assets
+DiabetaCare/
+├── 🖥️ client/                          # Frontend Application
+│   ├── 📱 src/
+│   │   ├── 🏠 app/                     # Next.js App Router
+│   │   │   ├── 👨‍⚕️ doctor/            # Doctor-specific pages
+│   │   │   │   ├── 🏥 home/            # Doctor dashboard
+│   │   │   │   ├── 👥 patients/        # Patient management
+│   │   │   │   ├── 🩸 blood-sugar/     # Blood sugar monitoring
+│   │   │   │   ├── 💉 insulin-management/ # Insulin tracking
+│   │   │   │   ├── 🏃‍♂️ exercises/      # Exercise management
+│   │   │   │   ├── 🥗 diets/           # Diet management
+│   │   │   │   ├── 🤒 symptoms/        # Symptom tracking
+│   │   │   │   └── 📊 statics/         # Analytics & reports
+│   │   │   ├── 👤 patient/             # Patient-specific pages
+│   │   │   │   ├── 🏠 home/            # Patient dashboard
+│   │   │   │   ├── 🩸 blood-sugar/     # Blood sugar tracking
+│   │   │   │   ├── 💉 my-insulin/      # Insulin management
+│   │   │   │   ├── 🏃‍♂️ exercises/      # Exercise tracking
+│   │   │   │   ├── 🥗 diets/           # Diet tracking
+│   │   │   │   ├── 🤒 symptoms/        # Symptom reporting
+│   │   │   │   ├── 📊 statics/         # Personal analytics
+│   │   │   │   └── 👨‍⚕️ my-doctor/      # Doctor communication
+│   │   │   ├── 🔐 login/               # Authentication
+│   │   │   ├── 📝 register/            # User registration
+│   │   │   └── 🚫 unauthorized/        # Access control
+│   │   ├── 🧩 components/              # Reusable components
+│   │   │   ├── 🏗️ layout/              # Layout components
+│   │   │   ├── 🔐 auth/                # Authentication components
+│   │   │   ├── 📅 calendar/            # Calendar components
+│   │   │   ├── 👥 patients/            # Patient-specific components
+│   │   │   └── 🎨 ui/                  # UI components
+│   │   ├── 🔌 services/                # API services
+│   │   └── 🛠️ utils/                   # Utility functions
+│   ├── 🖥️ main/                        # Electron main process
+│   └── 📦 public/                      # Static assets
+├── ⚙️ server/                          # Backend API
+│   ├── 🚀 server.js                    # Main Express server
+│   ├── 🛠️ utils/                       # Utility functions
+│   ├── 📧 templates/                   # Email templates
+│   └── 🔒 certs/                       # SSL certificates
+├── 📸 Screenshots/                     # Application screenshots
+├── 🗄️ Database/                        # Database scripts
+└── 📋 Documentation/                   # Project documentation
 ```
 
-### Server-Side Structure
-```
-server/
-├── server.js                  # Main Express server file
-├── utils/                     # Utility functions and helpers
-├── templates/                 # Email templates
-└── certs/                     # SSL certificates for HTTPS
-```
+## 🚀 Quick Start Guide
 
-## 🚀 Installation and Setup
+### 📋 Prerequisites
+- **Node.js** (v18 or higher) 🟢
+- **PostgreSQL** (v14 or higher) 🐘
+- **npm** or **yarn** package manager 📦
 
-### Prerequisites
-- Node.js (v18 or higher)
-- PostgreSQL (v14 or higher)
-- npm or yarn package manager
+### ⚡ Installation Steps
 
-### Setup Instructions
-
-1. **Clone the repository**
+1. **📥 Clone the Repository**
    ```bash
    git clone https://github.com/yourusername/DiabetaCare.git
    cd DiabetaCare
    ```
 
-2. **Backend Setup**
+2. **🗄️ Database Setup**
+   ```bash
+   # Create PostgreSQL database
+   createdb diabetacare
+   
+   # Execute database schema
+   psql -d diabetacare -f "DiabetaCare DataBase Connection.session copy.sql"
+   ```
+
+3. **⚙️ Backend Setup**
    ```bash
    cd server
    npm install
-   # Create a .env file with the following variables
+   
+   # Create .env file
+   cp .env.example .env
+   # Edit .env with your configuration:
    # DATABASE_URL=postgresql://username:password@localhost:5432/diabetacare
-   # JWT_SECRET=your_jwt_secret
+   # JWT_SECRET=your_secure_jwt_secret
    # PORT=5000
    # GMAIL_USER=your_email@gmail.com
    # GMAIL_APP_PASSWORD=your_app_password
+   
    npm run dev
    ```
 
-3. **Frontend Setup**
+4. **🎨 Frontend Setup**
    ```bash
    cd client
    npm install
    npm run dev
    ```
 
-4. **Database Initialization**
-   - Execute the SQL scripts in the `DiabetaCare DataBase Connection.session.sql` file to set up the database schema
-
-5. **Running the Application**
-   - Web Version: `npm run dev` in the client directory
-   - Desktop App: `npm run electron` in the client directory
-
-## 📘 Usage Guide
-
-### Patient Workflow
-1. **Login**: Access your account with username and password
-2. **Dashboard**: View overview of health metrics and upcoming activities
-3. **Blood Sugar**: Log and track blood sugar readings
-4. **Insulin**: Record insulin doses and schedule
-5. **Exercise**: Follow prescribed exercise routines
-6. **Diet**: Access diet plans and nutritional guidance
-7. **Symptoms**: Report any unusual symptoms
-
-### Doctor Workflow
-1. **Login**: Access your doctor account
-2. **Dashboard**: View overview of patient statistics and alerts
-3. **Patient List**: Access list of assigned patients
-4. **Patient Profile**: View detailed patient health data
-5. **Treatment**: Adjust exercise plans, diet recommendations, and medication
-
-## 💾 Database Schema
-
-The database is built with PostgreSQL and includes the following key tables:
-
-- **users**: Core user information with role-based access
-- **roles**: User role definitions (patient, doctor, admin)
-- **genders**: Gender options
-- **blood_sugar_measurements**: Patient blood sugar readings
-- **blood_sugar_levels**: Classifications for blood sugar readings
-- **insulin_records**: Patient insulin administration records
-- **exercises**: Exercise definitions and routines
-- **diet_plans**: Nutritional guidance and meal plans
-- **symptoms**: Patient-reported symptoms
-- **patient_doctor**: Relationship mapping between patients and doctors
+5. **🖥️ Desktop App (Optional)**
+   ```bash
+   cd client
+   npm run electron
+   ```
 
 ## 🔌 API Endpoints
 
-The API follows RESTful design principles and includes endpoints for:
+### 🔐 Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/register` | User registration with auto-generated password |
+| `POST` | `/login` | User authentication with JWT token |
+| `POST` | `/refresh-token` | Token refresh mechanism |
 
-- **Authentication**: `/login`, `/register`, `/refresh-token`
-- **User Management**: `/users`, `/users/:id`
-- **Blood Sugar**: `/blood-sugar`, `/blood-sugar/:id`
-- **Insulin**: `/insulin`, `/insulin/:id`
-- **Exercises**: `/exercises`, `/exercises/:id`
-- **Diet**: `/diet-plans`, `/diet-plans/:id`
-- **Symptoms**: `/symptoms`, `/symptoms/:id`
-- **Doctor-Patient**: `/doctor/patients`, `/patient/doctor`
+### 👥 User Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/users` | Get all users (Admin/Doctor only) |
+| `GET` | `/users/:id` | Get specific user profile |
+| `PUT` | `/users/:id` | Update user information |
 
-All endpoints are documented using Swagger and can be accessed at `/api-docs` when running the server.
+### 🩸 Blood Sugar Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/blood-sugar-measurements/patient/:patient_id` | Get patient's blood sugar history |
+| `POST` | `/blood-sugar-measurements/patient/add` | Add new blood sugar reading |
+| `PUT` | `/blood-sugar-measurements/patient/update` | Update blood sugar reading |
+| `GET` | `/blood-sugar-alerts` | Get blood sugar alerts (Doctor only) |
 
-## 🔐 Authentication and Authorization
+### 💉 Insulin Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/insulin-recommendation` | Get insulin dosage recommendations |
+| `POST` | `/insulin-recommendation/create` | Create new insulin recommendation |
+| `GET` | `/insulin-recommendation/patient/` | Get patient-specific insulin advice |
+| `POST` | `/insulin-patient-logs/add` | Log insulin administration |
 
-The system implements a JWT-based authentication system:
-- **Token Generation**: Tokens are created at login with 1-hour expiry
-- **Role-Based Access**: Different routes are accessible based on user roles (patient/doctor/admin)
-- **Password Security**: Passwords are hashed using bcrypt
-- **Token Invalidation**: Tokens are invalidated on password change
+### 🏃‍♂️ Exercise Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/exercises` | Get available exercises |
+| `POST` | `/exercises/patient/add` | Assign exercise to patient |
+| `GET` | `/exercise-recommendation/:patient_id` | Get AI-powered exercise recommendations |
+| `POST` | `/exercise-logs/patient/add` | Log exercise completion |
 
-## 📦 Deployment
+### 🥗 Diet Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/diet-types` | Get available diet plans |
+| `POST` | `/diet-plans/patient/add` | Assign diet to patient |
+| `GET` | `/diet-recommendation/:patient_id` | Get AI-powered diet recommendations |
+| `POST` | `/diet-logs/patient/add` | Log diet adherence |
 
-The application can be deployed in multiple ways:
+### 🤒 Symptom Management
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/symptoms/patient/:patient_id` | Get patient symptoms |
+| `POST` | `/symptoms/patient/add` | Add new symptom report |
+| `GET` | `/symptom_types` | Get available symptom types |
 
-### Web Application
-- Frontend: Deploy the Next.js app to Vercel or Netlify
-- Backend: Deploy the Express server to Heroku, AWS, or similar services
-- Database: Use a managed PostgreSQL service like AWS RDS or Heroku Postgres
+### 📊 Analytics & Dashboard
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/doctor/dashboard/stats` | Doctor dashboard statistics |
+| `GET` | `/patient/dashboard/stats` | Patient dashboard statistics |
+| `GET` | `/patient/graph-data/:patient_id` | Comprehensive patient analytics |
 
-### Desktop Application
-- Build the Electron app for distribution:
-  ```bash
-  cd client
-  npm run build
-  ```
-- The packaged application will be available for Windows, macOS, and Linux
+## 🗄️ Database Schema
+
+### Core Tables
+```sql
+-- User Management
+users (id, username, email, phone_number, role_id, password, full_name, gender_id, birth_date)
+roles (id, role_name) -- patient, doctor, admin
+genders (id, gender_name)
+
+-- Health Monitoring
+blood_sugar_measurements (id, patient_id, value, measured_at, blood_sugar_level_id)
+blood_sugar_levels (id, label, min_value, max_value) -- Low, Normal, Intermediate, High
+insulin_logs (id, patient_id, log_date, insulin_dosage_ml, note)
+
+-- Treatment Management
+exercises (id, exercise_name, description, intensity_level, duration_minutes)
+patient_exercises (id, patient_id, exercise_id, start_date, end_date, status)
+exercise_logs (id, patient_exercise_id, log_date, is_completed, note)
+
+diet_types (id, diet_name, description, nutritional_info)
+patient_diets (id, patient_id, diet_id, start_date, end_date)
+diet_logs (id, patient_diet_id, log_date, is_completed, note)
+
+-- Symptom Tracking
+symptom_types (id, symptom_name, description)
+patient_symptoms (id, patient_id, symptom_id, created_at)
+
+-- Relationships
+patient_doctor (patient_id, doctor_id) -- Many-to-many relationship
+
+-- AI Recommendations
+recommendation_rules (id, min_blood_sugar, max_blood_sugar, required_symptoms, exercise_id, diet_id)
+insulin_recommendations (id, min_blood_sugar, max_blood_sugar, level_description, insulin_dosage_ml, note)
+```
+
+## 🔐 Security Features
+
+### 🔒 Authentication & Authorization
+- **JWT-based authentication** with 1-hour token expiry
+- **Role-based access control** (Patient, Doctor, Admin)
+- **Password hashing** using bcrypt with salt rounds
+- **Token invalidation** on password change
+- **CORS protection** for cross-origin requests
+
+### 🛡️ Data Protection
+- **Input validation** and sanitization
+- **SQL injection prevention** using parameterized queries
+- **HTTPS enforcement** with SSL certificates
+- **Environment variable** configuration for sensitive data
+
+## 📊 Analytics & Intelligence
+
+### 🤖 Recommendations System
+The system uses intelligent algorithms to provide personalized recommendations:
+
+1. **Exercise Recommendations**: Based on blood sugar levels and current symptoms
+2. **Diet Recommendations**: Personalized meal plans considering health metrics
+3. **Insulin Dosage**: Calculated recommendations based on blood sugar averages
+4. **Alert System**: Automated notifications for concerning health patterns
+
+### 📈 Data Visualization
+- **Time-series charts** for blood sugar trends
+- **Completion rate analytics** for exercises and diets
+- **Statistical summaries** with averages, min/max values
+- **Time-of-day analysis** for better pattern recognition
+
+## 🚀 Deployment Options
+
+### 🌐 Web Application
+```bash
+# Frontend (Vercel/Netlify)
+cd client
+npm run build
+# Deploy to your preferred platform
+
+# Backend (Heroku/AWS/DigitalOcean)
+cd server
+npm start
+# Deploy with environment variables configured
+```
+
+### 🖥️ Desktop Application
+```bash
+cd client
+npm run build
+# Creates distributable packages for:
+# - Windows (.exe)
+# - macOS (.dmg)
+# - Linux (.AppImage)
+```
+
+
+### 💡 Feature Requests
+We're always looking for ways to improve DiabetaCare. Share your ideas through our [Feature Request Form](https://github.com/MYounesDev/DiabetaCare/issues/new).
+
+
+
+## 🙏 Acknowledgments
+
+- **Healthcare Professionals** who provided domain expertise
+- **Open Source Community** for the amazing tools and libraries
+- **Beta Testers** who helped refine the user experience
+
 
 ---
+
+<div align="center">
+
+**Made with ❤️ for better diabetes management**
+
+</div>
 

@@ -123,10 +123,10 @@ export default function DoctorBloodSugar() {
   return (
     <PageTemplate>
       <AuthWrapper allowedRoles={["doctor"]}>
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-100 p-8">
+        <div className="min-h-screen bg-gradient-to-br from-green-50 to-teal-100 p-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-orange-800 mb-2">Blood Sugar Monitoring</h1>
+            <h1 className="text-3xl font-bold text-green-800 mb-2">Blood Sugar Monitoring</h1>
             <p className="text-gray-600">Track and manage patient blood sugar measurements throughout the day</p>
           </div>
 
@@ -135,12 +135,12 @@ export default function DoctorBloodSugar() {
             {/* Patient List - takes 1/3 of the space */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="p-6 border-b border-gray-200">
-                <h2 className="text-xl font-bold text-orange-800">Patients</h2>
+                <h2 className="text-xl font-bold text-green-800">Patients</h2>
               </div>
               <div className="p-4">
                 {loadingPatients ? (
                   <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                   </div>
                 ) : (
                   <PatientList
@@ -157,7 +157,7 @@ export default function DoctorBloodSugar() {
               {selectedPatientId ? (
                 loadingMeasurements ? (
                   <div className="flex justify-center items-center h-64">
-                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+                    <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-green-500"></div>
                   </div>
                 ) : (
                   <BloodSugarCalendar
